@@ -1,0 +1,36 @@
+{
+  "name": "ethernauts",
+  "version": "0.0.1",
+  "description": "EthernautDAO's first NFT project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ethernautdao/ethernauts.git"
+  },
+  "keywords": [
+    "Ethereum",
+    "NFT",
+    "Ethernaut",
+    "EthernautDAO",
+    "DAO",
+    "Developer",
+    "Solidity"
+  ],
+  "author": "EthernautDAO",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ethernautdao/ethernauts/issues"
+  },
+  "homepage": "https://github.com/ethernautdao/ethernauts#readme",
+  "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.0.2",
+    "@nomiclabs/hardhat-waffle": "^2.0.1",
+    "chai": "^4.3.4",
+    "ethereum-waffle": "^3.4.0",
+    "ethers": "^5.4.5",
+    "hardhat": "^2.6.1"
+  }
+}
