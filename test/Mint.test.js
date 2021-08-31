@@ -1,7 +1,7 @@
 const assert = require('assert');
 const { ethers } = require('hardhat');
 
-describe('Ethernauts.mint', () => {
+describe('Mint', () => {
   let Ethernauts;
 
   let users;
