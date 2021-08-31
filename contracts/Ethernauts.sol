@@ -11,9 +11,7 @@ contract Ethernauts is ERC721, Ownable {
 
     uint256 _tokensMinted;
 
-    constructor() ERC721("Ethernauts", "ETHNTS") {
-
-    }
+    constructor() ERC721("Ethernauts", "ETHNTS") {}
 
     function mint() external payable {
         uint256 tokenId = _tokensMinted;
