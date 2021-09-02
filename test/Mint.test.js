@@ -17,7 +17,7 @@ describe('Mint', () => {
 
   before('deploy contract', async () => {
     const factory = await ethers.getContractFactory('Ethernauts');
-    Ethernauts = await factory.deploy();
+    Ethernauts = await factory.deploy(100);
   });
 
   function itCorrectlyMintsTokensForUser(userNumber) {
@@ -108,5 +108,28 @@ describe('Mint', () => {
     itCorrectlyMintsTokensForUser(2);
     itCorrectlyMintsTokensForUser(5);
     itCorrectlyMintsTokensForUser(3);
+  });
+
+  describe('when trying to mint more than the maximum amount of Ethernauts', () => {
+    let tokensMinted;
+
+    before('mint max -1', async () => {
+      const num = (await Ethernauts.maxEthernauts()).toNumber() - (await Ethernauts.tokensMinted()).toNumber();
+
+      let promises = [];
+      for (let i = 0; i < num; i++) {
+        promises.push((await Ethernauts.connect(user).mint()).wait());
+      }
+
+      await Promise.all(promises);
+    });
+
+    it('reverts', async () => {
+      try {
+        await (await Ethernauts.connect(user).mint()).wait();
+      } catch (err) {
+        assert.ok(err.toString().includes('No more Ethernauts can be minted'));
+      }
+    });
   });
 });

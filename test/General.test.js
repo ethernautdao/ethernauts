@@ -12,7 +12,7 @@ describe('Ethernauts', () => {
 
   before('deploy contract', async () => {
     const factory = await ethers.getContractFactory('Ethernauts');
-    Ethernauts = await factory.deploy();
+    Ethernauts = await factory.deploy(10000);
   });
 
   it('should have set the owner correctly', async () => {

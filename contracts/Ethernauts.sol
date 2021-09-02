@@ -9,12 +9,20 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 contract Ethernauts is ERC721, Ownable {
     using Address for address payable;
 
-    uint256 _tokensMinted;
+    uint public immutable maxEthernauts;
 
-    constructor() ERC721("Ethernauts", "ETHNTS") {}
+    uint256 public tokensMinted;
+
+    constructor(uint maxEthernauts_) ERC721("Ethernauts", "ETHNTS") {
+        require(maxEthernauts_ <= 10000, "Max Ethernauts supply too large");
+
+        maxEthernauts = maxEthernauts_;
+    }
 
     function mint() external payable {
-        uint256 tokenId = _tokensMinted;
+        require(tokensMinted < maxEthernauts, "No more Ethernauts can be minted");
+
+        uint256 tokenId = tokensMinted;
 
         _mint(msg.sender, tokenId);
     }
@@ -22,7 +30,7 @@ contract Ethernauts is ERC721, Ownable {
     function _mint(address to, uint256 tokenId) internal virtual override {
         super._mint(to, tokenId);
 
-        _tokensMinted += 1;
+        tokensMinted += 1;
     }
 
     function withdraw(address payable payee) external onlyOwner {

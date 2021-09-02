@@ -12,7 +12,7 @@ describe('Withdraw', () => {
 
   before('deploy contract', async () => {
     const factory = await ethers.getContractFactory('Ethernauts');
-    Ethernauts = await factory.deploy();
+    Ethernauts = await factory.deploy(10000);
   });
 
   describe('when some tokens have been minted', () => {
@@ -21,6 +21,16 @@ describe('Withdraw', () => {
       await (await Ethernauts.connect(user).mint({ value: ethers.utils.parseEther('2') })).wait();
       await (await Ethernauts.connect(user).mint({ value: ethers.utils.parseEther('0.5') })).wait();
       await (await Ethernauts.connect(user).mint({ value: ethers.utils.parseEther('0.1') })).wait();
+    });
+
+    describe('when a regular user attempts to withdraw', () => {
+      it('reverts', async () => {
+        try {
+          await (await Ethernauts.connect(user).withdraw(user.address)).wait();
+        } catch (err) {
+          assert.ok(err.toString().includes('caller is not the owner'))
+        }
+      });
     });
 
     describe('when the owner withdraws all ETH', () => {
