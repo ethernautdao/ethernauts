@@ -12,11 +12,18 @@ contract Ethernauts is ERC721, Ownable {
     uint public immutable maxEthernauts;
 
     uint256 public tokensMinted;
+    uint256 public daoPercent;
+    uint256 public artistPercent;
 
-    constructor(uint maxEthernauts_) ERC721("Ethernauts", "ETHNTS") {
+    uint256 constant PERCENT = 1000000;
+
+    constructor(uint maxEthernauts_, uint daoPercent_, uint artistPercent_) ERC721("Ethernauts", "ETHNTS") {
         require(maxEthernauts_ <= 10000, "Max Ethernauts supply too large");
+        require(daoPercent_ + artistPercent_ == PERCENT, "Invalid dao and artist percentages");
 
         maxEthernauts = maxEthernauts_;
+        daoPercent = daoPercent_;
+        artistPercent = artistPercent_;
     }
 
     function mint() external payable {
@@ -34,7 +41,16 @@ contract Ethernauts is ERC721, Ownable {
         tokensMinted += 1;
     }
 
-    function withdraw(address payable payee) external onlyOwner {
-        payee.sendValue(address(this).balance);
+    // TODO: Need re-entrancy guard?
+    function withdraw(address payable dao, address payable artist) external onlyOwner {
+        // TODO: Safety checks on addresses
+
+        uint256 balance = address(this).balance;
+
+        uint256 daoScaled = balance * daoPercent;
+        uint256 artistScaled = balance * artistPercent;
+
+        dao.sendValue(daoScaled / PERCENT);
+        artist.sendValue(artistScaled / PERCENT);
     }
 }
