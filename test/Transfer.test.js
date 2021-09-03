@@ -17,7 +17,9 @@ describe('Transfer', () => {
 
   describe('when a user mints a token', () => {
     before('mint', async () => {
-      await (await Ethernauts.connect(user1).mint()).wait();
+      await (await Ethernauts.connect(user1).mint({
+        value: ethers.utils.parseEther('0.2'),
+      })).wait();
     });
 
     it('shows that the user has the token', async () => {

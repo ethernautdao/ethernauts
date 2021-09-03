@@ -1,5 +1,6 @@
 const assert = require('assert');
 const { ethers } = require('hardhat');
+const assertRevert = require('./utils/assertRevert');
 
 describe('Withdraw', () => {
   let Ethernauts;
@@ -20,16 +21,15 @@ describe('Withdraw', () => {
       await (await Ethernauts.connect(user).mint({ value: ethers.utils.parseEther('1') })).wait();
       await (await Ethernauts.connect(user).mint({ value: ethers.utils.parseEther('2') })).wait();
       await (await Ethernauts.connect(user).mint({ value: ethers.utils.parseEther('0.5') })).wait();
-      await (await Ethernauts.connect(user).mint({ value: ethers.utils.parseEther('0.1') })).wait();
+      await (await Ethernauts.connect(user).mint({ value: ethers.utils.parseEther('0.2') })).wait();
     });
 
     describe('when a regular user attempts to withdraw', () => {
       it('reverts', async () => {
-        try {
-          await (await Ethernauts.connect(user).withdraw(user.address)).wait();
-        } catch (err) {
-          assert.ok(err.toString().includes('caller is not the owner'))
-        }
+        await assertRevert(
+          Ethernauts.connect(user).withdraw(user.address),
+          'caller is not the owner',
+        );
       });
     });
 

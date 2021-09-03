@@ -20,6 +20,7 @@ contract Ethernauts is ERC721, Ownable {
     }
 
     function mint() external payable {
+        require(msg.value >= 0.2 ether, "Insufficient payment");
         require(tokensMinted < maxEthernauts, "No more Ethernauts can be minted");
 
         uint256 tokenId = tokensMinted;
