@@ -30,11 +30,15 @@ contract Ethernauts is ERC721, Ownable {
         require(maxTokens_ <= 10000, "Max token supply too large");
         require(daoPercent_ + artistPercent_ == PERCENT, "Invalid dao and artist percentages");
 
+        maxGiftable = maxGiftable_;
         maxTokens = maxTokens_;
         daoPercent = daoPercent_;
         artistPercent = artistPercent_;
-        maxGiftable = maxGiftable_;
     }
+
+    // -------------
+    // External ABI
+    // -------------
 
     function mint() external payable {
         require(msg.value >= 0.2 ether, "Insufficient payment");
@@ -43,12 +47,33 @@ contract Ethernauts is ERC721, Ownable {
     }
 
     function gift(address to) external onlyOwner {
-        require(tokensGifted <= maxGiftable, "No more Ethernauts can be gifted");
+        require(tokensGifted < maxGiftable, "No more Ethernauts can be gifted");
 
         _mintNext(to);
 
         tokensGifted += 1;
     }
+
+    function exists(uint256 tokenId) public view returns (bool) {
+        return _exists(tokenId);
+    }
+
+    // TODO: Need re-entrancy guard?
+    function withdraw(address payable dao, address payable artist) external onlyOwner {
+        // TODO: Safety checks on addresses
+
+        uint256 balance = address(this).balance;
+
+        uint256 daoScaled = balance * daoPercent;
+        uint256 artistScaled = balance * artistPercent;
+
+        dao.sendValue(daoScaled / PERCENT);
+        artist.sendValue(artistScaled / PERCENT);
+    }
+
+    // -------------------
+    // Internal functions
+    // -------------------
 
     function _mintNext(address to) internal {
         uint256 tokenId = tokensMinted;
@@ -64,16 +89,4 @@ contract Ethernauts is ERC721, Ownable {
         tokensMinted += 1;
     }
 
-    // TODO: Need re-entrancy guard?
-    function withdraw(address payable dao, address payable artist) external onlyOwner {
-        // TODO: Safety checks on addresses
-
-        uint256 balance = address(this).balance;
-
-        uint256 daoScaled = balance * daoPercent;
-        uint256 artistScaled = balance * artistPercent;
-
-        dao.sendValue(daoScaled / PERCENT);
-        artist.sendValue(artistScaled / PERCENT);
-    }
 }

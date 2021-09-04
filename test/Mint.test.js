@@ -65,6 +65,14 @@ describe('Mint', () => {
           receipt = await tx.wait();
         });
 
+        it('shows that the token now exists', async () => {
+          assert.ok(await Ethernauts.exists(parseInt(mintedTokenId)));
+        });
+
+        it('shows that the next token does not exist', async () => {
+          assert.ok(!(await Ethernauts.exists(parseInt(mintedTokenId) + 1)));
+        });
+
         it('emitted a Transfer event', async () => {
           const event = receipt.events.find(e => e.event === 'Transfer');
 
@@ -124,8 +132,6 @@ describe('Mint', () => {
   });
 
   describe('when trying to mint more than the maximum amount of Ethernauts', () => {
-    let tokensMinted;
-
     before('mint max -1', async () => {
       const num = (await Ethernauts.maxTokens()).toNumber() - (await Ethernauts.tokensMinted()).toNumber();
 
