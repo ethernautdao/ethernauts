@@ -28,9 +28,9 @@ async function main() {
     console.log('Minting a token...');
 
     const tx = await Ethernauts.mint({ value: ethers.utils.parseEther('0.2') });
-    await tx.wait();
+    const receipt = await tx.wait();
 
-    console.log('Token minted!');
+    console.log(`Token minted! (Gas spent: ${receipt.gasUsed})`);
   });
 }
 
