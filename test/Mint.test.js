@@ -12,6 +12,7 @@ describe('Mint', () => {
 
   let mintedTokenId;
   let tokensMinted = 0;
+  let tokenIds = [];
 
   const baseURI = 'http://deadpine.io/';
 
@@ -53,6 +54,7 @@ describe('Mint', () => {
           if (!user.tokenIds) user.tokenIds = [];
 
           mintedTokenId = `${tokensMinted}`;
+          tokenIds.push(mintedTokenId);
           user.tokenIds.push(mintedTokenId);
 
           user.numTokens++;
@@ -117,6 +119,14 @@ describe('Mint', () => {
         it('shows that the user owns the token', async () => {
           assert.equal(await Ethernauts.ownerOf(mintedTokenId), user.address);
         });
+
+        it('can enumerate all the user tokens ids', async () => {
+          for (let i = 0; i < user.tokenIds.length; i++) {
+            const tokenId = user.tokenIds[i];
+
+            assert.equal(await Ethernauts.tokenOfOwnerByIndex(user.address, i), tokenId);
+          }
+        });
       });
     }
 
@@ -136,12 +146,22 @@ describe('Mint', () => {
     itCorrectlyMintsTokensForUser(2);
     itCorrectlyMintsTokensForUser(5);
     itCorrectlyMintsTokensForUser(3);
+
+    describe('when checking on all minted NFTs', () => {
+      it('can enumerate all token ids', async () => {
+        for (let i = 0; i < tokenIds.length; i++) {
+          const tokenId = tokenIds[i];
+
+          assert.equal(await Ethernauts.tokenByIndex(i), tokenId);
+        }
+      });
+    });
   });
 
   describe('when trying to mint more than the maximum amount of Ethernauts', () => {
     before('mint max -1', async () => {
       const num =
-        (await Ethernauts.maxTokens()).toNumber() - (await Ethernauts.tokensMinted()).toNumber();
+        (await Ethernauts.maxTokens()).toNumber() - (await Ethernauts.totalSupply()).toNumber();
 
       let promises = [];
       for (let i = 0; i < num; i++) {

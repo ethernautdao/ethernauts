@@ -101,6 +101,13 @@ describe('Ethernauts', () => {
       assert.equal((await Ethernauts.artistPercent()).toNumber(), artistPercent);
     });
 
+    it('shows that the expexted interfaces are supported', async () => {
+      assert.ok(await Ethernauts.supportsInterface('0x01ffc9a7')); // ERC165
+      assert.ok(await Ethernauts.supportsInterface('0x80ac58cd')); // ERC721
+      assert.ok(await Ethernauts.supportsInterface('0x5b5e139f')); // ERC721Metadata
+      assert.ok(await Ethernauts.supportsInterface('0x780e9d63')); // ERC721Enumarable
+    });
+
     describe('when a regular user tries to call protected functions', () => {
       it('reverts', async () => {
         await assertRevert(

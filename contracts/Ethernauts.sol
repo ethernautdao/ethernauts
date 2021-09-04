@@ -4,18 +4,18 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 
-contract Ethernauts is ERC721, Ownable {
+contract Ethernauts is ERC721Enumerable, Ownable {
     using Address for address payable;
 
     uint public immutable maxTokens;
     uint public immutable maxGiftable;
     bytes32 public immutable provenance;
 
-    string public assetsURI;
+    string public baseTokenURI;
 
     uint public tokensGifted;
-    uint public tokensMinted;
 
     uint public daoPercent;
     uint public artistPercent;
@@ -67,8 +67,8 @@ contract Ethernauts is ERC721, Ownable {
         tokensGifted += 1;
     }
 
-    function setBaseURI(string memory assetsURI_) public onlyOwner {
-        assetsURI = assetsURI_;
+    function setBaseURI(string memory baseTokenURI_) public onlyOwner {
+        baseTokenURI = baseTokenURI_;
     }
 
     // TODO: Need re-entrancy guard?
@@ -89,20 +89,18 @@ contract Ethernauts is ERC721, Ownable {
     // -------------------
 
     function _baseURI() internal view virtual override returns (string memory) {
-        return assetsURI;
+        return baseTokenURI;
     }
 
     function _mintNext(address to) internal {
-        uint tokenId = tokensMinted;
+        uint tokenId = totalSupply();
 
         _mint(to, tokenId);
     }
 
     function _mint(address to, uint tokenId) internal virtual override {
-        require(tokensMinted < maxTokens, "No more Ethernauts can be minted");
+        require(totalSupply() < maxTokens, "No more Ethernauts can be minted");
 
         super._mint(to, tokenId);
-
-        tokensMinted += 1;
     }
 }
