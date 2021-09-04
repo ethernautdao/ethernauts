@@ -12,7 +12,7 @@ describe('Transfer', () => {
 
   before('deploy contract', async () => {
     const factory = await ethers.getContractFactory('Ethernauts');
-    Ethernauts = await factory.deploy(10000, 500000, 500000);
+    Ethernauts = await factory.deploy(100, 10000, 500000, 500000);
   });
 
   describe('when a user mints a token', () => {

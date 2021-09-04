@@ -1,6 +1,6 @@
 const assert = require('assert');
-const { ethers } = require('hardhat');
 const assertRevert = require('./utils/assertRevert');
+const { ethers } = require('hardhat');
 
 describe('Withdraw', () => {
   let Ethernauts;
@@ -17,7 +17,12 @@ describe('Withdraw', () => {
 
   before('deploy contract', async () => {
     const factory = await ethers.getContractFactory('Ethernauts');
-    Ethernauts = await factory.deploy(10000, DAO_PERCENT * PERCENT_SCALAR, ARTIST_PERCENT * PERCENT_SCALAR);
+    Ethernauts = await factory.deploy(
+      100,
+      10000,
+      DAO_PERCENT * PERCENT_SCALAR,
+      ARTIST_PERCENT * PERCENT_SCALAR
+    );
   });
 
   describe('when some tokens have been minted', () => {

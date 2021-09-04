@@ -1,6 +1,6 @@
 const assert = require('assert');
+const assertRevert = require('./utils/assertRevert')
 const { ethers } = require('hardhat');
-const assertRevert = require('./utils/assertRevert');
 
 describe('Mint', () => {
   let Ethernauts;
@@ -19,7 +19,7 @@ describe('Mint', () => {
 
   before('deploy contract', async () => {
     const factory = await ethers.getContractFactory('Ethernauts');
-    Ethernauts = await factory.deploy(100, 500000, 500000);
+    Ethernauts = await factory.deploy(100, 100, 500000, 500000);
   });
 
   describe('when attempting to mint without enough ETH', () => {
@@ -127,7 +127,7 @@ describe('Mint', () => {
     let tokensMinted;
 
     before('mint max -1', async () => {
-      const num = (await Ethernauts.maxEthernauts()).toNumber() - (await Ethernauts.tokensMinted()).toNumber();
+      const num = (await Ethernauts.maxTokens()).toNumber() - (await Ethernauts.tokensMinted()).toNumber();
 
       let promises = [];
       for (let i = 0; i < num; i++) {

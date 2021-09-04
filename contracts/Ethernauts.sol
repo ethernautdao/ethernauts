@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 contract Ethernauts is ERC721, Ownable {
     using Address for address payable;
 
-    uint public immutable maxEthernauts;
+    uint public immutable maxTokens;
     uint public immutable maxGiftable;
 
     uint256 public tokensGifted;
@@ -21,16 +21,16 @@ contract Ethernauts is ERC721, Ownable {
     uint256 constant PERCENT = 1000000;
 
     constructor(
-        uint maxEthernauts_,
         uint maxGiftable_,
+        uint maxTokens_,
         uint daoPercent_,
         uint artistPercent_
     ) ERC721("Ethernauts", "ETHNTS") {
-        require(maxGiftable_ <= 100, "Mex giftable supply too large");
-        require(maxEthernauts_ <= 10000, "Max Ethernauts supply too large");
+        require(maxGiftable_ <= 100, "Max giftable supply too large");
+        require(maxTokens_ <= 10000, "Max token supply too large");
         require(daoPercent_ + artistPercent_ == PERCENT, "Invalid dao and artist percentages");
 
-        maxEthernauts = maxEthernauts_;
+        maxTokens = maxTokens_;
         daoPercent = daoPercent_;
         artistPercent = artistPercent_;
         maxGiftable = maxGiftable_;
@@ -57,7 +57,7 @@ contract Ethernauts is ERC721, Ownable {
     }
 
     function _mint(address to, uint256 tokenId) internal virtual override {
-        require(tokensMinted < maxEthernauts, "No more Ethernauts can be minted");
+        require(tokensMinted < maxTokens, "No more Ethernauts can be minted");
 
         super._mint(to, tokenId);
 
