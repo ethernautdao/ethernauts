@@ -19,7 +19,7 @@ describe('Mint', () => {
 
   before('deploy contract', async () => {
     const factory = await ethers.getContractFactory('Ethernauts');
-    Ethernauts = await factory.deploy(100, 500000, 5000000);
+    Ethernauts = await factory.deploy(100, 500000, 500000);
   });
 
   describe('when attempting to mint without enough ETH', () => {

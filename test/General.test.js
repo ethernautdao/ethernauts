@@ -10,6 +10,8 @@ describe('Ethernauts', () => {
     ([owner] = await ethers.getSigners());
   });
 
+  // TODO: Try to deploy with invalid params
+
   before('deploy contract', async () => {
     const factory = await ethers.getContractFactory('Ethernauts');
     Ethernauts = await factory.deploy(10000, 500000, 500000);

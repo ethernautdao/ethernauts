@@ -10,32 +10,55 @@ contract Ethernauts is ERC721, Ownable {
     using Address for address payable;
 
     uint public immutable maxEthernauts;
+    uint public immutable maxGiftable;
 
+    uint256 public tokensGifted;
     uint256 public tokensMinted;
+
     uint256 public daoPercent;
     uint256 public artistPercent;
 
     uint256 constant PERCENT = 1000000;
 
-    constructor(uint maxEthernauts_, uint daoPercent_, uint artistPercent_) ERC721("Ethernauts", "ETHNTS") {
+    constructor(
+        uint maxEthernauts_,
+        uint maxGiftable_,
+        uint daoPercent_,
+        uint artistPercent_
+    ) ERC721("Ethernauts", "ETHNTS") {
+        require(maxGiftable_ <= 100, "Mex giftable supply too large");
         require(maxEthernauts_ <= 10000, "Max Ethernauts supply too large");
         require(daoPercent_ + artistPercent_ == PERCENT, "Invalid dao and artist percentages");
 
         maxEthernauts = maxEthernauts_;
         daoPercent = daoPercent_;
         artistPercent = artistPercent_;
+        maxGiftable = maxGiftable_;
     }
 
     function mint() external payable {
         require(msg.value >= 0.2 ether, "Insufficient payment");
-        require(tokensMinted < maxEthernauts, "No more Ethernauts can be minted");
 
+        _mintNext(msg.sender);
+    }
+
+    function gift(address to) external onlyOwner {
+        require(tokensGifted <= maxGiftable, "No more Ethernauts can be gifted");
+
+        _mintNext(to);
+
+        tokensGifted += 1;
+    }
+
+    function _mintNext(address to) internal {
         uint256 tokenId = tokensMinted;
 
-        _mint(msg.sender, tokenId);
+        _mint(to, tokenId);
     }
 
     function _mint(address to, uint256 tokenId) internal virtual override {
+        require(tokensMinted < maxEthernauts, "No more Ethernauts can be minted");
+
         super._mint(to, tokenId);
 
         tokensMinted += 1;
