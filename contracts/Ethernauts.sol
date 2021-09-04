@@ -41,9 +41,9 @@ contract Ethernauts is ERC721, Ownable {
         provenance = provenance_;
     }
 
-    // -------------
-    // External ABI
-    // -------------
+    // --------------------
+    // Public external ABI
+    // --------------------
 
     function mint() external payable {
         require(msg.value >= 0.2 ether, "Insufficient payment");
@@ -51,16 +51,20 @@ contract Ethernauts is ERC721, Ownable {
         _mintNext(msg.sender);
     }
 
+    function exists(uint tokenId) public view returns (bool) {
+        return _exists(tokenId);
+    }
+
+    // -----------------------
+    // Protexted external ABI
+    // -----------------------
+
     function gift(address to) external onlyOwner {
         require(tokensGifted < maxGiftable, "No more Ethernauts can be gifted");
 
         _mintNext(to);
 
         tokensGifted += 1;
-    }
-
-    function exists(uint tokenId) public view returns (bool) {
-        return _exists(tokenId);
     }
 
     function setBaseURI(string memory assetsURI_) public onlyOwner {

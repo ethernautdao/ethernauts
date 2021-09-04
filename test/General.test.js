@@ -8,7 +8,7 @@ describe('Ethernauts', () => {
   let owner;
 
   before('identify signers', async () => {
-    [owner] = await ethers.getSigners();
+    [owner, user] = await ethers.getSigners();
   });
 
   before('prepare factory', async () => {
@@ -99,6 +99,23 @@ describe('Ethernauts', () => {
     it('shows the correct percentages', async () => {
       assert.equal((await Ethernauts.daoPercent()).toNumber(), daoPercent);
       assert.equal((await Ethernauts.artistPercent()).toNumber(), artistPercent);
+    });
+
+    describe('when a regular user tries to call protected functions', () => {
+      it('reverts', async () => {
+        await assertRevert(
+          Ethernauts.connect(user).withdraw(user.address, user.address),
+          'caller is not the owner'
+        );
+        await assertRevert(
+          Ethernauts.connect(user).setBaseURI('someURI'),
+          'caller is not the owner'
+        );
+        await assertRevert(
+          Ethernauts.connect(user).gift(user.address),
+          'caller is not the owner'
+        );
+      });
     });
   });
 });
