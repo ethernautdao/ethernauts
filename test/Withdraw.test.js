@@ -5,14 +5,14 @@ const { ethers } = require('hardhat');
 describe('Withdraw', () => {
   let Ethernauts;
 
-  let owner, user;
+  let owner, user, artist;
 
   const DAO_PERCENT = 0.95;
   const ARTIST_PERCENT = 0.05;
   const PERCENT_SCALAR = 1000000;
 
   before('identify signers', async () => {
-    ([owner, artist, user] = await ethers.getSigners());
+    [owner, artist, user] = await ethers.getSigners();
   });
 
   before('deploy contract', async () => {
@@ -27,12 +27,10 @@ describe('Withdraw', () => {
   });
 
   describe('when some tokens have been minted', () => {
-    let ethPaidInMints = 0;
-
     async function mint(eth) {
-      await (await Ethernauts.connect(user).mint({ value: ethers.utils.parseEther(`${eth}`) })).wait();
-
-      ethPaidInMints += eth;
+      await (
+        await Ethernauts.connect(user).mint({ value: ethers.utils.parseEther(`${eth}`) })
+      ).wait();
     }
 
     before('mints', async () => {
@@ -47,7 +45,7 @@ describe('Withdraw', () => {
       it('reverts', async () => {
         await assertRevert(
           Ethernauts.connect(user).withdraw(user.address, user.address),
-          'caller is not the owner',
+          'caller is not the owner'
         );
       });
     });
@@ -57,7 +55,7 @@ describe('Withdraw', () => {
 
       function percent(value, pct) {
         return value
-          .mul(ethers.BigNumber.from(`${ pct * PERCENT_SCALAR }`))
+          .mul(ethers.BigNumber.from(`${pct * PERCENT_SCALAR}`))
           .div(ethers.BigNumber.from('1000000'));
       }
 
@@ -69,15 +67,19 @@ describe('Withdraw', () => {
 
       before('withdraw all contract ETH to the owner address', async () => {
         const tx = await Ethernauts.connect(owner).withdraw(owner.address, artist.address);
-        receipt = await tx.wait();
+        withdrawalReceipt = await tx.wait();
       });
 
       it('increased the owners ETH balance', async () => {
-        const paidInGas = ethers.BigNumber.from(receipt.cumulativeGasUsed).mul(receipt.effectiveGasPrice);
+        const paidInGas = ethers.BigNumber.from(withdrawalReceipt.cumulativeGasUsed).mul(
+          withdrawalReceipt.effectiveGasPrice
+        );
 
         assert.deepEqual(
           await ethers.provider.getBalance(owner.address),
-          owner.recordedEthBalance.add(percent(Ethernauts.recordedEthBalance, DAO_PERCENT)).sub(paidInGas)
+          owner.recordedEthBalance
+            .add(percent(Ethernauts.recordedEthBalance, DAO_PERCENT))
+            .sub(paidInGas)
         );
       });
 

@@ -7,7 +7,7 @@ describe('Transfer', () => {
   let user1, user2;
 
   before('identify signers', async () => {
-    ([user1, user2] = await ethers.getSigners());
+    [user1, user2] = await ethers.getSigners();
   });
 
   before('deploy contract', async () => {
@@ -17,9 +17,11 @@ describe('Transfer', () => {
 
   describe('when a user mints a token', () => {
     before('mint', async () => {
-      await (await Ethernauts.connect(user1).mint({
-        value: ethers.utils.parseEther('0.2'),
-      })).wait();
+      await (
+        await Ethernauts.connect(user1).mint({
+          value: ethers.utils.parseEther('0.2'),
+        })
+      ).wait();
     });
 
     it('shows that the user has the token', async () => {
@@ -29,7 +31,7 @@ describe('Transfer', () => {
 
     describe('when the user transfers the token to another user', () => {
       before('transfer', async () => {
-        await (await Ethernauts.connect(user1).transferFrom(user1.address, user2.address, '0'));
+        await await Ethernauts.connect(user1).transferFrom(user1.address, user2.address, '0');
       });
 
       it('shows that the user no longer has the token', async () => {

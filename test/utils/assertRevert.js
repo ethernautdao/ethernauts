@@ -9,11 +9,13 @@ async function assertRevert(tx, expectedMessage) {
 
   if (!error) {
     throw new Error('Transaction was expected to revert, but it did not');
-  } else if(expectedMessage)  {
+  } else if (expectedMessage) {
     const receivedMessage = error.toString();
 
     if (!receivedMessage.includes(expectedMessage)) {
-      throw new Error(`Transaction was expected to revert with "${expectedMessage}", but reverted with "${receivedMessage}"`);
+      throw new Error(
+        `Transaction was expected to revert with "${expectedMessage}", but reverted with "${receivedMessage}"`
+      );
     }
   }
 }

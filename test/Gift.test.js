@@ -8,13 +8,15 @@ describe('Gift', () => {
   let users;
   let owner, user;
 
+  let tx;
+
   let mintedTokenId;
   let tokensMinted = 0;
   let tokensGifted = 0;
 
   before('identify signers', async () => {
     users = await ethers.getSigners();
-    ([owner, user] = users);
+    [owner, user] = users;
   });
 
   before('deploy contract', async () => {
@@ -24,17 +26,13 @@ describe('Gift', () => {
 
   describe('when a regular user tries to gift an NFT', () => {
     it('reverts', async () => {
-      await assertRevert(
-        Ethernauts.connect(user).gift(user.address),
-        'caller is not the owner'
-      );
+      await assertRevert(Ethernauts.connect(user).gift(user.address), 'caller is not the owner');
     });
   });
 
   describe('when the owner gifts NFTs', () => {
     function itCorrectlyGiftsTokensForUser(userNumber) {
       describe(`when gifting a token for user #${userNumber}`, () => {
-
         before('identify the user', async () => {
           user = users[userNumber];
         });
@@ -53,29 +51,19 @@ describe('Gift', () => {
 
         before('gift', async () => {
           tx = await Ethernauts.connect(owner).gift(user.address);
-
-          receipt = await tx.wait();
+          await tx.wait();
         });
 
         it('incremented the user token balance', async () => {
-          assert.equal(
-            await Ethernauts.balanceOf(user.address),
-            user.numTokens
-          );
+          assert.equal(await Ethernauts.balanceOf(user.address), user.numTokens);
         });
 
         it('shows that the user owns the token', async () => {
-          assert.equal(
-            await Ethernauts.ownerOf(mintedTokenId),
-            user.address
-          );
+          assert.equal(await Ethernauts.ownerOf(mintedTokenId), user.address);
         });
 
         it('shows that the amount of gifted tokens increased', async () => {
-          assert.equal(
-            await Ethernauts.tokensGifted(),
-            tokensGifted
-          );
+          assert.equal(await Ethernauts.tokensGifted(), tokensGifted);
         });
       });
     }
@@ -100,7 +88,8 @@ describe('Gift', () => {
 
   describe('when trying to gift more than the maximum amount of giftable tokens', () => {
     before('mint max -1', async () => {
-      const num = (await Ethernauts.maxGiftable()).toNumber() - (await Ethernauts.tokensGifted()).toNumber();
+      const num =
+        (await Ethernauts.maxGiftable()).toNumber() - (await Ethernauts.tokensGifted()).toNumber();
 
       let promises = [];
       for (let i = 0; i < num; i++) {

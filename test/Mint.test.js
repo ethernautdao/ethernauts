@@ -1,5 +1,5 @@
 const assert = require('assert');
-const assertRevert = require('./utils/assertRevert')
+const assertRevert = require('./utils/assertRevert');
 const { ethers } = require('hardhat');
 
 describe('Mint', () => {
@@ -9,6 +9,7 @@ describe('Mint', () => {
   let owner, user;
 
   let tx, receipt;
+
   let mintedTokenId;
   let tokensMinted = 0;
 
@@ -16,7 +17,7 @@ describe('Mint', () => {
 
   before('identify signers', async () => {
     users = await ethers.getSigners();
-    ([owner, user] = users);
+    [owner, user] = users;
   });
 
   before('deploy contract', async () => {
@@ -43,7 +44,6 @@ describe('Mint', () => {
   describe('when minting many tokens', () => {
     function itCorrectlyMintsTokensForUser(userNumber) {
       describe(`when minting a token for user #${userNumber}`, () => {
-
         before('identify the user', async () => {
           user = users[userNumber];
         });
@@ -85,7 +85,7 @@ describe('Mint', () => {
         });
 
         it('emitted a Transfer event', async () => {
-          const event = receipt.events.find(e => e.event === 'Transfer');
+          const event = receipt.events.find((e) => e.event === 'Transfer');
 
           assert.equal(event.args.from, '0x0000000000000000000000000000000000000000');
           assert.equal(event.args.to, user.address);
@@ -93,7 +93,9 @@ describe('Mint', () => {
         });
 
         it('reduced the user ETH balance', async () => {
-          const paidInGas = ethers.BigNumber.from(receipt.cumulativeGasUsed).mul(receipt.effectiveGasPrice);
+          const paidInGas = ethers.BigNumber.from(receipt.cumulativeGasUsed).mul(
+            receipt.effectiveGasPrice
+          );
 
           assert.deepEqual(
             await ethers.provider.getBalance(user.address),
@@ -109,17 +111,11 @@ describe('Mint', () => {
         });
 
         it('incremented the user token balance', async () => {
-          assert.equal(
-            await Ethernauts.balanceOf(user.address),
-            user.numTokens
-          );
+          assert.equal(await Ethernauts.balanceOf(user.address), user.numTokens);
         });
 
         it('shows that the user owns the token', async () => {
-          assert.equal(
-            await Ethernauts.ownerOf(mintedTokenId),
-            user.address
-          );
+          assert.equal(await Ethernauts.ownerOf(mintedTokenId), user.address);
         });
       });
     }
@@ -144,13 +140,18 @@ describe('Mint', () => {
 
   describe('when trying to mint more than the maximum amount of Ethernauts', () => {
     before('mint max -1', async () => {
-      const num = (await Ethernauts.maxTokens()).toNumber() - (await Ethernauts.tokensMinted()).toNumber();
+      const num =
+        (await Ethernauts.maxTokens()).toNumber() - (await Ethernauts.tokensMinted()).toNumber();
 
       let promises = [];
       for (let i = 0; i < num; i++) {
-        promises.push((await Ethernauts.connect(user).mint({
-          value: ethers.utils.parseEther('0.2'),
-        })).wait());
+        promises.push(
+          (
+            await Ethernauts.connect(user).mint({
+              value: ethers.utils.parseEther('0.2'),
+            })
+          ).wait()
+        );
       }
 
       await Promise.all(promises);
