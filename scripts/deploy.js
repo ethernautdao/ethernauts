@@ -19,7 +19,7 @@ const PARAMETERS = {
 async function main() {
   const deploymentPath = `./deployments/${hre.network.name}.json`;
 
-  const data = _loadOrCreateFile(deploymentPath);
+  const data = _loadOrCreateDeploymentFile(deploymentPath);
 
   if (hre.network.name !== 'local' && data.token !== '') {
     throw new Error(`Token already exists at ${data.token}`);
@@ -43,7 +43,7 @@ async function _deployContract() {
   return Ethernauts;
 }
 
-function _loadOrCreateFile(filepath) {
+function _loadOrCreateDeploymentFile(filepath) {
   if (fs.existsSync(filepath)) {
     return JSON.parse(fs.readFileSync(filepath));
   } else {
