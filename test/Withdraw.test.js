@@ -21,7 +21,8 @@ describe('Withdraw', () => {
       100,
       10000,
       DAO_PERCENT * PERCENT_SCALAR,
-      ARTIST_PERCENT * PERCENT_SCALAR
+      ARTIST_PERCENT * PERCENT_SCALAR,
+      ethers.utils.id('beef')
     );
   });
 

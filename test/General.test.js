@@ -19,7 +19,16 @@ describe('Ethernauts', () => {
     describe('when deploying with too many giftable tokens', () => {
       it('reverts', async () => {
         await assertRevert(
-          factory.deploy(200, 10000, 500000, 500000),
+          factory.deploy(200, 10000, 500000, 500000, ethers.utils.id('beef')),
+          "Max giftable supply too large"
+        );
+      });
+    });
+
+    describe('when deploying with an invalid provenance hash', () => {
+      it('reverts', async () => {
+        await assertRevert(
+          factory.deploy(200, 10000, 500000, 500000, '0x0000000000000000000000000000000000000000000000000000000000000000'),
           "Max giftable supply too large"
         );
       });
@@ -28,7 +37,7 @@ describe('Ethernauts', () => {
     describe('when deploying with too many tokens', () => {
       it('reverts', async () => {
         await assertRevert(
-          factory.deploy(100, 20000, 500000, 500000),
+          factory.deploy(100, 20000, 500000, 500000, ethers.utils.id('beef')),
           "Max token supply too large"
         );
       });
@@ -37,14 +46,14 @@ describe('Ethernauts', () => {
     describe('when deploying with invalid distribution percentages', () => {
       it('reverts', async () => {
         await assertRevert(
-          factory.deploy(100, 10000, 700000, 500000),
+          factory.deploy(100, 10000, 700000, 500000, ethers.utils.id('beef')),
           "Invalid dao and artist percentages"
         );
       });
 
       it('reverts', async () => {
         await assertRevert(
-          factory.deploy(100, 10000, 1000, 50000),
+          factory.deploy(100, 10000, 1000, 50000, ethers.utils.id('beef')),
           "Invalid dao and artist percentages"
         );
       });
@@ -58,7 +67,7 @@ describe('Ethernauts', () => {
     const artistPercent = 50000;
 
     before('deploy contract', async () => {
-      Ethernauts = await factory.deploy(maxGiftable, maxTokens, daoPercent, artistPercent);
+      Ethernauts = await factory.deploy(maxGiftable, maxTokens, daoPercent, artistPercent, ethers.utils.id('beef'));
     });
 
     it('should have set the owner correctly', async () => {

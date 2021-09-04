@@ -11,29 +11,35 @@ contract Ethernauts is ERC721, Ownable {
 
     uint public immutable maxTokens;
     uint public immutable maxGiftable;
+    bytes32 public immutable provenance;
 
-    uint256 public tokensGifted;
-    uint256 public tokensMinted;
+    string public assetsURI;
 
-    uint256 public daoPercent;
-    uint256 public artistPercent;
+    uint public tokensGifted;
+    uint public tokensMinted;
 
-    uint256 constant PERCENT = 1000000;
+    uint public daoPercent;
+    uint public artistPercent;
+
+    uint constant PERCENT = 1000000;
 
     constructor(
         uint maxGiftable_,
         uint maxTokens_,
         uint daoPercent_,
-        uint artistPercent_
+        uint artistPercent_,
+        bytes32 provenance_
     ) ERC721("Ethernauts", "ETHNTS") {
         require(maxGiftable_ <= 100, "Max giftable supply too large");
         require(maxTokens_ <= 10000, "Max token supply too large");
         require(daoPercent_ + artistPercent_ == PERCENT, "Invalid dao and artist percentages");
+        require(provenance_ != bytes32(0), "Invalid provenance hash");
 
         maxGiftable = maxGiftable_;
         maxTokens = maxTokens_;
         daoPercent = daoPercent_;
         artistPercent = artistPercent_;
+        provenance = provenance_;
     }
 
     // -------------
@@ -54,18 +60,22 @@ contract Ethernauts is ERC721, Ownable {
         tokensGifted += 1;
     }
 
-    function exists(uint256 tokenId) public view returns (bool) {
+    function exists(uint tokenId) public view returns (bool) {
         return _exists(tokenId);
+    }
+
+    function setBaseURI(string memory assetsURI_) public onlyOwner {
+        assetsURI = assetsURI_;
     }
 
     // TODO: Need re-entrancy guard?
     function withdraw(address payable dao, address payable artist) external onlyOwner {
         // TODO: Safety checks on addresses
 
-        uint256 balance = address(this).balance;
+        uint balance = address(this).balance;
 
-        uint256 daoScaled = balance * daoPercent;
-        uint256 artistScaled = balance * artistPercent;
+        uint daoScaled = balance * daoPercent;
+        uint artistScaled = balance * artistPercent;
 
         dao.sendValue(daoScaled / PERCENT);
         artist.sendValue(artistScaled / PERCENT);
@@ -75,13 +85,17 @@ contract Ethernauts is ERC721, Ownable {
     // Internal functions
     // -------------------
 
+    function _baseURI() internal view virtual override returns (string memory) {
+        return assetsURI;
+    }
+
     function _mintNext(address to) internal {
-        uint256 tokenId = tokensMinted;
+        uint tokenId = tokensMinted;
 
         _mint(to, tokenId);
     }
 
-    function _mint(address to, uint256 tokenId) internal virtual override {
+    function _mint(address to, uint tokenId) internal virtual override {
         require(tokensMinted < maxTokens, "No more Ethernauts can be minted");
 
         super._mint(to, tokenId);

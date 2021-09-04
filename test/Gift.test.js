@@ -19,7 +19,7 @@ describe('Gift', () => {
 
   before('deploy contract', async () => {
     const factory = await ethers.getContractFactory('Ethernauts');
-    Ethernauts = await factory.deploy(100, 10000, 500000, 500000);
+    Ethernauts = await factory.deploy(100, 10000, 500000, 500000, ethers.utils.id('beef'));
   });
 
   describe('when a regular user tries to gift an NFT', () => {

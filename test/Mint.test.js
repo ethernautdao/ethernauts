@@ -6,20 +6,27 @@ describe('Mint', () => {
   let Ethernauts;
 
   let users;
+  let owner, user;
 
-  let user;
   let tx, receipt;
   let mintedTokenId;
   let tokensMinted = 0;
 
+  const baseURI = 'http://deadpine.io/';
+
   before('identify signers', async () => {
     users = await ethers.getSigners();
-    user = users[0];
+    ([owner, user] = users);
   });
 
   before('deploy contract', async () => {
     const factory = await ethers.getContractFactory('Ethernauts');
-    Ethernauts = await factory.deploy(100, 100, 500000, 500000);
+    Ethernauts = await factory.deploy(100, 100, 500000, 500000, ethers.utils.id('beef'));
+  });
+
+  before('set base URI', async () => {
+    const tx = await Ethernauts.connect(owner).setBaseURI(baseURI);
+    await tx.wait();
   });
 
   describe('when attempting to mint without enough ETH', () => {
@@ -63,6 +70,10 @@ describe('Mint', () => {
           });
 
           receipt = await tx.wait();
+        });
+
+        it('shows that the base URI is set', async () => {
+          assert.equal(await Ethernauts.tokenURI(mintedTokenId), `${baseURI}${mintedTokenId}`);
         });
 
         it('shows that the token now exists', async () => {
