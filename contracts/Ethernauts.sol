@@ -56,7 +56,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     }
 
     // -----------------------
-    // Protexted external ABI
+    // Protected external ABI
     // -----------------------
 
     function gift(address to) external onlyOwner {
