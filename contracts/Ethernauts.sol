@@ -5,7 +5,6 @@ import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
-
 contract Ethernauts is ERC721, Ownable {
     using Address for address payable;
 
@@ -21,7 +20,7 @@ contract Ethernauts is ERC721, Ownable {
     uint public daoPercent;
     uint public artistPercent;
 
-    uint constant PERCENT = 1000000;
+    uint private constant _PERCENT = 1000000;
 
     constructor(
         uint maxGiftable_,
@@ -32,7 +31,7 @@ contract Ethernauts is ERC721, Ownable {
     ) ERC721("Ethernauts", "ETHNTS") {
         require(maxGiftable_ <= 100, "Max giftable supply too large");
         require(maxTokens_ <= 10000, "Max token supply too large");
-        require(daoPercent_ + artistPercent_ == PERCENT, "Invalid dao and artist percentages");
+        require(daoPercent_ + artistPercent_ == _PERCENT, "Invalid percentages");
         require(provenance_ != bytes32(0), "Invalid provenance hash");
 
         maxGiftable = maxGiftable_;
@@ -77,8 +76,8 @@ contract Ethernauts is ERC721, Ownable {
         uint daoScaled = balance * daoPercent;
         uint artistScaled = balance * artistPercent;
 
-        dao.sendValue(daoScaled / PERCENT);
-        artist.sendValue(artistScaled / PERCENT);
+        dao.sendValue(daoScaled / _PERCENT);
+        artist.sendValue(artistScaled / _PERCENT);
     }
 
     // -------------------
@@ -102,5 +101,4 @@ contract Ethernauts is ERC721, Ownable {
 
         tokensMinted += 1;
     }
-
 }

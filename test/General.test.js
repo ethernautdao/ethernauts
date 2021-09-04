@@ -53,14 +53,14 @@ describe('Ethernauts', () => {
       it('reverts', async () => {
         await assertRevert(
           factory.deploy(100, 10000, 700000, 500000, ethers.utils.id('beef')),
-          'Invalid dao and artist percentages'
+          'Invalid percentages'
         );
       });
 
       it('reverts', async () => {
         await assertRevert(
           factory.deploy(100, 10000, 1000, 50000, ethers.utils.id('beef')),
-          'Invalid dao and artist percentages'
+          'Invalid percentages'
         );
       });
     });

@@ -1,6 +1,6 @@
-node_modules
+.DS_Store
 .env
-
-#Hardhat files
+.vscode
+node_modules
 cache
 artifacts
