@@ -18,5 +18,9 @@ module.exports = {
     minPrice: ethers.utils.parseEther('0.2'),
     maxPrice: ethers.utils.parseEther('14'),
     provenance: '0x0000000000000000000000000000000000000000000000000000000000000001',
-  }
+  },
+  overrides: {
+    gasPrice: ethers.utils.parseUnits('100', 'gwei'),
+    gasLimit: 8000000,
+  },
 };

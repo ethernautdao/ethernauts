@@ -21,10 +21,11 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     bytes32 public immutable provenance;
 
     // Can be changed by owner
+    // TODO: add setters
     IChallenge public activeChallenge;
     string public baseTokenURI;
-    uint minPrice;
-    uint maxPrice;
+    uint public minPrice;
+    uint public maxPrice;
 
     // Internal
     uint private _tokensGifted;

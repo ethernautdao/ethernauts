@@ -22,10 +22,7 @@ describe('General', () => {
         params.minPrice = 200;
         params.maxPrice = 100;
 
-        await assertRevert(
-          factory.deploy(...Object.values(params)),
-          'Invalid price range'
-        );
+        await assertRevert(factory.deploy(...Object.values(params)), 'Invalid price range');
       });
     });
 
@@ -46,10 +43,7 @@ describe('General', () => {
         const params = Object.assign({}, hre.config.defaults);
         params.provenance = '0x0000000000000000000000000000000000000000000000000000000000000000';
 
-        await assertRevert(
-          factory.deploy(...Object.values(params)),
-          'Invalid provenance hash'
-        );
+        await assertRevert(factory.deploy(...Object.values(params)), 'Invalid provenance hash');
       });
     });
 
@@ -58,10 +52,7 @@ describe('General', () => {
         const params = Object.assign({}, hre.config.defaults);
         params.maxTokens = 12000;
 
-        await assertRevert(
-          factory.deploy(...Object.values(params)),
-          'Max token supply too large'
-        );
+        await assertRevert(factory.deploy(...Object.values(params)), 'Max token supply too large');
       });
     });
 
@@ -71,10 +62,7 @@ describe('General', () => {
         params.daoPercent = 500000;
         params.artistPercent = 600000;
 
-        await assertRevert(
-          factory.deploy(...Object.values(params)),
-          'Invalid percentages'
-        );
+        await assertRevert(factory.deploy(...Object.values(params)), 'Invalid percentages');
       });
 
       it('reverts', async () => {
@@ -82,10 +70,7 @@ describe('General', () => {
         params.daoPercent = 50000;
         params.artistPercent = 600000;
 
-        await assertRevert(
-          factory.deploy(...Object.values(params)),
-          'Invalid percentages'
-        );
+        await assertRevert(factory.deploy(...Object.values(params)), 'Invalid percentages');
       });
     });
   });
@@ -118,7 +103,10 @@ describe('General', () => {
 
     it('shows the correct percentages', async () => {
       assert.equal((await Ethernauts.daoPercent()).toNumber(), hre.config.defaults.daoPercent);
-      assert.equal((await Ethernauts.artistPercent()).toNumber(), hre.config.defaults.artistPercent);
+      assert.equal(
+        (await Ethernauts.artistPercent()).toNumber(),
+        hre.config.defaults.artistPercent
+      );
     });
 
     it('shows that the expexted interfaces are supported', async () => {
