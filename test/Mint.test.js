@@ -37,7 +37,18 @@ describe('Mint', () => {
         Ethernauts.connect(user).mint({
           value: ethers.utils.parseEther('0.01'),
         }),
-        'Insufficient payment'
+        'msg.value too low'
+      );
+    });
+  });
+
+  describe('when attempting to mint with too much ETH', () => {
+    it('reverts', async () => {
+      await assertRevert(
+        Ethernauts.connect(user).mint({
+          value: ethers.utils.parseEther('15'),
+        }),
+        'msg.value too high'
       );
     });
   });

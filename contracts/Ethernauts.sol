@@ -45,7 +45,8 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     // --------------------
 
     function mint() external payable {
-        require(msg.value >= 0.2 ether, "Insufficient payment");
+        require(msg.value >= 0.2 ether, "msg.value too low");
+        require(msg.value <= 14 ether, "msg.value too high");
 
         _mintNext(msg.sender);
     }
