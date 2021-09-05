@@ -1,3 +1,4 @@
+const ethers = require('ethers');
 require('@nomiclabs/hardhat-ethers');
 
 module.exports = {
@@ -9,4 +10,13 @@ module.exports = {
       url: 'http://localhost:8545',
     },
   },
+  defaults: {
+    maxGiftable: 100,
+    maxTokens: 10000,
+    daoPercent: 950000, // 95%
+    artistPercent: 50000, // 5%
+    minPrice: ethers.utils.parseEther('0.2'),
+    maxPrice: ethers.utils.parseEther('14'),
+    provenance: '0x0000000000000000000000000000000000000000000000000000000000000001',
+  }
 };

@@ -23,7 +23,10 @@ describe('Mint', () => {
 
   before('deploy contract', async () => {
     const factory = await ethers.getContractFactory('Ethernauts');
-    Ethernauts = await factory.deploy(100, 100, 500000, 500000, ethers.utils.id('beef'));
+
+    const params = Object.assign({}, hre.config.defaults);
+    params.maxTokens = 100;
+    Ethernauts = await factory.deploy(...Object.values(params));
   });
 
   before('set base URI', async () => {

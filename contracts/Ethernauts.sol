@@ -23,6 +23,8 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     // Can be changed by owner
     IChallenge public activeChallenge;
     string public baseTokenURI;
+    uint minPrice;
+    uint maxPrice;
 
     // Internal
     uint private _tokensGifted;
@@ -33,18 +35,23 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         uint maxTokens_,
         uint daoPercent_,
         uint artistPercent_,
+        uint minPrice_,
+        uint maxPrice_,
         bytes32 provenance_
     ) ERC721("Ethernauts", "ETHNTS") {
         require(maxGiftable_ <= 100, "Max giftable supply too large");
         require(maxTokens_ <= 10000, "Max token supply too large");
         require(daoPercent_ + artistPercent_ == _PERCENT, "Invalid percentages");
         require(provenance_ != bytes32(0), "Invalid provenance hash");
+        require(minPrice_ < maxPrice_, "Invalid price range");
 
         maxGiftable = maxGiftable_;
         maxTokens = maxTokens_;
         daoPercent = daoPercent_;
         artistPercent = artistPercent_;
         provenance = provenance_;
+        minPrice = minPrice_;
+        maxPrice = maxPrice_;
     }
 
     // --------------------
@@ -52,7 +59,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     // --------------------
 
     function mint() external payable {
-        uint minPrice = 0.2 ether;
+        uint effectiveMinPrice = minPrice;
 
         // Trying to get a discount?
         if (msg.value <= minPrice) {
@@ -60,14 +67,14 @@ contract Ethernauts is ERC721Enumerable, Ownable {
             if (address(activeChallenge) != address(0)) {
                 require(!_receivedDiscount[msg.sender], "Cannot receive another discount");
 
-                minPrice = minPrice - activeChallenge.discountFor(msg.sender);
+                effectiveMinPrice = minPrice - activeChallenge.discountFor(msg.sender);
 
                 _receivedDiscount[msg.sender] = true;
             }
         }
 
-        require(msg.value >= minPrice, "msg.value too low");
-        require(msg.value <= 14 ether, "msg.value too high");
+        require(msg.value >= effectiveMinPrice, "msg.value too low");
+        require(msg.value <= maxPrice, "msg.value too high");
 
         _mintNext(msg.sender);
     }
