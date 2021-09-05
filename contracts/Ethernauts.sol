@@ -10,22 +10,23 @@ import "./interfaces/IChallenge.sol";
 contract Ethernauts is ERC721Enumerable, Ownable {
     using Address for address payable;
 
-    IChallenge public activeChallenge;
+    // Fixed
+    uint private constant _PERCENT = 1000000; // 1m = 100%, 500k = 50%, etc
 
+    // Can be set once on deploy
     uint public immutable maxTokens;
     uint public immutable maxGiftable;
+    uint public immutable daoPercent;
+    uint public immutable artistPercent;
     bytes32 public immutable provenance;
 
+    // Can be changed by owner
+    IChallenge public activeChallenge;
     string public baseTokenURI;
 
-    uint public tokensGifted;
-
-    uint public daoPercent;
-    uint public artistPercent;
-
-    uint private constant _PERCENT = 1000000;
-
-    mapping(address => bool) _receivedDiscount;
+    // Internal
+    uint private _tokensGifted;
+    mapping(address => bool) private _receivedDiscount;
 
     constructor(
         uint maxGiftable_,
@@ -53,11 +54,12 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     function mint() external payable {
         uint minPrice = 0.2 ether;
 
+        // Trying to get a discount?
         if (msg.value <= minPrice) {
-            bool challengeExists = address(activeChallenge) != address(0);
-            bool eligibleForDiscount = _receivedDiscount[msg.sender] == false;
+            // Is there an active challenge?
+            if (address(activeChallenge) != address(0)) {
+                require(!_receivedDiscount[msg.sender], "Cannot receive another discount");
 
-            if (challengeExists && eligibleForDiscount) {
                 minPrice = minPrice - activeChallenge.discountFor(msg.sender);
 
                 _receivedDiscount[msg.sender] = true;
@@ -74,16 +76,20 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         return _exists(tokenId);
     }
 
+    function tokensGifted() public view returns (uint) {
+        return _tokensGifted;
+    }
+
     // -----------------------
     // Protected external ABI
     // -----------------------
 
     function gift(address to) external onlyOwner {
-        require(tokensGifted < maxGiftable, "No more Ethernauts can be gifted");
+        require(_tokensGifted < maxGiftable, "No more Ethernauts can be gifted");
 
         _mintNext(to);
 
-        tokensGifted += 1;
+        _tokensGifted += 1;
     }
 
     function setChallenge(IChallenge newChallenge) external onlyOwner {

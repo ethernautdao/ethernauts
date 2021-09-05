@@ -5,7 +5,7 @@ const { ethers } = require('hardhat');
 describe('Ethernauts', () => {
   let factory, Ethernauts;
 
-  let owner;
+  let owner, user;
 
   before('identify signers', async () => {
     [owner, user] = await ethers.getSigners();
@@ -87,7 +87,10 @@ describe('Ethernauts', () => {
     });
 
     it('shows that no challenge is set', async () => {
-      assert.equal(await Ethernauts.activeChallenge(), '0x0000000000000000000000000000000000000000');
+      assert.equal(
+        await Ethernauts.activeChallenge(),
+        '0x0000000000000000000000000000000000000000'
+      );
     });
 
     it('should have set the name and symbol correctly', async () => {
@@ -122,10 +125,7 @@ describe('Ethernauts', () => {
           Ethernauts.connect(user).setBaseURI('someURI'),
           'caller is not the owner'
         );
-        await assertRevert(
-          Ethernauts.connect(user).gift(user.address),
-          'caller is not the owner'
-        );
+        await assertRevert(Ethernauts.connect(user).gift(user.address), 'caller is not the owner');
       });
     });
   });

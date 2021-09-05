@@ -10,7 +10,7 @@ describe('Challenge', () => {
 
   before('identify signers', async () => {
     users = await ethers.getSigners();
-    ([owner, user] = users);
+    [owner, user] = users;
   });
 
   before('deploy contract', async () => {
@@ -53,7 +53,10 @@ describe('Challenge', () => {
       });
 
       it('shows that the user should get the discount', async () => {
-        assert.deepEqual(await Challenge.discountFor(user.address), ethers.utils.parseEther('0.15'));
+        assert.deepEqual(
+          await Challenge.discountFor(user.address),
+          ethers.utils.parseEther('0.15')
+        );
       });
 
       describe('when the user tries to buy at a discount', () => {
@@ -65,16 +68,21 @@ describe('Challenge', () => {
         });
 
         before('purchase', async () => {
-          const tx = await Ethernauts.connect(user).mint({ value: ethers.utils.parseEther('0.05') });
+          const tx = await Ethernauts.connect(user).mint({
+            value: ethers.utils.parseEther('0.05'),
+          });
           receipt = await tx.wait();
         });
 
         it('shows that the total supply increased', async () => {
-          assert.deepEqual(await Ethernauts.totalSupply(), recordedTotalSupply.add(ethers.BigNumber.from('1')));
+          assert.deepEqual(
+            await Ethernauts.totalSupply(),
+            recordedTotalSupply.add(ethers.BigNumber.from('1'))
+          );
         });
 
         it('shows that the user got the token', async () => {
-          const event = receipt.events.find(e => e.event === 'Transfer');
+          const event = receipt.events.find((e) => e.event === 'Transfer');
 
           assert.equal(await Ethernauts.ownerOf(event.args.tokenId), user.address);
         });
@@ -83,7 +91,7 @@ describe('Challenge', () => {
           it('reverts', async () => {
             await assertRevert(
               Ethernauts.connect(user).mint({ value: ethers.utils.parseEther('0.05') }),
-              'msg.value too low'
+              'Cannot receive another discount'
             );
           });
         });
@@ -108,10 +116,7 @@ describe('Challenge', () => {
 
       describe('when another user tries to buy at a discount', () => {
         it('reverts', async () => {
-          await assertRevert(
-            Challenge.connect(owner).register(),
-            'Capacity exceeded'
-          );
+          await assertRevert(Challenge.connect(owner).register(), 'Capacity exceeded');
         });
       });
     });

@@ -18,7 +18,6 @@ async function main() {
 
   Ethernauts.on('Transfer', async (from, to, amount, event) => {
     if (from === '0x0000000000000000000000000000000000000000') {
-
       const tokenId = event.args.tokenId.toString();
 
       const tx = await ethers.provider.getTransaction(event.transactionHash);
@@ -36,7 +35,7 @@ async function main() {
     const tx = await Ethernauts.mint({ value: ethers.utils.parseEther(`${value}`) });
     await tx.wait();
 
-    console.log(`Token minted!`);
+    console.log('Token minted!');
   });
 }
 
@@ -73,4 +72,4 @@ main()
   .catch((error) => {
     console.error(error);
     process.exit(1);
-  })
+  });

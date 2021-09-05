@@ -3,16 +3,16 @@ const hre = require('hardhat');
 const { ethers } = hre;
 
 const DEPLOYMENT_SCHEMA = {
-  token: ''
+  token: '',
 };
 
 const PARAMETERS = {
   maxGiftable: 100,
   maxTokens: 10000,
-  daoPercent: 950000,   // 95%
+  daoPercent: 950000, // 95%
   artistPercent: 50000, // 5%
-  provenanceHash: ethers.utils.id('beef') // TODO?
-}
+  provenanceHash: ethers.utils.id('beef'), // TODO?
+};
 
 // TODO: Specify gas limit and price to use
 // TODO: Specify owner/deployer EOA
@@ -56,4 +56,4 @@ main()
   .catch((error) => {
     console.error(error);
     process.exit(1);
-  })
+  });

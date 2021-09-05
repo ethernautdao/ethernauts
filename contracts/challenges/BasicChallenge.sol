@@ -7,7 +7,7 @@ contract BasicChallenge is IChallenge {
     uint public maxDiscounts;
     uint public givenDiscounts;
 
-    mapping(address => uint) _discountForAddress;
+    mapping(address => uint) private _discountForAddress;
 
     constructor(uint maxDiscounts_) {
         maxDiscounts = maxDiscounts_;
