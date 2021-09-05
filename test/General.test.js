@@ -86,6 +86,10 @@ describe('Ethernauts', () => {
       assert.equal(await Ethernauts.owner(), owner.address);
     });
 
+    it('shows that no challenge is set', async () => {
+      assert.equal(await Ethernauts.activeChallenge(), '0x0000000000000000000000000000000000000000');
+    });
+
     it('should have set the name and symbol correctly', async () => {
       assert.equal(await Ethernauts.name(), 'Ethernauts');
       assert.equal(await Ethernauts.symbol(), 'ETHNTS');

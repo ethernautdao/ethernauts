@@ -78,8 +78,10 @@ describe('Mint', () => {
         });
 
         before('mint', async () => {
+          const value = Math.random() * 13.4 + 0.2;
+
           tx = await Ethernauts.connect(user).mint({
-            value: ethers.utils.parseEther('0.2'),
+            value: ethers.utils.parseEther(`${value}`),
           });
 
           receipt = await tx.wait();
