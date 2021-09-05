@@ -19,7 +19,7 @@ const createSampleAssets = async () => {
     if (!answer) process.exit(0);
   }
 
-  for (let x = 0; x <= TOTAL_ASSETS; x++) {
+  for (let x = 0; x < TOTAL_ASSETS; x++) {
     let png = new PNGlib(150, 150);
 
     const color = randomColor().hexString();
