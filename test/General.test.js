@@ -127,6 +127,7 @@ describe('General', () => {
           'caller is not the owner'
         );
         await assertRevert(Ethernauts.connect(user).gift(user.address), 'caller is not the owner');
+        await assertRevert(Ethernauts.connect(user).setChallenge(user.address), 'caller is not the owner');
       });
     });
   });
