@@ -21,7 +21,6 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     bytes32 public immutable provenance;
 
     // Can be changed by owner
-    // TODO: add setters
     IChallenge public activeChallenge;
     string public baseTokenURI;
     uint public minPrice;
@@ -44,7 +43,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         require(maxTokens_ <= 10000, "Max token supply too large");
         require(daoPercent_ + artistPercent_ == _PERCENT, "Invalid percentages");
         require(provenance_ != bytes32(0), "Invalid provenance hash");
-        require(minPrice_ < maxPrice_, "Invalid price range");
+        require(minPrice_ <= maxPrice_, "Invalid price range");
 
         maxGiftable = maxGiftable_;
         maxTokens = maxTokens_;
@@ -102,6 +101,18 @@ contract Ethernauts is ERC721Enumerable, Ownable {
 
     function setChallenge(IChallenge newChallenge) external onlyOwner {
         activeChallenge = newChallenge;
+    }
+
+    function setMinPrice(uint newMinPrice) external onlyOwner {
+        require(newMinPrice <= maxPrice, "Invalid price range");
+
+        minPrice = newMinPrice;
+    }
+
+    function setMaxPrice(uint newMaxPrice) external onlyOwner {
+        require(minPrice <= newMaxPrice, "Invalid price range");
+
+        maxPrice = newMaxPrice;
     }
 
     function setBaseURI(string memory baseTokenURI_) public onlyOwner {

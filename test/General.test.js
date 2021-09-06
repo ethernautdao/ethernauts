@@ -116,6 +116,21 @@ describe('General', () => {
       assert.ok(await Ethernauts.supportsInterface('0x780e9d63')); // ERC721Enumarable
     });
 
+    describe('when the owner calls protected functions', () => {
+      it('allows the owner to change min and max price', async () => {
+        let tx;
+
+        tx = await Ethernauts.connect(owner).setMinPrice(0);
+        await tx.wait();
+
+        tx = await Ethernauts.connect(owner).setMaxPrice(0);
+        await tx.wait();
+
+        assert.equal(await Ethernauts.minPrice(), '0');
+        assert.equal(await Ethernauts.maxPrice(), '0');
+      });
+    });
+
     describe('when a regular user tries to call protected functions', () => {
       it('reverts', async () => {
         await assertRevert(
