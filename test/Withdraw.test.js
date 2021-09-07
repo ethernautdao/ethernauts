@@ -17,13 +17,7 @@ describe('Withdraw', () => {
 
   before('deploy contract', async () => {
     const factory = await ethers.getContractFactory('Ethernauts');
-    Ethernauts = await factory.deploy(
-      100,
-      10000,
-      DAO_PERCENT * PERCENT_SCALAR,
-      ARTIST_PERCENT * PERCENT_SCALAR,
-      ethers.utils.id('beef')
-    );
+    Ethernauts = await factory.deploy(...Object.values(hre.config.defaults));
   });
 
   describe('when some tokens have been minted', () => {

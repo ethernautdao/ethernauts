@@ -5,39 +5,53 @@ import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 
+import "./interfaces/IChallenge.sol";
+
 contract Ethernauts is ERC721Enumerable, Ownable {
     using Address for address payable;
 
+    // Fixed
+    uint private constant _PERCENT = 1000000; // 1m = 100%, 500k = 50%, etc
+
+    // Can be set once on deploy
     uint public immutable maxTokens;
     uint public immutable maxGiftable;
+    uint public immutable daoPercent;
+    uint public immutable artistPercent;
     bytes32 public immutable provenance;
 
+    // Can be changed by owner
+    IChallenge public activeChallenge;
     string public baseTokenURI;
+    uint public minPrice;
+    uint public maxPrice;
 
-    uint public tokensGifted;
-
-    uint public daoPercent;
-    uint public artistPercent;
-
-    uint private constant _PERCENT = 1000000;
+    // Internal
+    uint private _tokensGifted;
+    mapping(address => bool) private _receivedDiscount;
 
     constructor(
         uint maxGiftable_,
         uint maxTokens_,
         uint daoPercent_,
         uint artistPercent_,
+        uint minPrice_,
+        uint maxPrice_,
         bytes32 provenance_
     ) ERC721("Ethernauts", "ETHNTS") {
         require(maxGiftable_ <= 100, "Max giftable supply too large");
         require(maxTokens_ <= 10000, "Max token supply too large");
         require(daoPercent_ + artistPercent_ == _PERCENT, "Invalid percentages");
         require(provenance_ != bytes32(0), "Invalid provenance hash");
+        require(minPrice_ <= maxPrice_, "Invalid price range");
 
         maxGiftable = maxGiftable_;
         maxTokens = maxTokens_;
         daoPercent = daoPercent_;
         artistPercent = artistPercent_;
         provenance = provenance_;
+        minPrice = minPrice_;
+        maxPrice = maxPrice_;
     }
 
     // --------------------
@@ -45,7 +59,22 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     // --------------------
 
     function mint() external payable {
-        require(msg.value >= 0.2 ether, "Insufficient payment");
+        uint effectiveMinPrice = minPrice;
+
+        // Trying to get a discount?
+        if (msg.value <= minPrice) {
+            // Is there an active challenge?
+            if (address(activeChallenge) != address(0)) {
+                require(!_receivedDiscount[msg.sender], "Cannot receive another discount");
+
+                effectiveMinPrice = minPrice - activeChallenge.discountFor(msg.sender);
+
+                _receivedDiscount[msg.sender] = true;
+            }
+        }
+
+        require(msg.value >= effectiveMinPrice, "msg.value too low");
+        require(msg.value <= maxPrice, "msg.value too high");
 
         _mintNext(msg.sender);
     }
@@ -54,16 +83,36 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         return _exists(tokenId);
     }
 
+    function tokensGifted() public view returns (uint) {
+        return _tokensGifted;
+    }
+
     // -----------------------
     // Protected external ABI
     // -----------------------
 
     function gift(address to) external onlyOwner {
-        require(tokensGifted < maxGiftable, "No more Ethernauts can be gifted");
+        require(_tokensGifted < maxGiftable, "No more Ethernauts can be gifted");
 
         _mintNext(to);
 
-        tokensGifted += 1;
+        _tokensGifted += 1;
+    }
+
+    function setChallenge(IChallenge newChallenge) external onlyOwner {
+        activeChallenge = newChallenge;
+    }
+
+    function setMinPrice(uint newMinPrice) external onlyOwner {
+        require(newMinPrice <= maxPrice, "Invalid price range");
+
+        minPrice = newMinPrice;
+    }
+
+    function setMaxPrice(uint newMaxPrice) external onlyOwner {
+        require(minPrice <= newMaxPrice, "Invalid price range");
+
+        maxPrice = newMaxPrice;
     }
 
     function setBaseURI(string memory baseTokenURI_) public onlyOwner {
