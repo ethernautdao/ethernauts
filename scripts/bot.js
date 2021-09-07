@@ -1,8 +1,13 @@
 const fs = require('fs');
 const hre = require('hardhat');
+
+const { IpfsForEthernaut } = require('../ipfs');
+
 const { ethers } = hre;
 
 async function main() {
+  const ipfsForEthernaut = new IpfsForEthernaut();
+
   const deploymentPath = `./deployments/${hre.network.name}.json`;
 
   const data = _loadDeploymentFile(deploymentPath);
@@ -12,16 +17,35 @@ async function main() {
   }
 
   const Ethernauts = await ethers.getContractAt('Ethernauts', data.token);
+
   console.log(`Listening for events on Ethernauts token at ${Ethernauts.address}`);
 
-  Ethernauts.on('Transfer', (from, to, amount, event) => {
+  Ethernauts.on('Transfer', async (from, to, amount, event) => {
     if (from === '0x0000000000000000000000000000000000000000') {
       const tokenId = event.args.tokenId.toString();
 
       console.log(`Mint detected, tokenId: ${tokenId}`);
 
-      console.log('UPLOADING TO IPFS...');
-      // TODO
+      /*
+        TODO: randomly select assets
+      */
+
+      // Upload to ipfs local node
+      const resultFromIpfsLocalNode = await ipfsForEthernaut.uploadToLocalIpfsNodeFromAssetFile(
+        `assets/${tokenId}.png`,
+        {
+          name: `${tokenId}.png`,
+          description: 'This is an example',
+        }
+      );
+
+      console.log('resultFromIpfsLocalNode', resultFromIpfsLocalNode);
+
+      // Upload asset and metadata to pinata
+      await Promise.all([
+        ipfsForEthernaut.pin(resultFromIpfsLocalNode.assetURI),
+        ipfsForEthernaut.pin(resultFromIpfsLocalNode.metadataURI),
+      ]);
     }
   });
 
@@ -32,15 +56,7 @@ function _checkIfTokenIdAssetExists(tokenId) {
   // TODO
 }
 
-function _updateLocalAssetIdWithTokenId() {
-  // TODO
-}
-
 function _randomlySelectAssetId() {
-  // TODO
-}
-
-async function _uploadToIPFS({ tokenId, assetId }) {
   // TODO
 }
 
@@ -57,4 +73,4 @@ main()
   .catch((error) => {
     console.error(error);
     process.exit(1);
-  })
+  });
