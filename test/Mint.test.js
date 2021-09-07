@@ -23,7 +23,10 @@ describe('Mint', () => {
 
   before('deploy contract', async () => {
     const factory = await ethers.getContractFactory('Ethernauts');
-    Ethernauts = await factory.deploy(100, 100, 500000, 500000, ethers.utils.id('beef'));
+
+    const params = Object.assign({}, hre.config.defaults);
+    params.maxTokens = 100;
+    Ethernauts = await factory.deploy(...Object.values(params));
   });
 
   before('set base URI', async () => {
@@ -37,7 +40,18 @@ describe('Mint', () => {
         Ethernauts.connect(user).mint({
           value: ethers.utils.parseEther('0.01'),
         }),
-        'Insufficient payment'
+        'msg.value too low'
+      );
+    });
+  });
+
+  describe('when attempting to mint with too much ETH', () => {
+    it('reverts', async () => {
+      await assertRevert(
+        Ethernauts.connect(user).mint({
+          value: ethers.utils.parseEther('15'),
+        }),
+        'msg.value too high'
       );
     });
   });
@@ -67,8 +81,10 @@ describe('Mint', () => {
         });
 
         before('mint', async () => {
+          const value = Math.random() * 13.4 + 0.2;
+
           tx = await Ethernauts.connect(user).mint({
-            value: ethers.utils.parseEther('0.2'),
+            value: ethers.utils.parseEther(`${value}`),
           });
 
           receipt = await tx.wait();

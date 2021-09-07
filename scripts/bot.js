@@ -52,13 +52,21 @@ async function main() {
   await new Promise(() => {});
 }
 
-function _checkIfTokenIdAssetExists(tokenId) {
-  // TODO
-}
+// function _checkIfTokenIdAssetExists(tokenId) {
+//   // TODO
+// }
 
-function _randomlySelectAssetId() {
-  // TODO
-}
+// function _updateLocalAssetIdWithTokenId() {
+//   // TODO
+// }
+
+// function _randomlySelectAssetId() {
+//   // TODO
+// }
+
+// async function _uploadToIPFS({ tokenId, assetId }) {
+//   // TODO
+// }
 
 function _loadDeploymentFile(filepath) {
   if (fs.existsSync(filepath)) {

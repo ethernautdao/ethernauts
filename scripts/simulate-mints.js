@@ -16,21 +16,26 @@ async function main() {
   console.log(`Interacting with Ethernauts token at ${Ethernauts.address}`);
   console.log(`Tokens minted so far: ${(await Ethernauts.totalSupply()).toString()}`);
 
-  Ethernauts.on('Transfer', (from, to, amount, event) => {
+  Ethernauts.on('Transfer', async (from, to, amount, event) => {
     if (from === '0x0000000000000000000000000000000000000000') {
       const tokenId = event.args.tokenId.toString();
 
-      console.log(`Mint detected, tokenId: ${tokenId}`);
+      const tx = await ethers.provider.getTransaction(event.transactionHash);
+      const value = ethers.utils.formatEther(tx.value);
+
+      console.log(`Mint of token #${tokenId} detected. User paid ${value} ETH`);
     }
   });
 
   await _onAnyKeyPress(async () => {
     console.log('Minting a token...');
 
-    const tx = await Ethernauts.mint({ value: ethers.utils.parseEther('0.2') });
-    const receipt = await tx.wait();
+    const value = Math.random() * 13.4 + 0.2;
 
-    console.log(`Token minted! (Gas spent: ${receipt.gasUsed})`);
+    const tx = await Ethernauts.mint({ value: ethers.utils.parseEther(`${value}`) });
+    await tx.wait();
+
+    console.log('Token minted!');
   });
 }
 
@@ -67,4 +72,4 @@ main()
   .catch((error) => {
     console.error(error);
     process.exit(1);
-  })
+  });
