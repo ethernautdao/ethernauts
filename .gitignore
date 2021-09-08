@@ -4,6 +4,8 @@
 node_modules
 cache
 artifacts
+cache-ovm
+artifacts-ovm
 deployments/local.json
 metadata/
 assets/

@@ -16,6 +16,9 @@ module.exports = {
       ovm: true,
     },
   },
+  ovm: {
+    solcVersion: '0.7.6+commit.3b061308',
+  },
   defaults: {
     maxGiftable: 100,
     maxTokens: 10000,
