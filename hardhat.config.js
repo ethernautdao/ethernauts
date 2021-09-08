@@ -1,13 +1,19 @@
 const ethers = require('ethers');
+
 require('@nomiclabs/hardhat-ethers');
+require('@eth-optimism/hardhat-ovm');
 
 module.exports = {
-  solidity: '0.8.4',
+  solidity: '0.7.6',
   defaultNetwork: 'hardhat',
   networks: {
     hardhat: {},
     local: {
       url: 'http://localhost:8545',
+    },
+    'local-optimism': {
+      url: 'http://localhost:8545',
+      ovm: true,
     },
   },
   defaults: {

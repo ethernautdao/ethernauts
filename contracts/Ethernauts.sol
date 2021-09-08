@@ -1,13 +1,13 @@
 //SPDX-License-Identifier: Unlicense
-pragma solidity ^0.8.0;
+pragma solidity ^0.7.6;
 
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
 import "./interfaces/IChallenge.sol";
 
-contract Ethernauts is ERC721Enumerable, Ownable {
+contract Ethernauts is ERC721, Ownable {
     using Address for address payable;
 
     // Fixed
@@ -116,7 +116,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     }
 
     function setBaseURI(string memory baseTokenURI_) public onlyOwner {
-        baseTokenURI = baseTokenURI_;
+        _setBaseURI(baseTokenURI_);
     }
 
     // TODO: Need re-entrancy guard?
@@ -135,10 +135,6 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     // -------------------
     // Internal functions
     // -------------------
-
-    function _baseURI() internal view virtual override returns (string memory) {
-        return baseTokenURI;
-    }
 
     function _mintNext(address to) internal {
         uint tokenId = totalSupply();
