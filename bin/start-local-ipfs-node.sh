@@ -3,5 +3,5 @@ if [ ! -d "$HOME/.ipfs" ]; then
   npx go-ipfs init
 fi
 
-echo "Running IPFS local node"
+echo "Running local IPFS node"
 npx go-ipfs daemon

@@ -23,7 +23,7 @@
     "url": "https://github.com/ethernautdao/ethernauts/issues"
   },
   "scripts": {
-    "start:local:ipfs": "./bin/start-ipfs-local-node.sh",
+    "start:local:ipfs": "./bin/start-local-ipfs-node.sh",
     "create:dummy:assets": "node scripts/create-dummy-assets.js",
     "lint:js": "prettier --check '**/*.js' && eslint '**/*.js'",
     "lint:js:fix": "prettier --write '**/*.js' && eslint --fix '**/*.js'",

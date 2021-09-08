@@ -3,7 +3,6 @@ const CID = require('cids');
 const fs = require('fs/promises');
 const ipfsClient = require('ipfs-http-client');
 
-const config = require('../config');
 const { ensureIpfsUriPrefix, stripIpfsUriPrefix, extractCID } = require('./utils');
 
 // ipfs.add parameters for more deterministic CIDs
@@ -13,13 +12,24 @@ const ipfsAddOptions = {
   wrapWithDirectory: true, // useful to create folders
 };
 
-class IpfsForEthernaut {
-  constructor() {
-    this.ipfs = ipfsClient.create(config.ipfsApiUrl);
+class IPFS {
+  constructor(ipfsApiUrl, ipfsGatewayUrl, pinningService) {
+    this.ipfsApiUrl = ipfsApiUrl;
+    this.ipfsGatewayUrl = ipfsGatewayUrl;
+    this.pinningService = pinningService;
+
+    // create ipfs client
+    this.ipfs = ipfsClient.create(ipfsApiUrl);
   }
 
+  /**
+   * Upload to local ipfs node from buffer
+   * @param {Buffer} content File buffer
+   * @param {object} options The fields needed for metadata
+   * @returns {object} The data returned by ipfs and the pinning service
+   */
+
   async uploadToLocalIpfsNode(content, options) {
-    // add the asset to IPFS
     const filePath = options.path;
 
     if (!filePath) {
@@ -34,7 +44,6 @@ class IpfsForEthernaut {
 
     const { cid: assetCid } = await this.ipfs.add({ path: ipfsPath, content }, ipfsAddOptions);
 
-    // make the NFT metadata JSON
     const assetURI = ensureIpfsUriPrefix(assetCid) + ipfsPath;
     const metadata = await this.makeNFTMetadata(assetURI, options);
 
@@ -55,6 +64,13 @@ class IpfsForEthernaut {
     };
   }
 
+  /**
+   * Upload to local ipfs node from a file path
+   * @param {string} filename The path of the file
+   * @param {object} options The fields needed for metadata
+   * @returns {object} The data returned by ipfs and the pinning service.
+   */
+
   async uploadToLocalIpfsNodeFromAssetFile(filename, options) {
     const content = await fs.readFile(filename);
 
@@ -63,6 +79,13 @@ class IpfsForEthernaut {
       path: filename,
     });
   }
+
+  /**
+   * Create metadata using JSON format
+   * @param {string} assetURI The obtained URI from ipfs
+   * @param {object} options The fields required for metadata
+   * @returns {object} Retuns a JSON of metadata.
+   */
 
   async makeNFTMetadata(assetURI, options) {
     const { name, description } = options;
@@ -76,39 +99,50 @@ class IpfsForEthernaut {
     };
   }
 
+  /**
+   * Ask the remote service to pin the content
+   * Behind the scenes, this will cause the pinning service to connect to our local IPFS node
+   * @param {string} cidOrURI The CID or TThe obtained URI from ipfs
+   */
+
   async pin(cidOrURI) {
     const cid = extractCID(cidOrURI);
 
     // Configure pinning service
     await this._configurePinningService();
 
-    // Check if we've already pinned this CID to avoid a "duplicate pin" error.
     const pinned = await this.isAlreadyPinned(cid);
 
     if (pinned) {
       return;
     }
 
-    // Ask the remote service to pin the content.
-    // Behind the scenes, this will cause the pinning service to connect to our local IPFS node
-    // and fetch the data using Bitswap, IPFS's transfer protocol.
-    await this.ipfs.pin.remote.add(cid, { service: config.pinningService.name });
+    await this.ipfs.pin.remote.add(cid, { service: this.pinningService.name });
   }
 
+  /**
+   * Configure pinning services to store our local ipfs data
+   */
   async _configurePinningService() {
     // check if the service has already been added to js-ipfs
     for (const svc of await this.ipfs.pin.remote.service.ls()) {
-      if (svc.service === config.pinningService.name) {
+      if (svc.service === this.pinningService.name) {
         // service is already configured, no need to do anything
         return;
       }
     }
 
-    // add the service to IPFS
-    const { name, endpoint, key } = config.pinningService;
+    // Check if we've already pinned this CID to avoid a "duplicate pin" error.
+    const { name, endpoint, key } = this.pinningService;
 
     await this.ipfs.pin.remote.service.add(name, { endpoint, key });
   }
+
+  /**
+   * Ask for pinned CID to avoid a "duplicate pin" error
+   * @param {string} cid
+   * @returns {boolean} Returns if the CID exists.
+   */
 
   async isAlreadyPinned(cid) {
     if (typeof cid === 'string') {
@@ -116,7 +150,7 @@ class IpfsForEthernaut {
     }
 
     const opts = {
-      service: config.pinningService.name,
+      service: this.pinningService.name,
       cid: [cid], // ls expects an array of cids
     };
 
@@ -127,11 +161,15 @@ class IpfsForEthernaut {
     return false;
   }
 
+  /**
+   * Build the gateway url for easy and quick access
+   * @param {string} ipfsURI The ipfs URI.
+   * @returns {string} The asset URL through the gateway
+   */
+
   makeGatewayURL(ipfsURI) {
-    return config.ipfsGatewayUrl + '/' + stripIpfsUriPrefix(ipfsURI);
+    return this.ipfsGatewayUrl + '/' + stripIpfsUriPrefix(ipfsURI);
   }
 }
 
-module.exports = {
-  IpfsForEthernaut,
-};
+module.exports = IPFS;

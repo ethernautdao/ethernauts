@@ -1,12 +1,14 @@
 const fs = require('fs');
 const hre = require('hardhat');
 
-const { IpfsForEthernaut } = require('../ipfs');
+const config = require('../config');
+
+const IPFS = require('../ipfs');
 
 const { ethers } = hre;
 
 async function main() {
-  const ipfsForEthernaut = new IpfsForEthernaut();
+  const ipfs = new IPFS(config.ipfsApiUrl, config.ipfsGatewayUrl, config.pinningService);
 
   const deploymentPath = `./deployments/${hre.network.name}.json`;
 
@@ -30,8 +32,8 @@ async function main() {
         TODO: randomly select assets
       */
 
-      // Upload to ipfs local node
-      const resultFromIpfsLocalNode = await ipfsForEthernaut.uploadToLocalIpfsNodeFromAssetFile(
+      // Upload to local ipfs node
+      const resultFromLocalIpfsNode = await ipfs.uploadToLocalIpfsNodeFromAssetFile(
         `assets/${tokenId}.png`,
         {
           name: `${tokenId}.png`,
@@ -39,13 +41,13 @@ async function main() {
         }
       );
 
-      console.log('resultFromIpfsLocalNode', resultFromIpfsLocalNode);
-
       // Upload asset and metadata to pinata
       await Promise.all([
-        ipfsForEthernaut.pin(resultFromIpfsLocalNode.assetURI),
-        ipfsForEthernaut.pin(resultFromIpfsLocalNode.metadataURI),
+        ipfs.pin(resultFromLocalIpfsNode.assetURI),
+        ipfs.pin(resultFromLocalIpfsNode.metadataURI),
       ]);
+
+      console.log('resultFromLocalIpfsNode', resultFromLocalIpfsNode);
     }
   });
 
