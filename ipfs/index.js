@@ -25,8 +25,8 @@ class IPFS {
   /**
    * Upload to local ipfs node from buffer
    * @param {Buffer} content File buffer
-   * @param {object} options The fields needed for metadata
-   * @returns {object} The data returned by ipfs and the pinning service
+   * @param {object} options The fields required for metadata
+   * @returns {object} The data by ipfs and the pinning service
    */
 
   async uploadToLocalIpfsNode(content, options) {
@@ -67,8 +67,8 @@ class IPFS {
   /**
    * Upload to local ipfs node from a file path
    * @param {string} filename The path of the file
-   * @param {object} options The fields needed for metadata
-   * @returns {object} The data returned by ipfs and the pinning service.
+   * @param {object} options The fields required for metadata
+   * @returns {object} The data by ipfs and the pinning service.
    */
 
   async uploadToLocalIpfsNodeFromAssetFile(filename, options) {
@@ -82,7 +82,7 @@ class IPFS {
 
   /**
    * Create metadata using JSON format
-   * @param {string} assetURI The obtained URI from ipfs
+   * @param {string} assetURI The URI of ipfs
    * @param {object} options The fields required for metadata
    * @returns {object} Retuns a JSON of metadata.
    */
@@ -102,7 +102,7 @@ class IPFS {
   /**
    * Ask the remote service to pin the content
    * Behind the scenes, this will cause the pinning service to connect to our local IPFS node
-   * @param {string} cidOrURI The CID or TThe obtained URI from ipfs
+   * @param {string} cidOrURI The CID or the URI of ipfs
    */
 
   async pin(cidOrURI) {
@@ -141,7 +141,7 @@ class IPFS {
   /**
    * Ask for pinned CID to avoid a "duplicate pin" error
    * @param {string} cid
-   * @returns {boolean} Returns if the CID exists.
+   * @returns {boolean} Returns if the CID exists
    */
 
   async isAlreadyPinned(cid) {
