@@ -1,4 +1,4 @@
-const fs = require('fs').promises;
+const fs = require('fs/promises');
 const PNGlib = require('node-pnglib');
 const Confirm = require('prompt-confirm');
 const randomColor = require('random-color');
@@ -10,7 +10,7 @@ const hasFiles = async (folder) => {
   return (await fs.readdir(folder).length) != 0;
 };
 
-const createSampleAssets = async () => {
+const createDummyAssets = async () => {
   if (await hasFiles('assets/')) {
     const confirm = new Confirm('Do you want to recreate the assets?');
 
@@ -34,6 +34,6 @@ const createSampleAssets = async () => {
   }
 };
 
-createSampleAssets()
+createDummyAssets()
   .then(() => console.log('Dummy assets has been created!'))
   .catch(console.error);
