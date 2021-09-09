@@ -5,8 +5,6 @@ import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 
-import "./interfaces/IChallenge.sol";
-
 contract Ethernauts is ERC721Enumerable, Ownable {
     using Address for address payable;
 
@@ -21,7 +19,6 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     bytes32 public immutable provenance;
 
     // Can be changed by owner
-    IChallenge public activeChallenge;
     string public baseTokenURI;
     uint public minPrice;
     uint public maxPrice;
@@ -59,21 +56,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     // --------------------
 
     function mint() external payable {
-        uint effectiveMinPrice = minPrice;
-
-        // Trying to get a discount?
-        if (msg.value <= minPrice) {
-            // Is there an active challenge?
-            if (address(activeChallenge) != address(0)) {
-                require(!_receivedDiscount[msg.sender], "Cannot receive another discount");
-
-                effectiveMinPrice = minPrice - activeChallenge.discountFor(msg.sender);
-
-                _receivedDiscount[msg.sender] = true;
-            }
-        }
-
-        require(msg.value >= effectiveMinPrice, "msg.value too low");
+        require(msg.value >= minPrice, "msg.value too low");
         require(msg.value <= maxPrice, "msg.value too high");
 
         _mintNext(msg.sender);
@@ -97,10 +80,6 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         _mintNext(to);
 
         _tokensGifted += 1;
-    }
-
-    function setChallenge(IChallenge newChallenge) external onlyOwner {
-        activeChallenge = newChallenge;
     }
 
     function setMinPrice(uint newMinPrice) external onlyOwner {

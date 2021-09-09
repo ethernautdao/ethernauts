@@ -84,13 +84,6 @@ describe('General', () => {
       assert.equal(await Ethernauts.owner(), owner.address);
     });
 
-    it('shows that no challenge is set', async () => {
-      assert.equal(
-        await Ethernauts.activeChallenge(),
-        '0x0000000000000000000000000000000000000000'
-      );
-    });
-
     it('should have set the name and symbol correctly', async () => {
       assert.equal(await Ethernauts.name(), 'Ethernauts');
       assert.equal(await Ethernauts.symbol(), 'ETHNTS');
@@ -142,7 +135,6 @@ describe('General', () => {
           'caller is not the owner'
         );
         await assertRevert(Ethernauts.connect(user).gift(user.address), 'caller is not the owner');
-        await assertRevert(Ethernauts.connect(user).setChallenge(user.address), 'caller is not the owner');
       });
     });
   });
