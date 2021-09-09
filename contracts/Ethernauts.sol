@@ -119,10 +119,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         baseTokenURI = baseTokenURI_;
     }
 
-    // TODO: Need re-entrancy guard?
     function withdraw(address payable dao, address payable artist) external onlyOwner {
-        // TODO: Safety checks on addresses
-
         uint balance = address(this).balance;
 
         uint daoScaled = balance * daoPercent;
