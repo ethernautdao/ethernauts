@@ -1,8 +1,8 @@
 const fs = require('fs');
+const path = require('path');
 const hre = require('hardhat');
 
 const config = require('../config');
-
 const IPFS = require('../ipfs');
 
 const { ethers } = hre;
@@ -10,9 +10,9 @@ const { ethers } = hre;
 async function main() {
   const ipfs = new IPFS(config.ipfsApiUrl, config.ipfsGatewayUrl, config.pinningService);
 
-  const deploymentPath = `./deployments/${hre.network.name}.json`;
-
-  const data = _loadDeploymentFile(deploymentPath);
+  const data = _loadDeploymentFile(
+    path.resolve(__dirname, '..', 'deployments', `${hre.network.name}.json`)
+  );
 
   if (!data.token || data.token === '') {
     throw new Error('No token data found');
