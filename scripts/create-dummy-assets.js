@@ -17,11 +17,11 @@ function fileExists(file) {
     .catch(() => false);
 }
 
-const createDummyAssets = async () => {
+async function main() {
   if (await fileExists(path.join(ASSETS_FOLDER, '0.png'))) {
     const confirm = new Confirm('Do you want to recreate the assets?');
-    const answer = await confirm.run();
-    if (!answer) process.exit(0);
+    const yes = await confirm.run();
+    if (!yes) return;
     await del([path.join(ASSETS_FOLDER, '*.{png,json}')]);
   }
 
@@ -92,9 +92,9 @@ const createDummyAssets = async () => {
     const to = i + 1 >= 10 ? '1.0' : `0.${`${i + 1}`.padEnd(1, '0')}`;
     console.log(`  [${from}-${to}): ${count} assets`);
   });
-};
+}
 
-createDummyAssets().catch((err) => {
+main().catch((err) => {
   console.error(err);
   process.exit(1);
 });
