@@ -80,61 +80,73 @@ describe('General', () => {
       Ethernauts = await factory.deploy(...Object.values(hre.config.defaults));
     });
 
-    it('should have set the owner correctly', async () => {
-      assert.equal(await Ethernauts.owner(), owner.address);
-    });
-
-    it('should have set the name and symbol correctly', async () => {
-      assert.equal(await Ethernauts.name(), 'Ethernauts');
-      assert.equal(await Ethernauts.symbol(), 'ETHNTS');
-    });
-
-    it('shows the correct max supplies', async () => {
-      assert.equal((await Ethernauts.maxGiftable()).toNumber(), hre.config.defaults.maxGiftable);
-      assert.equal((await Ethernauts.maxTokens()).toNumber(), hre.config.defaults.maxTokens);
-    });
-
-    it('shows the correct percentages', async () => {
-      assert.equal((await Ethernauts.daoPercent()).toNumber(), hre.config.defaults.daoPercent);
-      assert.equal(
-        (await Ethernauts.artistPercent()).toNumber(),
-        hre.config.defaults.artistPercent
-      );
-    });
-
-    it('shows that the expexted interfaces are supported', async () => {
-      assert.ok(await Ethernauts.supportsInterface('0x01ffc9a7')); // ERC165
-      assert.ok(await Ethernauts.supportsInterface('0x80ac58cd')); // ERC721
-      assert.ok(await Ethernauts.supportsInterface('0x5b5e139f')); // ERC721Metadata
-      assert.ok(await Ethernauts.supportsInterface('0x780e9d63')); // ERC721Enumarable
-    });
-
-    describe('when the owner calls protected functions', () => {
-      it('allows the owner to change min and max price', async () => {
-        let tx;
-
-        tx = await Ethernauts.connect(owner).setMinPrice(0);
+    describe('when a token exists', () => {
+      before('mint a token', async () => {
+        const tx = await Ethernauts.connect(owner).mint({ value: ethers.utils.parseEther('0.2') });
         await tx.wait();
-
-        tx = await Ethernauts.connect(owner).setMaxPrice(0);
-        await tx.wait();
-
-        assert.equal(await Ethernauts.minPrice(), '0');
-        assert.equal(await Ethernauts.maxPrice(), '0');
       });
-    });
 
-    describe('when a regular user tries to call protected functions', () => {
-      it('reverts', async () => {
-        await assertRevert(
-          Ethernauts.connect(user).withdraw(user.address, user.address),
-          'caller is not the owner'
+      it('should have set the owner correctly', async () => {
+        assert.equal(await Ethernauts.owner(), owner.address);
+      });
+
+      it('should have set the name and symbol correctly', async () => {
+        assert.equal(await Ethernauts.name(), 'Ethernauts');
+        assert.equal(await Ethernauts.symbol(), 'ETHNTS');
+      });
+
+      it('shows the correct max supplies', async () => {
+        assert.equal((await Ethernauts.maxGiftable()).toNumber(), hre.config.defaults.maxGiftable);
+        assert.equal((await Ethernauts.maxTokens()).toNumber(), hre.config.defaults.maxTokens);
+      });
+
+      it('shows the correct percentages', async () => {
+        assert.equal((await Ethernauts.daoPercent()).toNumber(), hre.config.defaults.daoPercent);
+        assert.equal(
+          (await Ethernauts.artistPercent()).toNumber(),
+          hre.config.defaults.artistPercent
         );
-        await assertRevert(
-          Ethernauts.connect(user).setBaseURI('someURI'),
-          'caller is not the owner'
-        );
-        await assertRevert(Ethernauts.connect(user).gift(user.address), 'caller is not the owner');
+      });
+
+      it('shows that the expected interfaces are supported', async () => {
+        assert.ok(await Ethernauts.supportsInterface('0x01ffc9a7')); // ERC165
+        assert.ok(await Ethernauts.supportsInterface('0x80ac58cd')); // ERC721
+        assert.ok(await Ethernauts.supportsInterface('0x5b5e139f')); // ERC721Metadata
+        assert.ok(await Ethernauts.supportsInterface('0x780e9d63')); // ERC721Enumarable
+      });
+
+      describe('when the owner calls protected functions', () => {
+        it('allows the owner to change min and max price', async () => {
+          let tx;
+
+          tx = await Ethernauts.connect(owner).setMinPrice(0);
+          await tx.wait();
+
+          tx = await Ethernauts.connect(owner).setMaxPrice(0);
+          await tx.wait();
+
+          assert.equal(await Ethernauts.minPrice(), '0');
+          assert.equal(await Ethernauts.maxPrice(), '0');
+        });
+      });
+
+      describe('when a regular user tries to call protected functions', () => {
+        it('reverts', async () => {
+          await assertRevert(
+            Ethernauts.connect(user).withdraw(user.address, user.address),
+            'caller is not the owner'
+          );
+          await assertRevert(
+            Ethernauts.connect(user).setBaseURI('someURI'),
+            'caller is not the owner'
+          );
+          await assertRevert(Ethernauts.connect(user).gift(user.address), 'caller is not the owner');
+          await assertRevert(Ethernauts.connect(user).setPropertyOnToken(
+            0,
+            ethers.utils.formatBytes32String('somePropertyId'),
+            ethers.utils.formatBytes32String('yes'),
+          ), 'caller is not the owner');
+        });
       });
     });
   });
