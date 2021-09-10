@@ -22,7 +22,7 @@ const createDummyAssets = async () => {
     const confirm = new Confirm('Do you want to recreate the assets?');
     const answer = await confirm.run();
     if (!answer) process.exit(0);
-    await del([path.join(ASSETS_FOLDER, '*.png')]);
+    await del([path.join(ASSETS_FOLDER, '*.{png,json}')]);
   }
 
   const _r = random.exponential(10.1);
