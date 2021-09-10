@@ -44,6 +44,7 @@
     "prettier": "2.3.2",
     "prettier-plugin-solidity": "1.0.0-beta.17",
     "prompt-confirm": "^2.0.4",
+    "random": "^3.0.6",
     "random-color": "^1.0.1",
     "solhint": "3.3.6"
   },
