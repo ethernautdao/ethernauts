@@ -1,22 +1,26 @@
-const fs = require('fs/promises');
+const fs = require('fs');
+const path = require('path');
+const del = require('del');
 const PNGlib = require('node-pnglib');
 const Confirm = require('prompt-confirm');
 const randomColor = require('random-color');
 
 const TOTAL_ASSETS = 10000;
-const ASSETS_FOLDER = 'assets/';
+const ASSETS_FOLDER = path.resolve(__dirname, '..', 'assets');
 
-const hasFiles = async (folder) => {
-  return (await fs.readdir(folder).length) != 0;
-};
+function fileExists(file) {
+  return fs.promises
+    .access(file, fs.constants.F_OK)
+    .then(() => true)
+    .catch(() => false);
+}
 
 const createDummyAssets = async () => {
-  if (await hasFiles('assets/')) {
+  if (await fileExists(path.join(ASSETS_FOLDER, '0.png'))) {
     const confirm = new Confirm('Do you want to recreate the assets?');
-
     const answer = await confirm.run();
-
     if (!answer) process.exit(0);
+    await del([path.join(ASSETS_FOLDER, '*.png')]);
   }
 
   for (let x = 0; x < TOTAL_ASSETS; x++) {
@@ -30,7 +34,8 @@ const createDummyAssets = async () => {
       }
     }
 
-    await fs.writeFile(ASSETS_FOLDER + x + '.png', png.getBuffer());
+    const file = path.join(ASSETS_FOLDER, `${x}.png`);
+    await fs.promises.writeFile(file, png.getBuffer());
   }
 };
 

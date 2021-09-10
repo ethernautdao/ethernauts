@@ -6,4 +6,4 @@ cache
 artifacts
 deployments/local.json
 metadata/
-assets/
+assets
