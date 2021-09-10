@@ -87,7 +87,7 @@ async function main() {
   console.log('');
   console.log('Rarity distribution: ');
 
-  distribution.forEach((count, i, a) => {
+  distribution.forEach((count, i) => {
     const from = `0.${`${i}`.padEnd(1, '0')}`;
     const to = i + 1 >= 10 ? '1.0' : `0.${`${i + 1}`.padEnd(1, '0')}`;
     console.log(`  [${from}-${to}): ${count} assets`);
