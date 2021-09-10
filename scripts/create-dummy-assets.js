@@ -4,6 +4,7 @@ const del = require('del');
 const PNGlib = require('node-pnglib');
 const Confirm = require('prompt-confirm');
 const randomColor = require('random-color');
+const faker = require('faker');
 
 const TOTAL_ASSETS = 10000;
 const ASSETS_FOLDER = path.resolve(__dirname, '..', 'assets');
@@ -27,6 +28,8 @@ const createDummyAssets = async () => {
     await del([path.join(ASSETS_FOLDER, '*.png')]);
   }
 
+  const promises = [];
+
   for (let x = 0; x < TOTAL_ASSETS; x++) {
     let png = new PNGlib(150, 150);
 
@@ -39,9 +42,21 @@ const createDummyAssets = async () => {
       }
     }
 
-    const file = path.join(ASSETS_FOLDER, `${x}.png`);
-    await fs.promises.writeFile(file, png.getBuffer());
+    const metadata = {
+      name: faker.hacker.adjective(),
+      description: faker.hacker.phrase(),
+    };
+
+    const assetPath = path.join(ASSETS_FOLDER, `${x}.png`);
+    const metadataPath = path.join(ASSETS_FOLDER, `${x}.json`);
+
+    promises.push(
+      fs.promises.writeFile(assetPath, png.getBuffer()),
+      fs.promises.writeFile(metadataPath, JSON.stringify(metadata, null, 2))
+    );
   }
+
+  await Promise.all(promises);
 };
 
 createDummyAssets()
