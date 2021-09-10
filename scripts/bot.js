@@ -2,8 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const hre = require('hardhat');
 
-const config = require('../config');
-const IPFS = require('../ipfs');
+const IPFS = require('../src/ipfs');
+const config = require('../src/config');
 
 const { ethers } = hre;
 
