@@ -15,6 +15,10 @@ function fileExists(file) {
     .catch(() => false);
 }
 
+function rand(min = 0, max = 100) {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
 const createDummyAssets = async () => {
   if (await fileExists(path.join(ASSETS_FOLDER, '0.png'))) {
     const confirm = new Confirm('Do you want to recreate the assets?');
@@ -27,10 +31,11 @@ const createDummyAssets = async () => {
     let png = new PNGlib(150, 150);
 
     const color = randomColor().hexString();
+    const [min, max] = [rand(0, 74), rand(75, 150)];
 
-    for (let i = 20; i < 100; i++) {
-      for (let j = 20; j < 100; j++) {
-        png.setPixel(i + 10, j + 20, color);
+    for (let i = min; i < max; i++) {
+      for (let j = min; j < max; j++) {
+        png.setPixel(i, j, color);
       }
     }
 
