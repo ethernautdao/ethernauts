@@ -3,7 +3,7 @@ const CID = require('cids');
 const fs = require('fs/promises');
 const ipfsClient = require('ipfs-http-client');
 
-const { ensureIpfsUriPrefix, stripIpfsUriPrefix, extractCID } = require('./utils');
+const { ensureIpfsUriPrefix, stripIpfsUriPrefix, extractCID } = require('./utils/ipfs-uri');
 
 // ipfs.add parameters for more deterministic CIDs
 const ipfsAddOptions = {
