@@ -17,10 +17,6 @@ function fileExists(file) {
     .catch(() => false);
 }
 
-function rand(min = 0, max = 100) {
-  return Math.floor(Math.random() * (max - min + 1) + min);
-}
-
 const createDummyAssets = async () => {
   if (await fileExists(path.join(ASSETS_FOLDER, '0.png'))) {
     const confirm = new Confirm('Do you want to recreate the assets?');
@@ -42,7 +38,7 @@ const createDummyAssets = async () => {
     let png = new PNGlib(150, 150);
 
     const color = randomColor().hexString();
-    const [min, max] = [rand(0, 74), rand(75, 150)];
+    const [min, max] = [random.int(0, 74), random.int(75, 150)];
 
     for (let i = min; i < max; i++) {
       for (let j = min; j < max; j++) {
@@ -91,10 +87,11 @@ const createDummyAssets = async () => {
   console.log('');
   console.log('Rarity distribution: ');
 
-  distribution.forEach((count, i) => {
-    console.log(`  [0.${`${i}`.padEnd(2, '0')}-0.${`${i + 1}`.padEnd(2, '0')}): ${count} assets`);
+  distribution.forEach((count, i, a) => {
+    const from = `0.${`${i}`.padEnd(1, '0')}`;
+    const to = i + 1 >= 10 ? '1.0' : `0.${`${i + 1}`.padEnd(1, '0')}`;
+    console.log(`  [${from}-${to}): ${count} assets`);
   });
-  console.log('');
 };
 
 createDummyAssets().catch((err) => {
