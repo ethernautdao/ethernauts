@@ -3,7 +3,7 @@ const path = require('path');
 const hre = require('hardhat');
 
 const IPFS = require('../src/ipfs');
-const config = require('../src/config');
+const config = require('../config');
 
 const { ethers } = hre;
 
