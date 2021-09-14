@@ -22,7 +22,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     string public baseTokenURI;
     uint public minPrice;
     uint public maxPrice;
-    // For every tokenId, map a propertyId to propertyValue
+    // For every tokenId, map propertyIds to propertyValues
     mapping(uint => mapping(bytes32 => bytes32)) public properties;
 
     // Internal

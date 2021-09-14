@@ -61,6 +61,17 @@ describe('Properties', () => {
         );
       });
 
+      it('does not set the property on another token', async () => {
+        assert.equal(
+          await Ethernauts.getPropertyOfToken(1, encode('mentor')),
+          encode('')
+        );
+        assert.equal(
+          await Ethernauts.getPropertyOfToken(2, encode('mentor')),
+          encode('')
+        );
+      });
+
       describe('when the property is changed', () => {
         before('change the property', async () => {
           const tx = await Ethernauts.connect(owner).setPropertyOnToken(
