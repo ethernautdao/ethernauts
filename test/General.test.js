@@ -80,6 +80,10 @@ describe('General', () => {
       Ethernauts = await factory.deploy(...Object.values(hre.config.defaults));
     });
 
+    it('shold show the expected initial sale state', async () => {
+      assert.equal(await Ethernauts.saleState(), 0); // 0 = Paused
+    });
+
     it('should have set the owner correctly', async () => {
       assert.equal(await Ethernauts.owner(), owner.address);
     });
@@ -135,6 +139,7 @@ describe('General', () => {
           'caller is not the owner'
         );
         await assertRevert(Ethernauts.connect(user).gift(user.address), 'caller is not the owner');
+        await assertRevert(Ethernauts.connect(user).setSaleState(2), 'caller is not the owner');
       });
     });
   });

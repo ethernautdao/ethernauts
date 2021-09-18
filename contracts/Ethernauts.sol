@@ -8,10 +8,26 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 contract Ethernauts is ERC721Enumerable, Ownable {
     using Address for address payable;
 
+    enum SaleState {
+        Paused,
+        Early,
+        Open
+    }
+
+    modifier onlyOnEarlySale() {
+        require(saleState == SaleState.Early, "Early sale is not active");
+        _;
+    }
+
+    modifier onlyOnOpenSale() {
+        require(saleState == SaleState.Open, "Open sale is not active");
+        _;
+    }
+
     // Fixed
     uint private constant _PERCENT = 1000000; // 1m = 100%, 500k = 50%, etc
 
-    // Can be set once on deploy
+    // Can be set only once on deploy
     uint public immutable maxTokens;
     uint public immutable maxGiftable;
     uint public immutable daoPercent;
@@ -22,6 +38,8 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     string public baseTokenURI;
     uint public minPrice;
     uint public maxPrice;
+    uint public earlyPrice;
+    SaleState public saleState;
 
     // Internal
     uint private _tokensGifted;
@@ -34,6 +52,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         uint artistPercent_,
         uint minPrice_,
         uint maxPrice_,
+        uint earlyPrice_,
         bytes32 provenance_
     ) ERC721("Ethernauts", "ETHNTS") {
         require(maxGiftable_ <= 100, "Max giftable supply too large");
@@ -49,13 +68,22 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         provenance = provenance_;
         minPrice = minPrice_;
         maxPrice = maxPrice_;
+        earlyPrice = earlyPrice_;
+
+        saleState = SaleState.Paused;
     }
 
     // --------------------
     // Public external ABI
     // --------------------
 
-    function mint() external payable {
+    function mintEarly() external payable onlyOnEarlySale {
+        require(msg.value == earlyPrice, "bad msg.value");
+
+        _mintNext(msg.sender);
+    }
+
+    function mint() external payable onlyOnOpenSale {
         require(msg.value >= minPrice, "msg.value too low");
         require(msg.value <= maxPrice, "msg.value too high");
 
@@ -73,6 +101,10 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     // -----------------------
     // Protected external ABI
     // -----------------------
+
+    function setSaleState(SaleState newSaleState) external onlyOwner {
+        saleState = newSaleState;
+    }
 
     function gift(address to) external onlyOwner {
         require(_tokensGifted < maxGiftable, "No more Ethernauts can be gifted");

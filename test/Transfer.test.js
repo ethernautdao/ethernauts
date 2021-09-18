@@ -4,15 +4,19 @@ const { ethers } = require('hardhat');
 describe('Transfer', () => {
   let Ethernauts;
 
-  let user1, user2;
+  let owner, user1, user2;
 
   before('identify signers', async () => {
-    [user1, user2] = await ethers.getSigners();
+    [owner, user1, user2] = await ethers.getSigners();
   });
 
   before('deploy contract', async () => {
     const factory = await ethers.getContractFactory('Ethernauts');
     Ethernauts = await factory.deploy(...Object.values(hre.config.defaults));
+  });
+
+  before('open the sale', async () => {
+    await (await Ethernauts.connect(owner).setSaleState(2)).wait();
   });
 
   describe('when a user mints a token', () => {

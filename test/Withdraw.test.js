@@ -20,6 +20,10 @@ describe('Withdraw', () => {
     Ethernauts = await factory.deploy(...Object.values(hre.config.defaults));
   });
 
+  before('open the sale', async () => {
+    await (await Ethernauts.connect(owner).setSaleState(2)).wait();
+  });
+
   describe('when some tokens have been minted', () => {
     async function mint(eth) {
       await (

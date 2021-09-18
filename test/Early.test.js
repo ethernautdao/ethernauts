@@ -2,19 +2,17 @@ const assert = require('assert');
 const assertRevert = require('./utils/assertRevert');
 const { ethers } = require('hardhat');
 
-describe('Mint', () => {
+describe('Early mint', () => {
   let Ethernauts;
 
   let users;
   let owner, user;
 
-  let tx, receipt;
-
   let mintedTokenId;
   let tokensMinted = 0;
   let tokenIds = [];
 
-  const baseURI = 'http://deadpine.io/';
+  let tx, receipt;
 
   before('identify signers', async () => {
     users = await ethers.getSigners();
@@ -25,75 +23,28 @@ describe('Mint', () => {
     const factory = await ethers.getContractFactory('Ethernauts');
 
     const params = Object.assign({}, hre.config.defaults);
-    params.maxTokens = 100;
     Ethernauts = await factory.deploy(...Object.values(params));
   });
 
-  before('set base URI', async () => {
-    const tx = await Ethernauts.connect(owner).setBaseURI(baseURI);
-    await tx.wait();
-  });
-
-  describe('when attempting to mint when the sale is paused', () => {
-    before('set paused', async () => {
-      await (await Ethernauts.connect(owner).setSaleState(0)).wait();
-    });
-
-    it('reverts', async () => {
-      await assertRevert(
-        Ethernauts.connect(user).mint({
-          value: ethers.utils.parseEther('15'),
-        }),
-        'Open sale is not active'
-      );
-    });
-  });
-
-  describe('when attempting to mint when the sale is in early stage', () => {
+  describe('when the early sale is active', () => {
     before('set early', async () => {
       await (await Ethernauts.connect(owner).setSaleState(1)).wait();
-    });
-
-    it('reverts', async () => {
-      await assertRevert(
-        Ethernauts.connect(user).mint({
-          value: ethers.utils.parseEther('15'),
-        }),
-        'Open sale is not active'
-      );
-    });
-  });
-
-  describe('when the open sale is active', () => {
-    before('set open', async () => {
-      await (await Ethernauts.connect(owner).setSaleState(2)).wait();
     });
 
     describe('when attempting to mint without enough ETH', () => {
       it('reverts', async () => {
         await assertRevert(
-          Ethernauts.connect(user).mint({
+          Ethernauts.connect(user).mintEarly({
             value: ethers.utils.parseEther('0.01'),
           }),
-          'msg.value too low'
+          'bad msg.value'
         );
       });
     });
 
-    describe('when attempting to mint with too much ETH', () => {
-      it('reverts', async () => {
-        await assertRevert(
-          Ethernauts.connect(user).mint({
-            value: ethers.utils.parseEther('15'),
-          }),
-          'msg.value too high'
-        );
-      });
-    });
-
-    describe('when minting many tokens', () => {
-      function itCorrectlyMintsTokensForUser(userNumber) {
-        describe(`when minting a token for user #${userNumber}`, () => {
+    describe('when minting many early tokens', () => {
+      function itCorrectlyMintsEarlyTokensForUser(userNumber) {
+        describe(`when minting an early token for user #${userNumber}`, () => {
           before('identify the user', async () => {
             user = users[userNumber];
           });
@@ -115,18 +66,12 @@ describe('Mint', () => {
             user.recordedEthBalance = await ethers.provider.getBalance(user.address);
           });
 
-          before('mint', async () => {
-            const value = Math.random() * 13.4 + 0.2;
-
-            tx = await Ethernauts.connect(user).mint({
-              value: ethers.utils.parseEther(`${value}`),
+          before('early mint', async () => {
+            tx = await Ethernauts.connect(user).mintEarly({
+              value: hre.config.defaults.earlyPrice,
             });
 
             receipt = await tx.wait();
-          });
-
-          it('shows that the base URI is set', async () => {
-            assert.equal(await Ethernauts.tokenURI(mintedTokenId), `${baseURI}${mintedTokenId}`);
           });
 
           it('shows that the token now exists', async () => {
@@ -181,22 +126,22 @@ describe('Mint', () => {
         });
       }
 
-      itCorrectlyMintsTokensForUser(1);
-      itCorrectlyMintsTokensForUser(1);
-      itCorrectlyMintsTokensForUser(2);
-      itCorrectlyMintsTokensForUser(2);
-      itCorrectlyMintsTokensForUser(2);
-      itCorrectlyMintsTokensForUser(1);
-      itCorrectlyMintsTokensForUser(3);
-      itCorrectlyMintsTokensForUser(4);
-      itCorrectlyMintsTokensForUser(1);
-      itCorrectlyMintsTokensForUser(5);
-      itCorrectlyMintsTokensForUser(2);
-      itCorrectlyMintsTokensForUser(6);
-      itCorrectlyMintsTokensForUser(1);
-      itCorrectlyMintsTokensForUser(2);
-      itCorrectlyMintsTokensForUser(5);
-      itCorrectlyMintsTokensForUser(3);
+      itCorrectlyMintsEarlyTokensForUser(1);
+      itCorrectlyMintsEarlyTokensForUser(1);
+      itCorrectlyMintsEarlyTokensForUser(2);
+      itCorrectlyMintsEarlyTokensForUser(2);
+      itCorrectlyMintsEarlyTokensForUser(2);
+      itCorrectlyMintsEarlyTokensForUser(1);
+      itCorrectlyMintsEarlyTokensForUser(3);
+      itCorrectlyMintsEarlyTokensForUser(4);
+      itCorrectlyMintsEarlyTokensForUser(1);
+      itCorrectlyMintsEarlyTokensForUser(5);
+      itCorrectlyMintsEarlyTokensForUser(2);
+      itCorrectlyMintsEarlyTokensForUser(6);
+      itCorrectlyMintsEarlyTokensForUser(1);
+      itCorrectlyMintsEarlyTokensForUser(2);
+      itCorrectlyMintsEarlyTokensForUser(5);
+      itCorrectlyMintsEarlyTokensForUser(3);
 
       describe('when checking on all minted NFTs', () => {
         it('can enumerate all token ids', async () => {
@@ -206,35 +151,6 @@ describe('Mint', () => {
             assert.equal(await Ethernauts.tokenByIndex(i), tokenId);
           }
         });
-      });
-    });
-
-    describe('when trying to mint more than the maximum amount of Ethernauts', () => {
-      before('mint max -1', async () => {
-        const num =
-          (await Ethernauts.maxTokens()).toNumber() - (await Ethernauts.totalSupply()).toNumber();
-
-        let promises = [];
-        for (let i = 0; i < num; i++) {
-          promises.push(
-            (
-              await Ethernauts.connect(user).mint({
-                value: ethers.utils.parseEther('0.2'),
-              })
-            ).wait()
-          );
-        }
-
-        await Promise.all(promises);
-      });
-
-      it('reverts', async () => {
-        await assertRevert(
-          Ethernauts.connect(user).mint({
-            value: ethers.utils.parseEther('0.2'),
-          }),
-          'No more Ethernauts can be minted'
-        );
       });
     });
   });

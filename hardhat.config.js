@@ -17,6 +17,7 @@ module.exports = {
     artistPercent: 50000, // 5%
     minPrice: ethers.utils.parseEther('0.2'),
     maxPrice: ethers.utils.parseEther('14'),
+    earlyPrice: ethers.utils.parseEther('0.03'),
     provenance: '0x0000000000000000000000000000000000000000000000000000000000000001',
   },
   overrides: {
