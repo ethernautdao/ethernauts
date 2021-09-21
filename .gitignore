@@ -6,3 +6,4 @@ cache
 deployments/local.json
 node_modules
 resources
+assets/

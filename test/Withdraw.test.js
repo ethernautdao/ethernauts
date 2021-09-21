@@ -5,11 +5,7 @@ const { ethers } = require('hardhat');
 describe('Withdraw', () => {
   let Ethernauts;
 
-  let owner, user, artist;
-
-  const DAO_PERCENT = 0.95;
-  const ARTIST_PERCENT = 0.05;
-  const PERCENT_SCALAR = 1000000;
+  let owner, user;
 
   before('identify signers', async () => {
     [owner, artist, user] = await ethers.getSigners();
@@ -21,24 +17,24 @@ describe('Withdraw', () => {
   });
 
   describe('when some tokens have been minted', () => {
-    async function mint(eth) {
+    async function mint() {
       await (
-        await Ethernauts.connect(user).mint({ value: ethers.utils.parseEther(`${eth}`) })
+        await Ethernauts.connect(user).mint({ value: ethers.utils.parseEther('0.2') })
       ).wait();
     }
 
     before('mints', async () => {
-      await mint(1);
-      await mint(2);
-      await mint(10);
-      await mint(0.5);
-      await mint(0.2);
+      await mint();
+      await mint();
+      await mint();
+      await mint();
+      await mint();
     });
 
     describe('when a regular user attempts to withdraw', () => {
       it('reverts', async () => {
         await assertRevert(
-          Ethernauts.connect(user).withdraw(user.address, user.address),
+          Ethernauts.connect(user).withdraw(user.address),
           'caller is not the owner'
         );
       });
@@ -47,12 +43,6 @@ describe('Withdraw', () => {
     describe('when the owner withdraws all ETH', () => {
       let withdrawalReceipt;
 
-      function percent(value, pct) {
-        return value
-          .mul(ethers.BigNumber.from(`${pct * PERCENT_SCALAR}`))
-          .div(ethers.BigNumber.from('1000000'));
-      }
-
       before('record ETH balances', async () => {
         Ethernauts.recordedEthBalance = await ethers.provider.getBalance(Ethernauts.address);
         owner.recordedEthBalance = await ethers.provider.getBalance(owner.address);
@@ -60,7 +50,7 @@ describe('Withdraw', () => {
       });
 
       before('withdraw all contract ETH to the owner address', async () => {
-        const tx = await Ethernauts.connect(owner).withdraw(owner.address, artist.address);
+        const tx = await Ethernauts.connect(owner).withdraw(owner.address);
         withdrawalReceipt = await tx.wait();
       });
 
@@ -72,15 +62,8 @@ describe('Withdraw', () => {
         assert.deepEqual(
           await ethers.provider.getBalance(owner.address),
           owner.recordedEthBalance
-            .add(percent(Ethernauts.recordedEthBalance, DAO_PERCENT))
+            .add(Ethernauts.recordedEthBalance)
             .sub(paidInGas)
-        );
-      });
-
-      it('increased the artist ETH balance', async () => {
-        assert.deepEqual(
-          await ethers.provider.getBalance(artist.address),
-          artist.recordedEthBalance.add(percent(Ethernauts.recordedEthBalance, ARTIST_PERCENT))
         );
       });
 
