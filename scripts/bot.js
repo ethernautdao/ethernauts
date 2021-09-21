@@ -1,18 +1,18 @@
 const fs = require('fs');
+const path = require('path');
 const hre = require('hardhat');
 
+const IPFS = require('../src/ipfs');
 const config = require('../config');
-
-const IPFS = require('../ipfs');
 
 const { ethers } = hre;
 
 async function main() {
   const ipfs = new IPFS(config.ipfsApiUrl, config.ipfsGatewayUrl, config.pinningService);
 
-  const deploymentPath = `./deployments/${hre.network.name}.json`;
-
-  const data = _loadDeploymentFile(deploymentPath);
+  const data = _loadDeploymentFile(
+    path.resolve(__dirname, '..', 'deployments', `${hre.network.name}.json`)
+  );
 
   if (!data.token || data.token === '') {
     throw new Error('No token data found');
@@ -34,7 +34,7 @@ async function main() {
 
       // Upload to local ipfs node
       const resultFromLocalIpfsNode = await ipfs.uploadToLocalIpfsNodeFromAssetFile(
-        `assets/${tokenId}.png`,
+        path.resolve(__dirname, '..', 'resources', 'assets', `${tokenId}.png`),
         {
           name: `${tokenId}.png`,
           description: 'This is an example',
@@ -78,9 +78,7 @@ function _loadDeploymentFile(filepath) {
   }
 }
 
-main()
-  .then(() => process.exit(0))
-  .catch((error) => {
-    console.error(error);
-    process.exit(1);
-  });
+main().catch((error) => {
+  console.error(error);
+  process.exit(1);
+});

@@ -1,9 +1,8 @@
 .DS_Store
 .env
 .vscode
-node_modules
-cache
 artifacts
+cache
 deployments/local.json
-metadata/
-assets/
+node_modules
+resources
