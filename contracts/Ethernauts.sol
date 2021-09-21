@@ -8,47 +8,28 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 contract Ethernauts is ERC721Enumerable, Ownable {
     using Address for address payable;
 
-    // Fixed
-    uint private constant _PERCENT = 1000000; // 1m = 100%, 500k = 50%, etc
-
     // Can be set once on deploy
     uint public immutable maxTokens;
     uint public immutable maxGiftable;
-    uint public immutable daoPercent;
-    uint public immutable artistPercent;
-    bytes32 public immutable provenance;
 
     // Can be changed by owner
     string public baseTokenURI;
-    uint public minPrice;
-    uint public maxPrice;
+    uint public mintPrice;
 
     // Internal
     uint private _tokensGifted;
-    mapping(address => bool) private _receivedDiscount;
 
     constructor(
         uint maxGiftable_,
         uint maxTokens_,
-        uint daoPercent_,
-        uint artistPercent_,
-        uint minPrice_,
-        uint maxPrice_,
-        bytes32 provenance_
+        uint mintPrice_
     ) ERC721("Ethernauts", "ETHNTS") {
         require(maxGiftable_ <= 100, "Max giftable supply too large");
         require(maxTokens_ <= 10000, "Max token supply too large");
-        require(daoPercent_ + artistPercent_ == _PERCENT, "Invalid percentages");
-        require(provenance_ != bytes32(0), "Invalid provenance hash");
-        require(minPrice_ <= maxPrice_, "Invalid price range");
 
         maxGiftable = maxGiftable_;
         maxTokens = maxTokens_;
-        daoPercent = daoPercent_;
-        artistPercent = artistPercent_;
-        provenance = provenance_;
-        minPrice = minPrice_;
-        maxPrice = maxPrice_;
+        mintPrice = mintPrice_;
     }
 
     // --------------------
@@ -56,8 +37,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     // --------------------
 
     function mint() external payable {
-        require(msg.value >= minPrice, "msg.value too low");
-        require(msg.value <= maxPrice, "msg.value too high");
+        require(msg.value >= mintPrice, "bad msg.value");
 
         _mintNext(msg.sender);
     }
@@ -82,30 +62,16 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         _tokensGifted += 1;
     }
 
-    function setMinPrice(uint newMinPrice) external onlyOwner {
-        require(newMinPrice <= maxPrice, "Invalid price range");
-
-        minPrice = newMinPrice;
-    }
-
-    function setMaxPrice(uint newMaxPrice) external onlyOwner {
-        require(minPrice <= newMaxPrice, "Invalid price range");
-
-        maxPrice = newMaxPrice;
+    function setMintPrice(uint newMintPrice) external onlyOwner {
+        mintPrice = newMintPrice;
     }
 
     function setBaseURI(string memory baseTokenURI_) public onlyOwner {
         baseTokenURI = baseTokenURI_;
     }
 
-    function withdraw(address payable dao, address payable artist) external onlyOwner {
-        uint balance = address(this).balance;
-
-        uint daoScaled = balance * daoPercent;
-        uint artistScaled = balance * artistPercent;
-
-        dao.sendValue(daoScaled / _PERCENT);
-        artist.sendValue(artistScaled / _PERCENT);
+    function withdraw(address payable beneficiary) external onlyOwner {
+        beneficiary.sendValue(address(this).balance);
     }
 
     // -------------------

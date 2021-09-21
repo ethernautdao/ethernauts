@@ -40,18 +40,7 @@ describe('Mint', () => {
         Ethernauts.connect(user).mint({
           value: ethers.utils.parseEther('0.01'),
         }),
-        'msg.value too low'
-      );
-    });
-  });
-
-  describe('when attempting to mint with too much ETH', () => {
-    it('reverts', async () => {
-      await assertRevert(
-        Ethernauts.connect(user).mint({
-          value: ethers.utils.parseEther('15'),
-        }),
-        'msg.value too high'
+        'bad msg.value'
       );
     });
   });
@@ -81,10 +70,8 @@ describe('Mint', () => {
         });
 
         before('mint', async () => {
-          const value = Math.random() * 13.4 + 0.2;
-
           tx = await Ethernauts.connect(user).mint({
-            value: ethers.utils.parseEther(`${value}`),
+            value: ethers.utils.parseEther('0.2'),
           });
 
           receipt = await tx.wait();
