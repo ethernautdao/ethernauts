@@ -34,7 +34,7 @@ async function main() {
 
       // Upload to local ipfs node
       const resultFromLocalIpfsNode = await ipfs.uploadToLocalIpfsNodeFromAssetFile(
-        `assets/${tokenId}.png`,
+        path.resolve(__dirname, '..', 'resources', 'assets', `${tokenId}.png`),
         {
           name: `${tokenId}.png`,
           description: 'This is an example',
