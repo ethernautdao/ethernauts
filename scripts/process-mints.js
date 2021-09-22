@@ -2,7 +2,7 @@ const path = require('path');
 const hre = require('hardhat');
 
 const IPFS = require('../src/ipfs');
-const config = require('../config');
+const config = require('../src/config');
 
 const { ethers } = hre;
 
@@ -35,12 +35,6 @@ async function main() {
           description: 'This is an example',
         }
       );
-
-      // Upload asset and metadata to pinata
-      await Promise.all([
-        ipfs.pin(resultFromLocalIpfsNode.assetURI),
-        ipfs.pin(resultFromLocalIpfsNode.metadataURI),
-      ]);
 
       console.log('resultFromLocalIpfsNode', resultFromLocalIpfsNode);
     }
