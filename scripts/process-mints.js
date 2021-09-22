@@ -1,4 +1,3 @@
-const fs = require('fs');
 const path = require('path');
 const hre = require('hardhat');
 
@@ -10,15 +9,11 @@ const { ethers } = hre;
 async function main() {
   const ipfs = new IPFS(config.ipfsApiUrl, config.ipfsGatewayUrl, config.pinningService);
 
-  const data = _loadDeploymentFile(
-    path.resolve(__dirname, '..', 'deployments', `${hre.network.name}.json`)
-  );
+  const { token } = require(`../deployments/${hre.network.name}`);
 
-  if (!data.token || data.token === '') {
-    throw new Error('No token data found');
-  }
+  if (!token) throw new Error('No token data found');
 
-  const Ethernauts = await ethers.getContractAt('Ethernauts', data.token);
+  const Ethernauts = await ethers.getContractAt('Ethernauts', token);
 
   console.log(`Listening for events on Ethernauts token at ${Ethernauts.address}`);
 
@@ -54,31 +49,7 @@ async function main() {
   await new Promise(() => {});
 }
 
-// function _checkIfTokenIdAssetExists(tokenId) {
-//   // TODO
-// }
-
-// function _updateLocalAssetIdWithTokenId() {
-//   // TODO
-// }
-
-// function _randomlySelectAssetId() {
-//   // TODO
-// }
-
-// async function _uploadToIPFS({ tokenId, assetId }) {
-//   // TODO
-// }
-
-function _loadDeploymentFile(filepath) {
-  if (fs.existsSync(filepath)) {
-    return JSON.parse(fs.readFileSync(filepath));
-  } else {
-    throw new Error(`${filepath} not found`);
-  }
-}
-
-main().catch((error) => {
-  console.error(error);
+main().catch((err) => {
+  console.error(err);
   process.exit(1);
 });
