@@ -18,26 +18,26 @@ async function main() {
   console.log(`Listening for events on Ethernauts token at ${Ethernauts.address}`);
 
   Ethernauts.on('Transfer', async (from, to, amount, event) => {
-    if (from === '0x0000000000000000000000000000000000000000') {
-      const tokenId = event.args.tokenId.toString();
+    if (from !== '0x0000000000000000000000000000000000000000') return;
 
-      console.log(`Mint detected, tokenId: ${tokenId}`);
+    const tokenId = event.args.tokenId.toString();
 
-      /*
-        TODO: randomly select assets
-      */
+    console.log(`Mint detected, tokenId: ${tokenId}`);
 
-      // Upload to local ipfs node
-      const resultFromLocalIpfsNode = await ipfs.uploadToLocalIpfsNodeFromAssetFile(
-        path.resolve(__dirname, '..', 'resources', 'assets', `${tokenId}.png`),
-        {
-          name: `${tokenId}.png`,
-          description: 'This is an example',
-        }
-      );
+    /*
+      TODO: randomly select assets
+    */
 
-      console.log('resultFromLocalIpfsNode', resultFromLocalIpfsNode);
-    }
+    // Upload to local ipfs node
+    const resultFromLocalIpfsNode = await ipfs.uploadToLocalIpfsNodeFromAssetFile(
+      path.resolve(__dirname, '..', 'resources', 'assets', `${tokenId}.png`),
+      {
+        name: `${tokenId}.png`,
+        description: 'This is an example',
+      }
+    );
+
+    console.log('resultFromLocalIpfsNode', resultFromLocalIpfsNode);
   });
 
   await new Promise(() => {});
