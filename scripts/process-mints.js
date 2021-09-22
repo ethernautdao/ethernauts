@@ -39,8 +39,6 @@ async function main() {
 
     console.log('resultFromLocalIpfsNode', resultFromLocalIpfsNode);
   });
-
-  await new Promise(() => {});
 }
 
 main().catch((err) => {
