@@ -7,7 +7,15 @@ const config = require('../src/config');
 const { ethers } = hre;
 
 async function main() {
-  const ipfs = new IPFS(config.ipfsApiUrl, config.ipfsGatewayUrl, config.pinningService);
+  const ipfs = new IPFS({
+    pinningService: {
+      name: config.PINNING_SERVICE_NAME,
+      key: config.PINNING_SERVICE_KEY,
+      endpoint: config.PINNING_SERVICE_ENDPOINT,
+    },
+    ipfsGatewayUrl: config.IPFS_GATEWAY_URL,
+    ipfsApiUrl: config.IPFS_API_URL,
+  });
 
   const { token } = require(`../deployments/${hre.network.name}`);
 

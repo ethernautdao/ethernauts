@@ -52,6 +52,7 @@
   "dependencies": {
     "cids": "^1.1.9",
     "dotenv": "^10.0.0",
+    "envalid": "^7.2.1",
     "ipfs-http-client": "^52.0.3"
   }
 }
