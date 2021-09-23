@@ -32,10 +32,6 @@ async function main() {
 
     console.log(`Mint detected, tokenId: ${tokenId}`);
 
-    /*
-      TODO: randomly select assets
-    */
-
     // Upload to local ipfs node
     const resultFromLocalIpfsNode = await ipfs.uploadToLocalIpfsNodeFromAssetFile(
       path.resolve(__dirname, '..', 'resources', 'assets', `${tokenId}.png`),
