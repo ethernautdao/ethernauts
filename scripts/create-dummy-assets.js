@@ -1,7 +1,6 @@
 const fs = require('fs');
 const del = require('del');
 const path = require('path');
-const faker = require('faker');
 const random = require('random');
 const makeDir = require('make-dir');
 const PNGlib = require('node-pnglib');
@@ -25,10 +24,10 @@ async function main() {
     const confirm = new Confirm('Do you want to recreate the assets?');
     const yes = await confirm.run();
     if (!yes) return;
-    await del([ASSETS_FOLDER, METADATA_FOLDER]);
+    await del([ASSETS_FOLDER]);
   }
 
-  await Promise.all([makeDir(ASSETS_FOLDER), makeDir(METADATA_FOLDER)]);
+  await makeDir(ASSETS_FOLDER);
 
   const _r = random.exponential(10.1);
   const getRarity = () => {
@@ -51,21 +50,11 @@ async function main() {
       }
     }
 
-    const metadata = {
-      name: faker.hacker.adjective(),
-      description: faker.hacker.phrase(),
-      rarity: getRarity(),
-    };
-
-    rarities.push(metadata.rarity);
+    rarities.push(getRarity());
 
     const assetPath = path.join(ASSETS_FOLDER, `${x}.png`);
-    const metadataPath = path.join(METADATA_FOLDER, `${x}.json`);
 
-    promises.push(
-      fs.promises.writeFile(assetPath, png.getBuffer()),
-      fs.promises.writeFile(metadataPath, JSON.stringify(metadata, null, 2))
-    );
+    promises.push(fs.promises.writeFile(assetPath, png.getBuffer()));
   }
 
   await Promise.all(promises);
