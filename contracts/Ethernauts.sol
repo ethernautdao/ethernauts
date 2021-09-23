@@ -38,6 +38,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
 
     function mint() external payable {
         require(msg.value >= mintPrice, "bad msg.value");
+        require(availableToMint() - availableToGift() > 0, "No available supply");
 
         _mintNext(msg.sender);
     }
@@ -48,6 +49,14 @@ contract Ethernauts is ERC721Enumerable, Ownable {
 
     function tokensGifted() public view returns (uint) {
         return _tokensGifted;
+    }
+
+    function availableToMint() public view returns (uint) {
+        return maxTokens - totalSupply();
+    }
+
+    function availableToGift() public view returns (uint) {
+        return maxGiftable - _tokensGifted;
     }
 
     // -----------------------
@@ -89,7 +98,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     }
 
     function _mint(address to, uint tokenId) internal virtual override {
-        require(totalSupply() < maxTokens, "No more Ethernauts can be minted");
+        require(totalSupply() < maxTokens, "No available supply");
 
         super._mint(to, tokenId);
     }
