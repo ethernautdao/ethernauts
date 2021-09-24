@@ -36,23 +36,20 @@ async function main() {
 
   await makeDir(METADATA_FOLDER);
 
-  const ipfsHashes = await Promise.all(assets.map((asset) => {
+  return Promise.all(assets.map( async (asset) => {
     const filepath = path.join(ASSETS_FOLDER, asset);
-    
-    const file = fs.readFileSync(filepath);
+    const metadataPath = path.join(METADATA_FOLDER, `${path.parse(asset).name}.json`);
 
-    return getIPFSHash(file);
-  }));
+    const file = await fs.promises.readFile(filepath);
 
-  return Promise.all(assets.map((filename, index) => {
-    const metadataPath = path.join(METADATA_FOLDER, `${path.parse(filename).name}.json`);
+    const ipfsHash = await getIPFSHash(file);
 
     const metadata = {
-      name: filename,
-      image: IPFS_PREFIX + ipfsHashes[index],
+      name: asset,
+      image: IPFS_PREFIX + ipfsHash,
       description: faker.hacker.phrase(),
     }
-
+    
     return fs.promises.writeFile(metadataPath, JSON.stringify(metadata, null, 2));
   }));
 }
