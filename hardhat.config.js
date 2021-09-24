@@ -1,5 +1,7 @@
 const ethers = require('ethers');
+
 require('@nomiclabs/hardhat-ethers');
+require('solidity-coverage');
 
 module.exports = {
   solidity: '0.8.4',
