@@ -23,6 +23,8 @@
     "url": "https://github.com/ethernautdao/ethernauts/issues"
   },
   "scripts": {
+    "test": "hardhat test",
+    "coverage": "hardhat coverage",
     "start:local:ipfs": "./bin/start-local-ipfs-node.sh",
     "create:dummy:assets": "node scripts/create-dummy-assets.js",
     "lint:js": "prettier --check '**/*.js' && eslint '**/*.js'",
