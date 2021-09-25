@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
 contract Ethernauts is ERC721Enumerable, Ownable {
     using Address for address payable;
@@ -17,8 +18,9 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     uint public mintPrice;
     uint public earlyMintPrice;
 
-    // Internal
+    // private
     uint private _tokensGifted;
+    mapping(bytes32 => bool) _couponUsed;
 
     // Three different sale stages:
     enum SaleState {
@@ -65,10 +67,11 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         _mintNext(msg.sender);
     }
 
-    function mintEarly() external payable notOnState(SaleState.Paused) {
+    function mintEarly(bytes memory signedCoupon) external payable notOnState(SaleState.Paused) {
         require(msg.value >= earlyMintPrice, "bad msg.value");
         require(availableToMint() > 0, "No available supply");
 
+        _verifyCoupon(msg.sender, signedCoupon);
         _mintNext(msg.sender);
     }
 
@@ -127,20 +130,30 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     }
 
     // -------------------
-    // Internal functions
+    // Private functions
     // -------------------
 
-    function _baseURI() internal view virtual override returns (string memory) {
+    function _verifyCoupon(address sender, bytes memory signedCoupon) private {
+        bytes32 messageHash = ECDSA.toEthSignedMessageHash(sender);
+        require(!_couponUsed[messageHash], "Coupon already used");
+
+        address retrievedSigner = ECDSA.recover(messageHash, signedCoupon);
+        require(couponSigner == retrievedSigner, "Fake coupon");
+
+        _couponUsed[messageHash] = true;
+    }
+
+    function _baseURI() private view virtual override returns (string memory) {
         return baseTokenURI;
     }
 
-    function _mintNext(address to) internal {
+    function _mintNext(address to) private {
         uint tokenId = totalSupply();
 
         _mint(to, tokenId);
     }
 
-    function _mint(address to, uint tokenId) internal virtual override {
+    function _mint(address to, uint tokenId) private virtual override {
         require(totalSupply() < maxTokens, "No available supply");
 
         super._mint(to, tokenId);
