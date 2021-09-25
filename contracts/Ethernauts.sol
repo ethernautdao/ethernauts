@@ -17,10 +17,11 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     string public baseTokenURI;
     uint public mintPrice;
     uint public earlyMintPrice;
+    address public couponSigner;
 
     // private
     uint private _tokensGifted;
-    mapping(bytes32 => bool) _couponUsed;
+    mapping(bytes32 => bool) private _couponUsed;
 
     // Three different sale stages:
     enum SaleState {
@@ -28,31 +29,33 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         Early, // Only community can mint, at a discount using signed messages
         Open // Anyone can mint
     }
-    SaleState public saleState;
+    SaleState public currentSaleState;
 
     constructor(
-        uint maxGiftable_,
-        uint maxTokens_,
-        uint mintPrice_,
-        uint earlyMintPrice_
+        uint definitiveMaxGiftable,
+        uint definitiveMaxTokens,
+        uint initialMintPrice,
+        uint initialEarlyMintPrice,
+        address initialCouponSigner
     ) ERC721("Ethernauts", "NAUTS") {
-        require(maxGiftable_ <= 100, "Max giftable supply too large");
-        require(maxTokens_ <= 10000, "Max token supply too large");
+        require(definitiveMaxGiftable <= 100, "Max giftable supply too large");
+        require(definitiveMaxTokens <= 10000, "Max token supply too large");
 
-        maxGiftable = maxGiftable_;
-        maxTokens = maxTokens_;
-        mintPrice = mintPrice_;
-        earlyMintPrice = earlyMintPrice_;
+        maxGiftable = definitiveMaxGiftable;
+        maxTokens = definitiveMaxTokens;
+        mintPrice = initialMintPrice;
+        earlyMintPrice = initialEarlyMintPrice;
+        couponSigner = initialCouponSigner;
 
-        saleState = SaleState.Paused;
+        currentSaleState = SaleState.Paused;
     }
 
     // ----------
     // Modifiers
     // ----------
 
-    modifier notOnState(SaleState state_) {
-        require(saleState != state_, "Not allowed in current state");
+    modifier notOnState(SaleState definedSaleState) {
+        require(currentSaleState != definedSaleState, "Not allowed in current state");
         _;
     }
 
@@ -71,7 +74,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         require(msg.value >= earlyMintPrice, "bad msg.value");
         require(availableToMint() > 0, "No available supply");
 
-        _verifyCoupon(msg.sender, signedCoupon);
+        _verifyCoupon(signedCoupon);
         _mintNext(msg.sender);
     }
 
@@ -115,14 +118,18 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         earlyMintPrice = newEarlyMintPrice;
     }
 
-    function setBaseURI(string memory baseTokenURI_) public onlyOwner {
-        baseTokenURI = baseTokenURI_;
+    function setBaseURI(string memory newBaseTokenURI) external onlyOwner {
+        baseTokenURI = newBaseTokenURI;
     }
 
-    function setSaleState(SaleState newState_) public onlyOwner {
-        require(newState_ != saleState, "Invalid new state");
+    function setSaleState(SaleState newSaleState) external onlyOwner {
+        require(newSaleState != currentSaleState, "Invalid new state");
 
-        saleState = newState_;
+        currentSaleState = newSaleState;
+    }
+
+    function setCouponSigner(address newCouponSigner) external onlyOwner {
+        couponSigner = newCouponSigner;
     }
 
     function withdraw(address payable beneficiary) external onlyOwner {
@@ -133,8 +140,8 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     // Private functions
     // -------------------
 
-    function _verifyCoupon(address sender, bytes memory signedCoupon) private {
-        bytes32 messageHash = ECDSA.toEthSignedMessageHash(sender);
+    function _verifyCoupon(bytes memory signedCoupon) private {
+        bytes32 messageHash = ECDSA.toEthSignedMessageHash(keccak256(abi.encode(msg.sender)));
         require(!_couponUsed[messageHash], "Coupon already used");
 
         address retrievedSigner = ECDSA.recover(messageHash, signedCoupon);
@@ -143,7 +150,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         _couponUsed[messageHash] = true;
     }
 
-    function _baseURI() private view virtual override returns (string memory) {
+    function _baseURI() internal view virtual override returns (string memory) {
         return baseTokenURI;
     }
 
@@ -153,7 +160,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         _mint(to, tokenId);
     }
 
-    function _mint(address to, uint tokenId) private virtual override {
+    function _mint(address to, uint tokenId) internal virtual override {
         require(totalSupply() < maxTokens, "No available supply");
 
         super._mint(to, tokenId);

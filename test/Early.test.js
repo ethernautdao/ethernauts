@@ -64,6 +64,9 @@ describe('Early mint', () => {
         });
       });
 
+      // TODO
+      describe.skip('when trying to mint early tokens with invalid coupons', () => {});
+
       describe('when minting many early tokens', () => {
         function itCorrectlyMintsEarlyTokensForUser(userNumber) {
           describe(`when minting an early token for user #${userNumber}`, () => {
@@ -89,6 +92,8 @@ describe('Early mint', () => {
             });
 
             before('early mint', async () => {
+              const signedCoupon = 'Bleh';
+
               tx = await Ethernauts.connect(user).mintEarly({
                 value: hre.config.defaults.earlyMintPrice,
               });
@@ -149,13 +154,18 @@ describe('Early mint', () => {
         }
 
         itCorrectlyMintsEarlyTokensForUser(1);
-        itCorrectlyMintsEarlyTokensForUser(1);
         itCorrectlyMintsEarlyTokensForUser(2);
-        itCorrectlyMintsEarlyTokensForUser(2);
-        itCorrectlyMintsEarlyTokensForUser(2);
-        itCorrectlyMintsEarlyTokensForUser(1);
         itCorrectlyMintsEarlyTokensForUser(3);
         itCorrectlyMintsEarlyTokensForUser(4);
+        itCorrectlyMintsEarlyTokensForUser(5);
+        itCorrectlyMintsEarlyTokensForUser(6);
+        itCorrectlyMintsEarlyTokensForUser(7);
+
+        // TODO
+        describe.skip('when users try to reuse a coupon', () => {});
+
+        // TODO
+        describe.skip('when to use a coupon signed for anothe user', () => {});
 
         describe('when the owner sets the sale state to open', () => {
           before('open the sale', async () => {
