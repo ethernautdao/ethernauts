@@ -14,6 +14,7 @@ module.exports = {
     maxGiftable: 100,
     maxTokens: 10000,
     mintPrice: ethers.utils.parseEther('0.2'),
+    earlyMintPrice: ethers.utils.parseEther('0.015'),
   },
   overrides: {
     gasPrice: ethers.utils.parseUnits('100', 'gwei'),
