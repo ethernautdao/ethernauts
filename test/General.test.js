@@ -53,7 +53,7 @@ describe('General', () => {
 
     it('should have set the name and symbol correctly', async () => {
       assert.equal(await Ethernauts.name(), 'Ethernauts');
-      assert.equal(await Ethernauts.symbol(), 'ETHNTS');
+      assert.equal(await Ethernauts.symbol(), 'NAUTS');
     });
 
     it('shows the correct max supplies', async () => {

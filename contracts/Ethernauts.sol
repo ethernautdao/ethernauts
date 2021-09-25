@@ -33,7 +33,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         uint maxTokens_,
         uint mintPrice_,
         uint earlyMintPrice_
-    ) ERC721("Ethernauts", "ETHNTS") {
+    ) ERC721("Ethernauts", "NAUTS") {
         require(maxGiftable_ <= 100, "Max giftable supply too large");
         require(maxTokens_ <= 10000, "Max token supply too large");
 
