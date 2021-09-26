@@ -67,7 +67,7 @@ describe('Early mint', () => {
           Ethernauts.connect(user).mintEarly(dummyCoupon, {
             value: ethers.utils.parseEther('0.01'),
           }),
-          'bad msg.value'
+          'Invalid msg.value'
         );
       });
     });

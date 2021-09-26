@@ -64,7 +64,7 @@ describe('Mint', () => {
           Ethernauts.connect(user).mint({
             value: ethers.utils.parseEther('0.01'),
           }),
-          'bad msg.value'
+          'Invalid msg.value'
         );
       });
     });

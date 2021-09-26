@@ -64,14 +64,14 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     // --------------------
 
     function mint() external payable notOnState(SaleState.Paused) notOnState(SaleState.Early) {
-        require(msg.value >= mintPrice, "bad msg.value");
+        require(msg.value >= mintPrice, "Invalid msg.value");
         require(availableToMint() > 0, "No available supply");
 
         _mintNext(msg.sender);
     }
 
     function mintEarly(bytes memory signedCoupon) external payable notOnState(SaleState.Paused) {
-        require(msg.value >= earlyMintPrice, "bad msg.value");
+        require(msg.value >= earlyMintPrice, "Invalid msg.value");
         require(availableToMint() > 0, "No available supply");
 
         _verifyCoupon(signedCoupon);
