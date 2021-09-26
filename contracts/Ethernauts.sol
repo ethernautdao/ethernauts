@@ -19,7 +19,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     uint public earlyMintPrice;
     address public couponSigner;
 
-    // private
+    // Internal usage
     uint private _tokensGifted;
     mapping(bytes32 => bool) private _couponUsed;
 
