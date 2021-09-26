@@ -21,7 +21,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
 
     // Internal usage
     uint private _tokensGifted;
-    mapping(bytes32 => bool) private _couponUsed;
+    mapping(address => bool) private _couponUsed;
 
     // Three different sale stages:
     enum SaleState {
@@ -142,13 +142,13 @@ contract Ethernauts is ERC721Enumerable, Ownable {
 
     function _verifyCoupon(bytes memory signedCoupon) private {
         bytes32 messageHash = keccak256(abi.encode(msg.sender));
-        bytes32 prefixedHash = ECDSA.toEthSignedMessageHash(messageHash);
-        require(!_couponUsed[messageHash], "Expired coupon");
+        require(!_couponUsed[msg.sender], "Expired coupon");
 
+        bytes32 prefixedHash = ECDSA.toEthSignedMessageHash(messageHash);
         address retrievedSigner = ECDSA.recover(prefixedHash, signedCoupon);
         require(couponSigner == retrievedSigner, "Invalid coupon");
 
-        _couponUsed[messageHash] = true;
+        _couponUsed[msg.sender] = true;
     }
 
     function _baseURI() internal view virtual override returns (string memory) {
