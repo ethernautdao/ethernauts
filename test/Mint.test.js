@@ -38,7 +38,7 @@ describe('Mint', () => {
 
   describe('when attempting to mint when the sale is not open', () => {
     before('set paused', async () => {
-      if ((await Ethernauts.saleState()) !== 0) {
+      if ((await Ethernauts.currentSaleState()) !== 0) {
         await (await Ethernauts.connect(owner).setSaleState(0)).wait();
       }
     });

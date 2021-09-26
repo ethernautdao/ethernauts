@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
+import "hardhat/console.sol";
 
 contract Ethernauts is ERC721Enumerable, Ownable {
     using Address for address payable;
@@ -141,11 +142,12 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     // -------------------
 
     function _verifyCoupon(bytes memory signedCoupon) private {
-        bytes32 messageHash = ECDSA.toEthSignedMessageHash(keccak256(abi.encode(msg.sender)));
-        require(!_couponUsed[messageHash], "Coupon already used");
+        bytes32 messageHash = keccak256(abi.encode(msg.sender));
+        bytes32 prefixedHash = ECDSA.toEthSignedMessageHash(messageHash);
+        require(!_couponUsed[messageHash], "Expired coupon");
 
-        address retrievedSigner = ECDSA.recover(messageHash, signedCoupon);
-        require(couponSigner == retrievedSigner, "Fake coupon");
+        address retrievedSigner = ECDSA.recover(prefixedHash, signedCoupon);
+        require(couponSigner == retrievedSigner, "Invalid coupon");
 
         _couponUsed[messageHash] = true;
     }

@@ -43,8 +43,12 @@ describe('General', () => {
       Ethernauts = await factory.deploy(...Object.values(hre.config.defaults));
     });
 
+    it('shows the correct coupon signer', async () => {
+      assert.equal(await Ethernauts.couponSigner(), owner.address);
+    });
+
     it('shold show the expected initial sale state', async () => {
-      assert.equal(await Ethernauts.saleState(), 0); // 0 = Paused
+      assert.equal(await Ethernauts.currentSaleState(), 0); // 0 = Paused
     });
 
     it('should have set the owner correctly', async () => {
