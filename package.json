@@ -25,7 +25,7 @@
   "scripts": {
     "start:local:ipfs": "./scripts/start-local-ipfs-node.sh",
     "create:dummy:assets": "node scripts/create-dummy-assets.js",
-    "create:metadata:assets": "node scripts/create-metadata-from-assets.js",
+    "create:metadata": "node scripts/create-metadata.js",
     "upload:metadata:ipfs": "./node_modules/.bin/ipfs add -r resources/metadata",
     "lint:js": "prettier --check '**/*.js' && eslint '**/*.js'",
     "lint:js:fix": "prettier --write '**/*.js' && eslint --fix '**/*.js'",
