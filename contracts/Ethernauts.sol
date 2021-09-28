@@ -54,8 +54,8 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     // Modifiers
     // ----------
 
-    modifier notOnState(SaleState definedSaleState) {
-        require(currentSaleState != definedSaleState, "Not allowed in current state");
+    modifier onlyOnState(SaleState definedSaleState) {
+        require(currentSaleState == definedSaleState, "Not allowed in current state");
         _;
     }
 
@@ -63,14 +63,14 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     // Public external ABI
     // --------------------
 
-    function mint() external payable notOnState(SaleState.Paused) notOnState(SaleState.Early) {
+    function mint() external payable onlyOnState(SaleState.Open) {
         require(msg.value >= mintPrice, "Invalid msg.value");
         require(availableToMint() > 0, "No available supply");
 
         _mintNext(msg.sender);
     }
 
-    function mintEarly(bytes memory signedCoupon) external payable notOnState(SaleState.Paused) {
+    function mintEarly(bytes memory signedCoupon) external payable onlyOnState(SaleState.Early) {
         require(msg.value >= earlyMintPrice, "Invalid msg.value");
         require(availableToMint() > 0, "No available supply");
         require(!userRedeemedCoupon(msg.sender), "Used coupon");

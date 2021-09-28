@@ -194,6 +194,9 @@ describe('Early mint', () => {
       itCorrectlyMintsEarlyTokensForUser(2);
       itCorrectlyMintsEarlyTokensForUser(3);
       itCorrectlyMintsEarlyTokensForUser(4);
+      itCorrectlyMintsEarlyTokensForUser(5);
+      itCorrectlyMintsEarlyTokensForUser(6);
+      itCorrectlyMintsEarlyTokensForUser(7);
 
       describe('when users try to reuse a coupon', () => {
         let someUser;
@@ -229,23 +232,13 @@ describe('Early mint', () => {
         });
       });
 
-      describe('when the owner sets the sale state to open', () => {
-        before('open the sale', async () => {
-          await (await Ethernauts.connect(owner).setSaleState(2)).wait();
-        });
+      describe('when checking on all minted NFTs', () => {
+        it('can enumerate all token ids', async () => {
+          for (let i = 0; i < tokenIds.length; i++) {
+            const tokenId = tokenIds[i];
 
-        itCorrectlyMintsEarlyTokensForUser(5);
-        itCorrectlyMintsEarlyTokensForUser(6);
-        itCorrectlyMintsEarlyTokensForUser(7);
-
-        describe('when checking on all minted NFTs', () => {
-          it('can enumerate all token ids', async () => {
-            for (let i = 0; i < tokenIds.length; i++) {
-              const tokenId = tokenIds[i];
-
-              assert.equal(await Ethernauts.tokenByIndex(i), tokenId);
-            }
-          });
+            assert.equal(await Ethernauts.tokenByIndex(i), tokenId);
+          }
         });
       });
     });
