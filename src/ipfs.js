@@ -13,7 +13,7 @@ const ipfsAddOptions = {
 };
 
 class IPFS {
-  constructor(ipfsApiUrl, ipfsGatewayUrl, pinningService) {
+  constructor({ ipfsApiUrl, ipfsGatewayUrl, pinningService }) {
     this.ipfsApiUrl = ipfsApiUrl;
     this.ipfsGatewayUrl = ipfsGatewayUrl;
     this.pinningService = pinningService;
