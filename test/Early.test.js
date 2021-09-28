@@ -191,7 +191,7 @@ describe('Early mint', () => {
         });
       });
 
-      describe('when a users trues to use a coupon signed for anothe user', () => {
+      describe('when a user tries to use a coupon signed for another user', () => {
         it('reverts', async () => {
           const someUser = users[8];
 
