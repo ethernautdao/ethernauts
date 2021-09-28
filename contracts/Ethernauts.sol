@@ -141,9 +141,9 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     // -------------------
 
     function _verifyCoupon(bytes memory signedCoupon) private {
-        bytes32 messageHash = keccak256(abi.encode(msg.sender));
         require(!_couponUsed[msg.sender], "Expired coupon");
-
+        
+        bytes32 messageHash = keccak256(abi.encode(msg.sender));
         bytes32 prefixedHash = ECDSA.toEthSignedMessageHash(messageHash);
         address retrievedSigner = ECDSA.recover(prefixedHash, signedCoupon);
         require(couponSigner == retrievedSigner, "Invalid coupon");
