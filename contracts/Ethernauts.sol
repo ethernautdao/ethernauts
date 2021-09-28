@@ -21,7 +21,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
 
     // Internal usage
     uint private _tokensGifted;
-    mapping(address => bool) private _couponUsed;
+    mapping(address => bool) private _redeemedCoupons;
 
     // Three different sale stages:
     enum SaleState {
@@ -73,9 +73,12 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     function mintEarly(bytes memory signedCoupon) external payable notOnState(SaleState.Paused) {
         require(msg.value >= earlyMintPrice, "Invalid msg.value");
         require(availableToMint() > 0, "No available supply");
+        require(!userRedeemedCoupon(msg.sender), "Used coupon");
+        require(isCouponSignedForUser(msg.sender, signedCoupon), "Invalid coupon");
 
-        _verifyCoupon(signedCoupon);
         _mintNext(msg.sender);
+
+        _redeemedCoupons[msg.sender] = true;
     }
 
     function tokensGifted() public view returns (uint) {
@@ -96,6 +99,19 @@ contract Ethernauts is ERC721Enumerable, Ownable {
 
     function exists(uint tokenId) public view returns (bool) {
         return _exists(tokenId);
+    }
+
+    function isCouponSignedForUser(address user, bytes memory coupon) public view returns (bool) {
+        bytes32 messageHash = keccak256(abi.encode(user));
+        bytes32 prefixedHash = ECDSA.toEthSignedMessageHash(messageHash);
+
+        address retrievedSigner = ECDSA.recover(prefixedHash, coupon);
+
+        return couponSigner == retrievedSigner;
+    }
+
+    function userRedeemedCoupon(address user) public view returns (bool) {
+        return _redeemedCoupons[user];
     }
 
     // -----------------------
@@ -139,17 +155,6 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     // -------------------
     // Private functions
     // -------------------
-
-    function _verifyCoupon(bytes memory signedCoupon) private {
-        require(!_couponUsed[msg.sender], "Expired coupon");
-        
-        bytes32 messageHash = keccak256(abi.encode(msg.sender));
-        bytes32 prefixedHash = ECDSA.toEthSignedMessageHash(messageHash);
-        address retrievedSigner = ECDSA.recover(prefixedHash, signedCoupon);
-        require(couponSigner == retrievedSigner, "Invalid coupon");
-
-        _couponUsed[msg.sender] = true;
-    }
 
     function _baseURI() internal view virtual override returns (string memory) {
         return baseTokenURI;

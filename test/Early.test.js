@@ -6,7 +6,7 @@ describe('Early mint', () => {
   let Ethernauts;
 
   let users;
-  let owner, user;
+  let owner, user, nextUser;
 
   let mintedTokenId;
   let tokensMinted = 0;
@@ -14,7 +14,7 @@ describe('Early mint', () => {
 
   let tx, receipt;
 
-  let dummyCoupon;
+  let coupon;
 
   async function signCouponForAddress(address, signer = owner) {
     const payload = `0x000000000000000000000000${address.replace('0x', '')}`;
@@ -29,7 +29,7 @@ describe('Early mint', () => {
   });
 
   before('prepare dummy signature', async () => {
-    dummyCoupon = await owner.signMessage('Hello');
+    coupon = await owner.signMessage('Hello');
   });
 
   before('deploy contract', async () => {
@@ -48,7 +48,7 @@ describe('Early mint', () => {
 
     it('reverts', async () => {
       await assertRevert(
-        Ethernauts.connect(user).mintEarly(dummyCoupon, {
+        Ethernauts.connect(user).mintEarly(coupon, {
           value: ethers.utils.parseEther('15'),
         }),
         'Not allowed in current state'
@@ -64,7 +64,7 @@ describe('Early mint', () => {
     describe('when attempting to mint without enough ETH', () => {
       it('reverts', async () => {
         await assertRevert(
-          Ethernauts.connect(user).mintEarly(dummyCoupon, {
+          Ethernauts.connect(user).mintEarly(coupon, {
             value: ethers.utils.parseEther('0.01'),
           }),
           'Invalid msg.value'
@@ -73,9 +73,17 @@ describe('Early mint', () => {
     });
 
     describe('when trying to mint early tokens with invalid coupons', () => {
+      before('create an invalid coupon', async () => {
+        coupon = await signCouponForAddress(user.address, user);
+      });
+
+      it('shows that the coupon is invalid', async () => {
+        assert.equal(await Ethernauts.isCouponSignedForUser(user.address, coupon), false);
+      });
+
       it('reverts', async () => {
         await assertRevert(
-          Ethernauts.connect(user).mintEarly(await signCouponForAddress(user.address, user), {
+          Ethernauts.connect(user).mintEarly(coupon, {
             value: hre.config.defaults.earlyMintPrice,
           }),
           'Invalid coupon'
@@ -90,10 +98,19 @@ describe('Early mint', () => {
 
           before('identify the user', async () => {
             user = users[userNumber];
+            nextUser = users[userNumber + 1];
           });
 
           before('sign coupon', async () => {
             coupon = await signCouponForAddress(user.address);
+          });
+
+          it('shows that the coupon is valid', async () => {
+            assert.equal(await Ethernauts.isCouponSignedForUser(user.address, coupon), true);
+          });
+
+          it('shows that the coupon is not valid for another user', async () => {
+            assert.equal(await Ethernauts.isCouponSignedForUser(nextUser.address, coupon), false);
           });
 
           before('keep track of values', async () => {
@@ -179,14 +196,22 @@ describe('Early mint', () => {
       itCorrectlyMintsEarlyTokensForUser(4);
 
       describe('when users try to reuse a coupon', () => {
-        it('reverts', async () => {
-          const someUser = users[1];
+        let someUser;
 
+        before('identify user', async () => {
+          someUser = users[1];
+        });
+
+        it('shows that the coupon has been used', async () => {
+          assert.equal(await Ethernauts.userRedeemedCoupon(someUser.address), true);
+        });
+
+        it('reverts', async () => {
           await assertRevert(
             Ethernauts.connect(someUser).mintEarly(await signCouponForAddress(someUser.address), {
               value: hre.config.defaults.earlyMintPrice,
             }),
-            'Expired coupon'
+            'Used coupon'
           );
         });
       });
