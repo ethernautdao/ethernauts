@@ -23,6 +23,8 @@
     "url": "https://github.com/ethernautdao/ethernauts/issues"
   },
   "scripts": {
+    "test": "hardhat test",
+    "coverage": "hardhat coverage",
     "start:local:ipfs": "./bin/start-local-ipfs-node.sh",
     "create:dummy:assets": "node scripts/create-dummy-assets.js",
     "lint:js": "prettier --check '**/*.js' && eslint '**/*.js'",
@@ -47,7 +49,8 @@
     "prompt-confirm": "^2.0.4",
     "random": "^3.0.6",
     "random-color": "^1.0.1",
-    "solhint": "3.3.6"
+    "solhint": "3.3.6",
+    "solidity-coverage": "^0.7.17"
   },
   "dependencies": {
     "cids": "^1.1.9",
