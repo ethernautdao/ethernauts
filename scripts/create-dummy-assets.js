@@ -7,10 +7,7 @@ const PNGlib = require('node-pnglib');
 const Confirm = require('prompt-confirm');
 const randomColor = require('random-color');
 
-const TOTAL_ASSETS = 10000;
-const RESOURCES_FOLDER = path.resolve(__dirname, '..', 'resources');
-const ASSETS_FOLDER = path.join(RESOURCES_FOLDER, 'assets');
-const METADATA_FOLDER = path.join(RESOURCES_FOLDER, 'metadata');
+const { TOTAL_ASSETS, ASSETS_FOLDER } = require('../src/config');
 
 function fileExists(file) {
   return fs.promises
