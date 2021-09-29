@@ -1,53 +1,36 @@
-const del = require('del');
 const path = require('path');
-const faker = require('faker');
 const fs = require('fs');
-const makeDir = require('make-dir');
-const Confirm = require('prompt-confirm');
 
+const constants = require('../src/constants');
+const fileExists = require('../src/utils/file-exists');
 const { getIPFSHash } = require('../src/utils/ipfs-uri');
-const { ASSETS_FOLDER, METADATA_FOLDER, IPFS_PREFIX } = require('../src/config');
-
-function fileExists(file) {
-  return fs.promises
-    .access(file, fs.constants.F_OK)
-    .then(() => true)
-    .catch(() => false);
-}
 
 async function main() {
-  if (await fileExists(path.join(METADATA_FOLDER, '0.json'))) {
-    const confirm = new Confirm('Do you want to recreate the assets metadata?');
-
-    const yes = await confirm.run();
-
-    if (!yes) process.exit();
-
-    await del([METADATA_FOLDER]);
+  if (!(await fileExists(path.join(constants.METADATA_FOLDER, '0.json')))) {
+    throw new Error('Metadata are needed');
   }
-
-  const assets = await fs.promises.readdir(ASSETS_FOLDER);
+  const assets = await fs.promises.readdir(constants.ASSETS_FOLDER);
 
   if (!assets.length) throw new Error('Assets are needed');
 
-  await makeDir(METADATA_FOLDER);
-
   return Promise.all(
     assets.map(async (asset) => {
-      const filepath = path.join(ASSETS_FOLDER, asset);
-      const metadataPath = path.join(METADATA_FOLDER, `${path.parse(asset).name}.json`);
+      const filepath = path.join(constants.ASSETS_FOLDER, asset);
+
+      const metadataPath = path.join(constants.METADATA_FOLDER, `${path.parse(asset).name}.json`);
 
       const file = await fs.promises.readFile(filepath);
 
       const ipfsHash = await getIPFSHash(file);
 
-      const metadata = {
-        name: asset,
-        image: IPFS_PREFIX + ipfsHash,
-        description: faker.hacker.phrase(),
+      const metadata = await fs.promises.readFile(metadataPath);
+
+      const metadataWithIpfs = {
+        ...JSON.parse(metadata),
+        image: constants.IPFS_PREFIX + ipfsHash,
       };
 
-      return fs.promises.writeFile(metadataPath, JSON.stringify(metadata, null, 2));
+      return fs.promises.writeFile(metadataPath, JSON.stringify(metadataWithIpfs, null, 2));
     })
   );
 }

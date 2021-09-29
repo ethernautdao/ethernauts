@@ -23,9 +23,10 @@
     "url": "https://github.com/ethernautdao/ethernauts/issues"
   },
   "scripts": {
-    "start:local:ipfs": "./scripts/start-local-ipfs-node.sh",
+    "start:local:ipfs": "./scripts/start-local-ipfs-node.sh", 
     "create:dummy:assets": "node scripts/create-dummy-assets.js",
-    "create:metadata": "node scripts/create-metadata.js",
+    "create:metadata:ipfs": "node scripts/create-metadata.js",
+    "create:dummy:resources": "npm run create:dummy:assets && npm run create:metadata:ipfs",
     "upload:metadata:ipfs": "./node_modules/.bin/jsipfs add -r resources/metadata",
     "lint:js": "prettier --check '**/*.js' && eslint '**/*.js'",
     "lint:js:fix": "prettier --write '**/*.js' && eslint --fix '**/*.js'",

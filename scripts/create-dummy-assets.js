@@ -1,30 +1,25 @@
 const fs = require('fs');
 const del = require('del');
 const path = require('path');
+const faker = require('faker');
 const random = require('random');
 const makeDir = require('make-dir');
 const PNGlib = require('node-pnglib');
 const Confirm = require('prompt-confirm');
 const randomColor = require('random-color');
 
-const { TOTAL_ASSETS, ASSETS_FOLDER } = require('../src/config');
-
-function fileExists(file) {
-  return fs.promises
-    .access(file, fs.constants.F_OK)
-    .then(() => true)
-    .catch(() => false);
-}
+const constants = require('../src/constants');
+const fileExists = require('../src/utils/file-exists');
 
 async function main() {
-  if (await fileExists(path.join(ASSETS_FOLDER, '0.png'))) {
-    const confirm = new Confirm('Do you want to recreate the assets?');
+  if (await fileExists(path.join(constants.ASSETS_FOLDER, '0.png'))) {
+    const confirm = new Confirm('Do you want to recreate the assets and metadata?');
     const yes = await confirm.run();
     if (!yes) return;
-    await del([ASSETS_FOLDER]);
+    await del([constants.ASSETS_FOLDER, constants.METADATA_FOLDER]);
   }
 
-  await makeDir(ASSETS_FOLDER);
+  await Promise.all([makeDir(constants.ASSETS_FOLDER), makeDir(constants.METADATA_FOLDER)]);
 
   const _r = random.exponential(10.1);
   const getRarity = () => {
@@ -35,7 +30,7 @@ async function main() {
   const promises = [];
   let rarities = [];
 
-  for (let x = 0; x < TOTAL_ASSETS; x++) {
+  for (let x = 0; x < constants.TOTAL_ASSETS; x++) {
     let png = new PNGlib(150, 150);
 
     const color = randomColor().hexString();
@@ -47,11 +42,21 @@ async function main() {
       }
     }
 
-    rarities.push(getRarity());
+    const metadata = {
+      name: faker.hacker.adjective(),
+      description: faker.hacker.phrase(),
+      rarity: getRarity(),
+    };
 
-    const assetPath = path.join(ASSETS_FOLDER, `${x}.png`);
+    rarities.push(metadata.rarity);
 
-    promises.push(fs.promises.writeFile(assetPath, png.getBuffer()));
+    const assetPath = path.join(constants.ASSETS_FOLDER, `${x}.png`);
+    const metadataPath = path.join(constants.METADATA_FOLDER, `${x}.json`);
+
+    promises.push(
+      fs.promises.writeFile(assetPath, png.getBuffer()),
+      fs.promises.writeFile(metadataPath, JSON.stringify(metadata, null, 2))
+    );
   }
 
   await Promise.all(promises);
@@ -66,7 +71,7 @@ async function main() {
     }, []),
   ].map((v) => v || 0);
 
-  const title = ` Generated ${TOTAL_ASSETS} assets `;
+  const title = ` Generated ${constants.TOTAL_ASSETS} assets `;
 
   console.log('');
   console.log(title.replace(/.{1}/g, '='));
