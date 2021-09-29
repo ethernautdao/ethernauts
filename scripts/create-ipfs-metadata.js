@@ -19,11 +19,12 @@ async function main() {
 
       const metadataPath = path.join(constants.METADATA_FOLDER, `${path.parse(asset).name}.json`);
 
-      const file = await fs.promises.readFile(filepath);
+      const [file, metadata] = await Promise.all([
+        fs.promises.readFile(filepath),
+        fs.promises.readFile(metadataPath),
+      ]);
 
       const ipfsHash = await getIPFSHash(file);
-
-      const metadata = await fs.promises.readFile(metadataPath);
 
       const metadataWithIpfs = {
         ...JSON.parse(metadata),
