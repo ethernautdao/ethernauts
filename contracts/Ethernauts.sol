@@ -121,23 +121,42 @@ contract Ethernauts is ERC721Enumerable, Ownable {
 
     function tokenURI(uint256 tokenId) public view override returns (string memory) {
         require(_exists(tokenId), "Token id does not exist");
+        require(_baseURI() != "", "Base URI not set");
+
+        uint batchId = tokenId / randomnessBatchSize;
+        uint randomNumber = _randomURINumbers[batchId];
 
         string memory baseURI = _baseURI();
 
-        return bytes(baseURI).length > 0 ? string(abi.encodePacked(baseURI, tokenId.toString())) : "";
-    }
+        if (randomNumber == 0) {
+            return string(abi.encodePacked(baseURI, "travelling_to_destination"));
+        } else {
+            uint offset = randomNumber * randomnessBatchSize;
+            uint nextBatchId = (batchId + 1) * randomnessBatchSize;
+            uint assetId = batchId * randomnessBatchSize + offset;
+            if (assetId > nextBatchId * randomnessBatchSize) {
+                assetId = assetId - (randomnessBatchSize - offset);
+            }
 
-    function isRandomnessTokenURIRevealedForToken(uint tokenId) public view returns (bool) {
-        uint batchId = tokenId / randomnessBatchSize;
+            return string(abi.encodePacked(baseURI), assetId);
+        }
     }
 
     // This is unprotected for now, but will actually only
     // be callable by an L1 -> L2 bridge contract.
     function setRandomNumberForBatch(uint batchId, uint randomNumber) external onlyOwner {
+        if (batchId > 0) {
+            require(_randomURINumbers[batchId - 1] != 0, "Previous random number not set");
+        }
+
         uint lowestTokenIdInBatch = batchId * randomnessBatchSize;
         require(lowestTokenIdInBatch < totalSupply(), "Cannot set for unminted tokens");
 
         _randomURINumbers[batchId] = randomNumber;
+    }
+
+    function getRandomNumberForBatch(uint batchId) public view returns (uint) {
+        return _randomURINumbers[batchId];
     }
 
     // -----------------------
