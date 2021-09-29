@@ -155,6 +155,7 @@ class IPFS {
     };
 
     for await (const result of this.ipfs.pin.remote.ls(opts)) {
+      result;
       return true;
     }
 

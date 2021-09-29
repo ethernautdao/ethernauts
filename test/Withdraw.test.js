@@ -8,7 +8,7 @@ describe('Withdraw', () => {
   let owner, user;
 
   before('identify signers', async () => {
-    [owner, artist, user] = await ethers.getSigners();
+    [owner, user] = await ethers.getSigners();
   });
 
   before('deploy contract', async () => {
@@ -16,11 +16,13 @@ describe('Withdraw', () => {
     Ethernauts = await factory.deploy(...Object.values(hre.config.defaults));
   });
 
+  before('open the sale', async () => {
+    await (await Ethernauts.connect(owner).setSaleState(2)).wait();
+  });
+
   describe('when some tokens have been minted', () => {
     async function mint() {
-      await (
-        await Ethernauts.connect(user).mint({ value: ethers.utils.parseEther('0.2') })
-      ).wait();
+      await (await Ethernauts.connect(user).mint({ value: ethers.utils.parseEther('0.2') })).wait();
     }
 
     before('mints', async () => {
@@ -46,7 +48,6 @@ describe('Withdraw', () => {
       before('record ETH balances', async () => {
         Ethernauts.recordedEthBalance = await ethers.provider.getBalance(Ethernauts.address);
         owner.recordedEthBalance = await ethers.provider.getBalance(owner.address);
-        artist.recordedEthBalance = await ethers.provider.getBalance(artist.address);
       });
 
       before('withdraw all contract ETH to the owner address', async () => {
@@ -61,9 +62,7 @@ describe('Withdraw', () => {
 
         assert.deepEqual(
           await ethers.provider.getBalance(owner.address),
-          owner.recordedEthBalance
-            .add(Ethernauts.recordedEthBalance)
-            .sub(paidInGas)
+          owner.recordedEthBalance.add(Ethernauts.recordedEthBalance).sub(paidInGas)
         );
       });
 

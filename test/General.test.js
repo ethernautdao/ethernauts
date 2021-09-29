@@ -43,13 +43,21 @@ describe('General', () => {
       Ethernauts = await factory.deploy(...Object.values(hre.config.defaults));
     });
 
+    it('shows the correct coupon signer', async () => {
+      assert.equal(await Ethernauts.couponSigner(), owner.address);
+    });
+
+    it('shold show the expected initial sale state', async () => {
+      assert.equal(await Ethernauts.currentSaleState(), 0); // 0 = Paused
+    });
+
     it('should have set the owner correctly', async () => {
       assert.equal(await Ethernauts.owner(), owner.address);
     });
 
     it('should have set the name and symbol correctly', async () => {
       assert.equal(await Ethernauts.name(), 'Ethernauts');
-      assert.equal(await Ethernauts.symbol(), 'ETHNTS');
+      assert.equal(await Ethernauts.symbol(), 'NAUTS');
     });
 
     it('shows the correct max supplies', async () => {
@@ -89,7 +97,16 @@ describe('General', () => {
           Ethernauts.connect(user).setBaseURI('someURI'),
           'caller is not the owner'
         );
+        await assertRevert(
+          Ethernauts.connect(user).setMintPrice(ethers.utils.parseEther('0.01')),
+          'caller is not the owner'
+        );
+        await assertRevert(
+          Ethernauts.connect(user).setEarlyMintPrice(ethers.utils.parseEther('0.01')),
+          'caller is not the owner'
+        );
         await assertRevert(Ethernauts.connect(user).gift(user.address), 'caller is not the owner');
+        await assertRevert(Ethernauts.connect(user).setSaleState(2), 'caller is not the owner');
       });
     });
   });
