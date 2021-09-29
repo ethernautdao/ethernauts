@@ -12,6 +12,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     // Can be set only once on deploy
     uint public immutable maxTokens;
     uint public immutable maxGiftable;
+    uint public immutable randomnessBatchSize;
 
     // Can be changed by owner
     string public baseTokenURI;
@@ -21,7 +22,8 @@ contract Ethernauts is ERC721Enumerable, Ownable {
 
     // Internal usage
     uint private _tokensGifted;
-    mapping(address => bool) private _redeemedCoupons;
+    mapping(address => bool) private _redeemedCoupons; // user address => if its single coupon has been redeemed
+    mapping(uint => uint) private _randomURINumbers; // batchId => random number used for random URI generation
 
     // Three different sale stages:
     enum SaleState {
@@ -34,6 +36,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     constructor(
         uint definitiveMaxGiftable,
         uint definitiveMaxTokens,
+        uint definitiveRandomnessBatchSize,
         uint initialMintPrice,
         uint initialEarlyMintPrice,
         address initialCouponSigner
@@ -43,6 +46,8 @@ contract Ethernauts is ERC721Enumerable, Ownable {
 
         maxGiftable = definitiveMaxGiftable;
         maxTokens = definitiveMaxTokens;
+        randomnessBatchSize = definitiveRandomnessBatchSize;
+
         mintPrice = initialMintPrice;
         earlyMintPrice = initialEarlyMintPrice;
         couponSigner = initialCouponSigner;
@@ -112,6 +117,27 @@ contract Ethernauts is ERC721Enumerable, Ownable {
 
     function userRedeemedCoupon(address user) public view returns (bool) {
         return _redeemedCoupons[user];
+    }
+
+    function tokenURI(uint256 tokenId) public view override returns (string memory) {
+        require(_exists(tokenId), "Token id does not exist");
+
+        string memory baseURI = _baseURI();
+
+        return bytes(baseURI).length > 0 ? string(abi.encodePacked(baseURI, tokenId.toString())) : "";
+    }
+
+    function isRandomnessTokenURIRevealedForToken(uint tokenId) public view returns (bool) {
+        uint batchId = tokenId / randomnessBatchSize;
+    }
+
+    // This is unprotected for now, but will actually only
+    // be callable by an L1 -> L2 bridge contract.
+    function setRandomNumberForBatch(uint batchId, uint randomNumber) external onlyOwner {
+        uint lowestTokenIdInBatch = batchId * randomnessBatchSize;
+        require(lowestTokenIdInBatch < totalSupply(), "Cannot set for unminted tokens");
+
+        _randomURINumbers[batchId] = randomNumber;
     }
 
     // -----------------------
