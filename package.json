@@ -23,7 +23,9 @@
     "url": "https://github.com/ethernautdao/ethernauts/issues"
   },
   "scripts": {
-    "start:local:ipfs": "./scripts/start-local-ipfs-node.sh", 
+    "test": "hardhat test",
+    "coverage": "hardhat coverage",
+    "start:local:ipfs": "./scripts/start-local-ipfs-node.sh",
     "create:dummy:assets": "node scripts/create-dummy-assets.js",
     "create:ipfs:metadata": "node scripts/create-ipfs-metadata.js",
     "create:dummy:resources": "npm run create:dummy:assets && npm run create:ipfs:metadata",
@@ -51,7 +53,8 @@
     "prompt-confirm": "^2.0.4",
     "random": "^3.0.6",
     "random-color": "^1.0.1",
-    "solhint": "3.3.6"
+    "solhint": "3.3.6",
+    "solidity-coverage": "^0.7.17"
   },
   "dependencies": {
     "cids": "^1.1.9",

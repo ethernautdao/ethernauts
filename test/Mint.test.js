@@ -26,6 +26,8 @@ describe('Mint', () => {
 
     const params = Object.assign({}, hre.config.defaults);
     params.maxTokens = 100;
+    params.maxGiftable = 10;
+
     Ethernauts = await factory.deploy(...Object.values(params));
   });
 
@@ -164,7 +166,7 @@ describe('Mint', () => {
   describe('when trying to mint more than the maximum amount of Ethernauts', () => {
     before('mint max -1', async () => {
       const num =
-        (await Ethernauts.maxTokens()).toNumber() - (await Ethernauts.totalSupply()).toNumber();
+        (await Ethernauts.maxTokens()).toNumber() - (await Ethernauts.maxGiftable()).toNumber() - (await Ethernauts.totalSupply()).toNumber();
 
       let promises = [];
       for (let i = 0; i < num; i++) {
@@ -185,7 +187,7 @@ describe('Mint', () => {
         Ethernauts.connect(user).mint({
           value: ethers.utils.parseEther('0.2'),
         }),
-        'No more Ethernauts can be minted'
+        'No available supply'
       );
     });
   });
