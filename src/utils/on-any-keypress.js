@@ -1,12 +1,12 @@
 const readline = require('readline');
 
 module.exports = async function* onAnyKeypress() {
-  const interface = readline.createInterface(process.stdin);
-  readline.emitKeypressEvents(process.stdin, interface);
-
   if (process.stdin.isTTY) {
     process.stdin.setRawMode(true);
   }
+
+  const rl = readline.createInterface(process.stdin);
+  readline.emitKeypressEvents(process.stdin, rl);
 
   let listener = null;
   try {
@@ -22,6 +22,7 @@ module.exports = async function* onAnyKeypress() {
     }
   } finally {
     if (listener) {
+      rl.close();
       process.stdin.removeListener('keypress', listener);
     }
   }
