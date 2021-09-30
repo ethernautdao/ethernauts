@@ -27,6 +27,9 @@
     "coverage": "hardhat coverage",
     "start:local:ipfs": "./scripts/start-local-ipfs-node.sh",
     "create:dummy:assets": "node scripts/create-dummy-assets.js",
+    "create:ipfs:metadata": "node scripts/create-ipfs-metadata.js",
+    "create:dummy:resources": "npm run create:dummy:assets && npm run create:ipfs:metadata",
+    "upload:ipfs:metadata": "./node_modules/.bin/jsipfs add -r resources/metadata",
     "lint:js": "prettier --check '**/*.js' && eslint '**/*.js'",
     "lint:js:fix": "prettier --write '**/*.js' && eslint --fix '**/*.js'",
     "lint:sol": "prettier --check 'contracts/**/*.sol' && solhint 'contracts/**/*.sol'",
@@ -42,6 +45,7 @@
     "ethers": "^5.4.5",
     "faker": "^5.5.3",
     "hardhat": "^2.6.1",
+    "ipfs": "^0.58.6",
     "make-dir": "^3.1.0",
     "node-pnglib": "^1.5.5",
     "prettier": "2.3.2",
@@ -56,6 +60,7 @@
     "cids": "^1.1.9",
     "dotenv": "^10.0.0",
     "envalid": "^7.2.1",
-    "ipfs-http-client": "^52.0.3"
+    "ipfs-http-client": "^52.0.3",
+    "ipfs-only-hash": "^4.0.0"
   }
 }

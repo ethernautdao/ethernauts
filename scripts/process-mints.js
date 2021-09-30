@@ -3,6 +3,7 @@ const hre = require('hardhat');
 
 const IPFS = require('../src/ipfs');
 const config = require('../src/config');
+const constants = require('../src/constants');
 
 const { ethers } = hre;
 
@@ -34,7 +35,7 @@ async function main() {
 
     // Upload to local ipfs node
     const resultFromLocalIpfsNode = await ipfs.uploadToLocalIpfsNodeFromAssetFile(
-      path.resolve(__dirname, '..', 'resources', 'assets', `${tokenId}.png`),
+      path.join(constants.ASSETS_FOLDER, `${tokenId}.png`),
       {
         name: `${tokenId}.png`,
         description: 'This is an example',
