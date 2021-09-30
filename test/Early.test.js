@@ -2,41 +2,44 @@ const assert = require('assert');
 const assertRevert = require('./utils/assertRevert');
 const { ethers } = require('hardhat');
 
-describe('Mint', () => {
+describe('Early mint', () => {
   let Ethernauts;
 
   let users;
-  let owner, user;
-
-  let tx, receipt;
+  let owner, user, nextUser;
 
   let mintedTokenId;
   let tokensMinted = 0;
   let tokenIds = [];
 
-  const baseURI = 'http://deadpine.io/';
+  let tx, receipt;
+
+  let coupon;
+
+  async function signCouponForAddress(address, signer = owner) {
+    const payload = `0x000000000000000000000000${address.replace('0x', '')}`;
+    const payloadHash = ethers.utils.keccak256(payload);
+    const payloadHashBytes = ethers.utils.arrayify(payloadHash);
+    return await signer.signMessage(payloadHashBytes);
+  }
 
   before('identify signers', async () => {
     users = await ethers.getSigners();
     [owner, user] = users;
   });
 
+  before('prepare dummy signature', async () => {
+    coupon = await owner.signMessage('Hello');
+  });
+
   before('deploy contract', async () => {
     const factory = await ethers.getContractFactory('Ethernauts');
 
     const params = Object.assign({}, hre.config.defaults);
-    params.maxTokens = 100;
-    params.maxGiftable = 10;
-
     Ethernauts = await factory.deploy(...Object.values(params));
   });
 
-  before('set base URI', async () => {
-    const tx = await Ethernauts.connect(owner).setBaseURI(baseURI);
-    await tx.wait();
-  });
-
-  describe('when attempting to mint when the sale is not open', () => {
+  describe('when attempting to mint when the early sale is not open', () => {
     before('set paused', async () => {
       if ((await Ethernauts.currentSaleState()) !== 0) {
         await (await Ethernauts.connect(owner).setSaleState(0)).wait();
@@ -45,7 +48,7 @@ describe('Mint', () => {
 
     it('reverts', async () => {
       await assertRevert(
-        Ethernauts.connect(user).mint({
+        Ethernauts.connect(user).mintEarly(coupon, {
           value: ethers.utils.parseEther('15'),
         }),
         'Not allowed in current state'
@@ -53,15 +56,15 @@ describe('Mint', () => {
     });
   });
 
-  describe('when the owner opens the sale', () => {
-    before('open the sale', async () => {
-      await (await Ethernauts.connect(owner).setSaleState(2)).wait();
+  describe('when the early sale is active', () => {
+    before('open the early sale', async () => {
+      await (await Ethernauts.connect(owner).setSaleState(1)).wait();
     });
 
     describe('when attempting to mint without enough ETH', () => {
       it('reverts', async () => {
         await assertRevert(
-          Ethernauts.connect(user).mint({
+          Ethernauts.connect(user).mintEarly(coupon, {
             value: ethers.utils.parseEther('0.01'),
           }),
           'Invalid msg.value'
@@ -69,11 +72,45 @@ describe('Mint', () => {
       });
     });
 
-    describe('when minting many tokens', () => {
-      function itCorrectlyMintsTokensForUser(userNumber) {
-        describe(`when minting a token for user #${userNumber}`, () => {
+    describe('when trying to mint early tokens with invalid coupons', () => {
+      before('create an invalid coupon', async () => {
+        coupon = await signCouponForAddress(user.address, user);
+      });
+
+      it('shows that the coupon is invalid', async () => {
+        assert.equal(await Ethernauts.isCouponSignedForUser(user.address, coupon), false);
+      });
+
+      it('reverts', async () => {
+        await assertRevert(
+          Ethernauts.connect(user).mintEarly(coupon, {
+            value: hre.config.defaults.earlyMintPrice,
+          }),
+          'Invalid coupon'
+        );
+      });
+    });
+
+    describe('when minting many early tokens', () => {
+      function itCorrectlyMintsEarlyTokensForUser(userNumber) {
+        describe(`when minting an early token for user #${userNumber}`, () => {
+          let coupon;
+
           before('identify the user', async () => {
             user = users[userNumber];
+            nextUser = users[userNumber + 1];
+          });
+
+          before('sign coupon', async () => {
+            coupon = await signCouponForAddress(user.address);
+          });
+
+          it('shows that the coupon is valid', async () => {
+            assert.equal(await Ethernauts.isCouponSignedForUser(user.address, coupon), true);
+          });
+
+          it('shows that the coupon is not valid for another user', async () => {
+            assert.equal(await Ethernauts.isCouponSignedForUser(nextUser.address, coupon), false);
           });
 
           before('keep track of values', async () => {
@@ -93,16 +130,12 @@ describe('Mint', () => {
             user.recordedEthBalance = await ethers.provider.getBalance(user.address);
           });
 
-          before('mint', async () => {
-            tx = await Ethernauts.connect(user).mint({
-              value: ethers.utils.parseEther('0.2'),
+          before('early mint', async () => {
+            tx = await Ethernauts.connect(user).mintEarly(coupon, {
+              value: hre.config.defaults.earlyMintPrice,
             });
 
             receipt = await tx.wait();
-          });
-
-          it('shows that the base URI is set', async () => {
-            assert.equal(await Ethernauts.tokenURI(mintedTokenId), `${baseURI}${mintedTokenId}`);
           });
 
           it('shows that the token now exists', async () => {
@@ -157,22 +190,47 @@ describe('Mint', () => {
         });
       }
 
-      itCorrectlyMintsTokensForUser(1);
-      itCorrectlyMintsTokensForUser(1);
-      itCorrectlyMintsTokensForUser(2);
-      itCorrectlyMintsTokensForUser(2);
-      itCorrectlyMintsTokensForUser(2);
-      itCorrectlyMintsTokensForUser(1);
-      itCorrectlyMintsTokensForUser(3);
-      itCorrectlyMintsTokensForUser(4);
-      itCorrectlyMintsTokensForUser(1);
-      itCorrectlyMintsTokensForUser(5);
-      itCorrectlyMintsTokensForUser(2);
-      itCorrectlyMintsTokensForUser(6);
-      itCorrectlyMintsTokensForUser(1);
-      itCorrectlyMintsTokensForUser(2);
-      itCorrectlyMintsTokensForUser(5);
-      itCorrectlyMintsTokensForUser(3);
+      itCorrectlyMintsEarlyTokensForUser(1);
+      itCorrectlyMintsEarlyTokensForUser(2);
+      itCorrectlyMintsEarlyTokensForUser(3);
+      itCorrectlyMintsEarlyTokensForUser(4);
+      itCorrectlyMintsEarlyTokensForUser(5);
+      itCorrectlyMintsEarlyTokensForUser(6);
+      itCorrectlyMintsEarlyTokensForUser(7);
+
+      describe('when users try to reuse a coupon', () => {
+        let someUser;
+
+        before('identify user', async () => {
+          someUser = users[1];
+        });
+
+        it('shows that the coupon has been used', async () => {
+          assert.equal(await Ethernauts.userRedeemedCoupon(someUser.address), true);
+        });
+
+        it('reverts', async () => {
+          await assertRevert(
+            Ethernauts.connect(someUser).mintEarly(await signCouponForAddress(someUser.address), {
+              value: hre.config.defaults.earlyMintPrice,
+            }),
+            'Used coupon'
+          );
+        });
+      });
+
+      describe('when a user tries to use a coupon signed for another user', () => {
+        it('reverts', async () => {
+          const someUser = users[8];
+
+          await assertRevert(
+            Ethernauts.connect(someUser).mintEarly(await signCouponForAddress(user.address), {
+              value: hre.config.defaults.earlyMintPrice,
+            }),
+            'Invalid coupon'
+          );
+        });
+      });
 
       describe('when checking on all minted NFTs', () => {
         it('can enumerate all token ids', async () => {
@@ -182,37 +240,6 @@ describe('Mint', () => {
             assert.equal(await Ethernauts.tokenByIndex(i), tokenId);
           }
         });
-      });
-    });
-
-    describe('when trying to mint more than the maximum amount of Ethernauts', () => {
-      before('mint max -1', async () => {
-        const num =
-          (await Ethernauts.maxTokens()).toNumber() -
-          (await Ethernauts.maxGiftable()).toNumber() -
-          (await Ethernauts.totalSupply()).toNumber();
-
-        let promises = [];
-        for (let i = 0; i < num; i++) {
-          promises.push(
-            (
-              await Ethernauts.connect(user).mint({
-                value: ethers.utils.parseEther('0.2'),
-              })
-            ).wait()
-          );
-        }
-
-        await Promise.all(promises);
-      });
-
-      it('reverts', async () => {
-        await assertRevert(
-          Ethernauts.connect(user).mint({
-            value: ethers.utils.parseEther('0.2'),
-          }),
-          'No available supply'
-        );
       });
     });
   });
