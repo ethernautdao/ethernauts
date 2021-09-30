@@ -1,11 +1,9 @@
 const path = require('path');
-const hre = require('hardhat');
 
+const { getContractAt } = require('../src/utils/hardhat');
 const IPFS = require('../src/ipfs');
 const config = require('../src/config');
 const constants = require('../src/constants');
-
-const { ethers } = hre;
 
 async function main() {
   const ipfs = new IPFS({
@@ -18,11 +16,7 @@ async function main() {
     ipfsApiUrl: config.IPFS_API_URL,
   });
 
-  const { token } = require(`../deployments/${hre.network.name}`);
-
-  if (!token) throw new Error('No token data found');
-
-  const Ethernauts = await ethers.getContractAt('Ethernauts', token);
+  const Ethernauts = await getContractAt('Ethernauts');
 
   console.log(`Listening for events on Ethernauts token at ${Ethernauts.address}`);
 
