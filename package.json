@@ -60,6 +60,7 @@
     "cids": "^1.1.9",
     "dotenv": "^10.0.0",
     "envalid": "^7.2.1",
+    "fastq": "^1.13.0",
     "ipfs-http-client": "^52.0.3",
     "ipfs-only-hash": "^4.0.0"
   }

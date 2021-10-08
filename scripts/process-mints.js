@@ -1,11 +1,10 @@
 const path = require('path');
-const hre = require('hardhat');
+const fastq = require('fastq');
 
+const { getContractAt } = require('../src/utils/hardhat');
 const IPFS = require('../src/ipfs');
 const config = require('../src/config');
 const constants = require('../src/constants');
-
-const { ethers } = hre;
 
 async function main() {
   const ipfs = new IPFS({
@@ -18,20 +17,10 @@ async function main() {
     ipfsApiUrl: config.IPFS_API_URL,
   });
 
-  const { token } = require(`../deployments/${hre.network.name}`);
+  const Ethernauts = await getContractAt('Ethernauts');
 
-  if (!token) throw new Error('No token data found');
-
-  const Ethernauts = await ethers.getContractAt('Ethernauts', token);
-
-  console.log(`Listening for events on Ethernauts token at ${Ethernauts.address}`);
-
-  Ethernauts.on('Transfer', async (from, to, amount, event) => {
-    if (from !== '0x0000000000000000000000000000000000000000') return;
-
-    const tokenId = event.args.tokenId.toString();
-
-    console.log(`Mint detected, tokenId: ${tokenId}`);
+  async function uploadResource(tokenId) {
+    // TODO: Check if image already exists on ipfs
 
     // Upload to local ipfs node
     const resultFromLocalIpfsNode = await ipfs.uploadToLocalIpfsNodeFromAssetFile(
@@ -43,6 +32,27 @@ async function main() {
     );
 
     console.log('resultFromLocalIpfsNode', resultFromLocalIpfsNode);
+  }
+
+  const queue = fastq.promise(uploadResource, config.MINTS_QUEUE_COCURRENCY);
+
+  const oldEvents = await Ethernauts.queryFilter('Transfer');
+
+  const proccesed = oldEvents
+    .map((evt) => {
+      if (evt.args.from !== '0x0000000000000000000000000000000000000000') return;
+      return evt.args.tokenId.toString();
+    })
+    .filter((tokenId) => !!tokenId);
+
+  console.log(`Listening for events on Ethernauts token at ${Ethernauts.address}`);
+
+  Ethernauts.on('Transfer', async (from, to, amount, evt) => {
+    if (from !== '0x0000000000000000000000000000000000000000') return;
+    const tokenId = evt.args.tokenId.toString();
+    if (proccesed.includes(tokenId)) return;
+    console.log(`Mint detected, tokenId: ${tokenId}`);
+    await queue.push(tokenId);
   });
 }
 
