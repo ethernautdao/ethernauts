@@ -28,10 +28,7 @@ jobs:
       
       - name: Checking Linters
         run: npm run lint
-      
-      - name: Running Tests
-        run: npm run test
 
-      - name: Running Coverage
+      - name: Running Tests
         run: npm run coverage
 
