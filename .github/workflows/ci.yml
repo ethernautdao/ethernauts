@@ -1,10 +1,10 @@
 name: CI
 
 on:
-  push:
+  push: 
     branches: [ master ]
   pull_request:
-    branches: [ master ]
+    branches: [ master ] 
 
   workflow_dispatch:
 
@@ -28,4 +28,3 @@ jobs:
 
       - name: Running Tests
         run: npm run coverage
-
