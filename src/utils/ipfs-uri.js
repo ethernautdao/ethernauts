@@ -47,7 +47,7 @@ const extractCID = (cidOrURI) => {
 
 /**
  * It calculates the IPFS hash for some data
- * @param {array|string|buffer|arrayBuffer} object 
+ * @param {array|string|buffer|arrayBuffer} object
  * @returns {string} ipfs hash
  */
 
@@ -56,7 +56,7 @@ const getIPFSHash = async (object) => {
   const hash = await Hash.of(data);
 
   return hash;
-}
+};
 
 module.exports = {
   ensureIpfsUriPrefix,
