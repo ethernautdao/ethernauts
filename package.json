@@ -4,6 +4,10 @@
   "description": "EthernautDAO's first NFT project",
   "main": "index.js",
   "homepage": "https://github.com/ethernautdao/ethernauts#readme",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ethernautdao/ethernauts.git"
