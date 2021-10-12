@@ -6,6 +6,8 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
+import "hardhat/console.sol";
+
 contract Ethernauts is ERC721Enumerable, Ownable {
     using Address for address payable;
 
@@ -120,9 +122,6 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     }
 
     function tokenURI(uint256 tokenId) public view override returns (string memory) {
-        require(_exists(tokenId), "Token id does not exist");
-        require(bytes(_baseURI()).length == 0, "Base URI not set");
-
         string memory baseURI = _baseURI();
 
         uint batchId = tokenId / randomnessBatchSize;
@@ -140,7 +139,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
             assetId -= randomnessBatchSize;
         }
 
-        return string(abi.encodePacked(baseURI), assetId);
+        return string(abi.encodePacked(baseURI, assetId));
     }
 
     // This is unprotected for now, but will actually only
