@@ -131,11 +131,13 @@ contract Ethernauts is ERC721Enumerable, Ownable {
             return string(abi.encodePacked(baseURI, "travelling_to_destination"));
         }
 
-        uint offset = randomNumber * randomnessBatchSize / uint(-1);
-        uint nextBatchId = (batchId + 1) * randomnessBatchSize;
-        uint assetId = batchId * randomnessBatchSize + offset;
-        if (assetId > nextBatchId * randomnessBatchSize) {
-            assetId = assetId - (randomnessBatchSize - offset);
+        uint offset = randomNumber % randomnessBatchSize;
+        uint batchMin = batchId * randomnessBatchSize;
+        uint batchMax = batchMin + randomnessBatchSize - 1;
+
+        uint assetId = tokenId + offset;
+        if (assetId > batchMax) {
+            assetId -= randomnessBatchSize;
         }
 
         return string(abi.encodePacked(baseURI), assetId);
