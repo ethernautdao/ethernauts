@@ -23,7 +23,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     // Internal usage
     uint private _tokensGifted;
     mapping(address => bool) private _redeemedCoupons; // user address => if its single coupon has been redeemed
-    mapping(uint => uint) private _randomURINumbers; // batchId => random number used for random URI generation
+    mapping(uint => uint) private _randomNumberForBatch; // batchId => random number used for random URI generation
 
     // Three different sale stages:
     enum SaleState {
@@ -121,42 +121,41 @@ contract Ethernauts is ERC721Enumerable, Ownable {
 
     function tokenURI(uint256 tokenId) public view override returns (string memory) {
         require(_exists(tokenId), "Token id does not exist");
-        require(_baseURI() != "", "Base URI not set");
-
-        uint batchId = tokenId / randomnessBatchSize;
-        uint randomNumber = _randomURINumbers[batchId];
+        require(bytes(_baseURI()).length == 0, "Base URI not set");
 
         string memory baseURI = _baseURI();
 
+        uint batchId = tokenId / randomnessBatchSize;
+        uint randomNumber = _randomNumberForBatch[batchId];
         if (randomNumber == 0) {
             return string(abi.encodePacked(baseURI, "travelling_to_destination"));
-        } else {
-            uint offset = randomNumber * randomnessBatchSize;
-            uint nextBatchId = (batchId + 1) * randomnessBatchSize;
-            uint assetId = batchId * randomnessBatchSize + offset;
-            if (assetId > nextBatchId * randomnessBatchSize) {
-                assetId = assetId - (randomnessBatchSize - offset);
-            }
-
-            return string(abi.encodePacked(baseURI), assetId);
         }
+
+        uint offset = randomNumber * randomnessBatchSize / uint(-1);
+        uint nextBatchId = (batchId + 1) * randomnessBatchSize;
+        uint assetId = batchId * randomnessBatchSize + offset;
+        if (assetId > nextBatchId * randomnessBatchSize) {
+            assetId = assetId - (randomnessBatchSize - offset);
+        }
+
+        return string(abi.encodePacked(baseURI), assetId);
     }
 
     // This is unprotected for now, but will actually only
     // be callable by an L1 -> L2 bridge contract.
     function setRandomNumberForBatch(uint batchId, uint randomNumber) external onlyOwner {
         if (batchId > 0) {
-            require(_randomURINumbers[batchId - 1] != 0, "Previous random number not set");
+            require(_randomNumberForBatch[batchId - 1] != 0, "Previous random number not set");
         }
 
         uint lowestTokenIdInBatch = batchId * randomnessBatchSize;
         require(lowestTokenIdInBatch < totalSupply(), "Cannot set for unminted tokens");
 
-        _randomURINumbers[batchId] = randomNumber;
+        _randomNumberForBatch[batchId] = randomNumber;
     }
 
     function getRandomNumberForBatch(uint batchId) public view returns (uint) {
-        return _randomURINumbers[batchId];
+        return _randomNumberForBatch[batchId];
     }
 
     // -----------------------
