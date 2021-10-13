@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/Address.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
@@ -10,6 +11,7 @@ import "hardhat/console.sol";
 
 contract Ethernauts is ERC721Enumerable, Ownable {
     using Address for address payable;
+    using Strings for uint256;
 
     // Can be set only once on deploy
     uint public immutable maxTokens;
@@ -139,7 +141,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
             assetId -= randomnessBatchSize;
         }
 
-        return string(abi.encodePacked(baseURI, assetId));
+        return string(abi.encodePacked(baseURI, assetId.toString()));
     }
 
     // This is unprotected for now, but will actually only

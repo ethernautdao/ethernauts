@@ -28,10 +28,14 @@ describe('Random', () => {
     await (await Ethernauts.connect(owner).setSaleState(2)).wait();
   });
 
-  function simulateRandomNumber() {
-    return ethers.BigNumber.from(
-      ethers.utils.randomBytes(32)
-    ).toString();
+  function simulateRandomNumber(factor) {
+    const { randomnessBatchSize } = hre.config.defaults;
+
+    const offset = Math.floor(randomnessBatchSize * factor);
+    const max = ethers.constants.MaxUint256;
+    const batch = ethers.BigNumber.from(randomnessBatchSize);
+
+    return ethers.BigNumber.from(offset).mul(max.div(batch));
   }
 
   describe('when the first tokens are minted', () => {
@@ -57,7 +61,7 @@ describe('Random', () => {
       let rand;
 
       before('set random number for batch', async () => {
-        rand = simulateRandomNumber();
+        rand = simulateRandomNumber(0.5);
 
         await (await Ethernauts.connect(owner).setRandomNumberForBatch(0, rand)).wait();
       });
@@ -66,11 +70,11 @@ describe('Random', () => {
         assert.equal((await Ethernauts.getRandomNumberForBatch(0)).toString(), rand);
       });
 
-      // it('shows the temp URI for all minted tokens', async () => {
-      //   assert.equal(await Ethernauts.tokenURI(0), `${baseURI}travelling_to_destination`);
-      //   assert.equal(await Ethernauts.tokenURI(1), `${baseURI}travelling_to_destination`);
-      //   assert.equal(await Ethernauts.tokenURI(2), `${baseURI}travelling_to_destination`);
-      // });
+      it('shows the temp URI for all minted tokens', async () => {
+        assert.equal(await Ethernauts.tokenURI(0), `${baseURI}250`);
+        assert.equal(await Ethernauts.tokenURI(1), `${baseURI}251`);
+        assert.equal(await Ethernauts.tokenURI(2), `${baseURI}252`);
+      });
     });
   });
 });
