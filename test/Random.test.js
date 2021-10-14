@@ -5,7 +5,7 @@ const { ethers } = require('hardhat');
 describe('Random', () => {
   let Ethernauts;
 
-  let users;
+  let owner;
 
   const maxTokens = 40;
   const batchSize = 20;
@@ -13,8 +13,7 @@ describe('Random', () => {
   const baseURI = 'http://deadpine.io/';
 
   before('identify signers', async () => {
-    users = await ethers.getSigners();
-    [owner, user] = users;
+    [owner] = await ethers.getSigners();
   });
 
   before('deploy contract', async () => {
