@@ -8,27 +8,18 @@ const PNGlib = require('node-pnglib');
 const Confirm = require('prompt-confirm');
 const randomColor = require('random-color');
 
-const TOTAL_ASSETS = 10000;
-const RESOURCES_FOLDER = path.resolve(__dirname, '..', 'resources');
-const ASSETS_FOLDER = path.join(RESOURCES_FOLDER, 'assets');
-const METADATA_FOLDER = path.join(RESOURCES_FOLDER, 'metadata');
-
-function fileExists(file) {
-  return fs.promises
-    .access(file, fs.constants.F_OK)
-    .then(() => true)
-    .catch(() => false);
-}
+const constants = require('../src/constants');
+const fileExists = require('../src/utils/file-exists');
 
 async function main() {
-  if (await fileExists(path.join(ASSETS_FOLDER, '0.png'))) {
-    const confirm = new Confirm('Do you want to recreate the assets?');
+  if (await fileExists(path.join(constants.ASSETS_FOLDER, '0.png'))) {
+    const confirm = new Confirm('Do you want to recreate the assets and metadata?');
     const yes = await confirm.run();
     if (!yes) return;
-    await del([ASSETS_FOLDER, METADATA_FOLDER]);
+    await del([constants.ASSETS_FOLDER, constants.METADATA_FOLDER]);
   }
 
-  await Promise.all([makeDir(ASSETS_FOLDER), makeDir(METADATA_FOLDER)]);
+  await Promise.all([makeDir(constants.ASSETS_FOLDER), makeDir(constants.METADATA_FOLDER)]);
 
   const _r = random.exponential(10.1);
   const getRarity = () => {
@@ -39,7 +30,7 @@ async function main() {
   const promises = [];
   let rarities = [];
 
-  for (let x = 0; x < TOTAL_ASSETS; x++) {
+  for (let x = 0; x < constants.TOTAL_ASSETS; x++) {
     let png = new PNGlib(150, 150);
 
     const color = randomColor().hexString();
@@ -59,8 +50,8 @@ async function main() {
 
     rarities.push(metadata.rarity);
 
-    const assetPath = path.join(ASSETS_FOLDER, `${x}.png`);
-    const metadataPath = path.join(METADATA_FOLDER, `${x}.json`);
+    const assetPath = path.join(constants.ASSETS_FOLDER, `${x}.png`);
+    const metadataPath = path.join(constants.METADATA_FOLDER, `${x}.json`);
 
     promises.push(
       fs.promises.writeFile(assetPath, png.getBuffer()),
@@ -80,7 +71,7 @@ async function main() {
     }, []),
   ].map((v) => v || 0);
 
-  const title = ` Generated ${TOTAL_ASSETS} assets `;
+  const title = ` Generated ${constants.TOTAL_ASSETS} assets `;
 
   console.log('');
   console.log(title.replace(/.{1}/g, '='));

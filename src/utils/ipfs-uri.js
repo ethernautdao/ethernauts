@@ -1,4 +1,5 @@
 const CID = require('cids');
+const Hash = require('ipfs-only-hash');
 
 /**
  * It makes sure the ipfs:// prefix exists
@@ -35,7 +36,7 @@ const stripIpfsUriPrefix = (cidOrURI) => {
 /**
  * It returns the CID
  * @param {string} cidOrURI The CID or the URI of ipfs
- * @returns
+ * @returns {string} ipfs cid
  */
 const extractCID = (cidOrURI) => {
   // remove the ipfs:// prefix, split on '/' and return first path component (root CID)
@@ -44,8 +45,22 @@ const extractCID = (cidOrURI) => {
   return new CID(cidString);
 };
 
+/**
+ * It calculates the IPFS hash for some data
+ * @param {array|string|buffer|arrayBuffer} object 
+ * @returns {string} ipfs hash
+ */
+
+const getIPFSHash = async (object) => {
+  const data = Buffer.from(object);
+  const hash = await Hash.of(data);
+
+  return hash;
+}
+
 module.exports = {
   ensureIpfsUriPrefix,
   stripIpfsUriPrefix,
   extractCID,
+  getIPFSHash,
 };
