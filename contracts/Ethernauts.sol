@@ -16,7 +16,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     // Can be set only once on deploy
     uint public immutable maxTokens;
     uint public immutable maxGiftable;
-    uint public immutable randomnessBatchSize;
+    uint public immutable batchSize;
 
     // Can be changed by owner
     string public baseTokenURI;
@@ -50,7 +50,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
 
         maxGiftable = definitiveMaxGiftable;
         maxTokens = definitiveMaxTokens;
-        randomnessBatchSize = definitiveRandomnessBatchSize;
+        batchSize = definitiveRandomnessBatchSize;
 
         mintPrice = initialMintPrice;
         earlyMintPrice = initialEarlyMintPrice;
@@ -126,19 +126,18 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     function tokenURI(uint256 tokenId) public view override returns (string memory) {
         string memory baseURI = _baseURI();
 
-        uint batchId = tokenId / randomnessBatchSize;
+        uint batchId = tokenId / batchSize;
         uint randomNumber = _randomNumberForBatch[batchId];
         if (randomNumber == 0) {
             return string(abi.encodePacked(baseURI, "travelling_to_destination"));
         }
 
-        uint offset = randomNumber % randomnessBatchSize;
-        uint batchMin = batchId * randomnessBatchSize;
-        uint batchMax = batchMin + randomnessBatchSize - 1;
+        uint offset = randomNumber % batchSize;
+        uint maxTokenIdInBatch = batchSize * (batchId + 1) - 1;
 
         uint assetId = tokenId + offset;
-        if (assetId > batchMax) {
-            assetId -= randomnessBatchSize;
+        if (assetId > maxTokenIdInBatch) {
+            assetId -= batchSize;
         }
 
         return string(abi.encodePacked(baseURI, assetId.toString()));
@@ -147,12 +146,14 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     // This is unprotected for now, but will actually only
     // be callable by an L1 -> L2 bridge contract.
     function setRandomNumberForBatch(uint batchId, uint randomNumber) external onlyOwner {
+        require(_randomNumberForBatch[batchId] == 0, "Random number already set");
+
         if (batchId > 0) {
             require(_randomNumberForBatch[batchId - 1] != 0, "Previous random number not set");
         }
 
-        uint lowestTokenIdInBatch = batchId * randomnessBatchSize;
-        require(lowestTokenIdInBatch < totalSupply(), "Cannot set for unminted tokens");
+        uint maxTokenIdInBatch = batchSize * (batchId + 1) - 1;
+        require(totalSupply() >= maxTokenIdInBatch, "Cannot set for unminted tokens");
 
         _randomNumberForBatch[batchId] = randomNumber;
     }
