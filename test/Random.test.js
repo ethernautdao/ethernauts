@@ -7,6 +7,9 @@ describe('Random', () => {
 
   let users;
 
+  const maxTokens = 40;
+  const batchSize = 20;
+
   const baseURI = 'http://deadpine.io/';
 
   before('identify signers', async () => {
@@ -18,8 +21,8 @@ describe('Random', () => {
     const factory = await ethers.getContractFactory('Ethernauts');
 
     const params = Object.assign({}, hre.config.defaults);
-    params.maxTokens = 100;
-    params.randomnessBatchSize = 20;
+    params.maxTokens = maxTokens;
+    params.batchSize = batchSize;
     params.maxGiftable = 0;
 
     Ethernauts = await factory.deploy(...Object.values(params));
@@ -34,13 +37,9 @@ describe('Random', () => {
   });
 
   function simulateRandomNumber(factor) {
-    const { randomnessBatchSize } = hre.config.defaults;
+    const rand = ethers.BigNumber.from(Math.floor(batchSize * factor));
 
-    const offset = Math.floor(randomnessBatchSize * factor);
-    const max = ethers.constants.MaxUint256;
-    const batch = ethers.BigNumber.from(randomnessBatchSize);
-
-    return ethers.BigNumber.from(offset).mul(max.div(batch));
+    return rand;
   }
 
   async function mintTokens(num) {
@@ -52,7 +51,6 @@ describe('Random', () => {
   }
 
   describe('as the first tokens are minted', () => {
-
     before('mint some tokens', async () => {
       await mintTokens(3);
     });
@@ -70,7 +68,7 @@ describe('Random', () => {
     describe('when the owner tries to generate a random number for the current batch, before all its tokens are minted', () => {
       it('reverts', async () => {
         await assertRevert(
-          Ethernauts.connect(owner).setRandomNumberForBatch(0, simulateRandomNumber(0.1)),
+          Ethernauts.connect(owner).setRandomNumberForBatch(0, 1337),
           'Cannot set for unminted tokens'
         );
       });
@@ -98,7 +96,7 @@ describe('Random', () => {
           assert.equal((await Ethernauts.getRandomNumberForBatch(0)).toString(), rand);
         });
 
-        it('shows the temp URI for all minted tokens', async () => {
+        it('shows the definitive URI for all minted tokens', async () => {
           assert.equal(await Ethernauts.tokenURI(0), `${baseURI}10`);
           assert.equal(await Ethernauts.tokenURI(5), `${baseURI}15`);
           assert.equal(await Ethernauts.tokenURI(10), `${baseURI}0`);
@@ -109,7 +107,7 @@ describe('Random', () => {
         describe('when the owner tries to set the random number for the past batch again', () => {
           it('reverts', async () => {
             await assertRevert(
-              Ethernauts.connect(owner).setRandomNumberForBatch(0, simulateRandomNumber(0.1)),
+              Ethernauts.connect(owner).setRandomNumberForBatch(0, 1337),
               'Random number already set'
             );
           });
@@ -118,9 +116,60 @@ describe('Random', () => {
         describe('when the owner tries to set the random number for the next batch before its tokens are minted', () => {
           it('reverts', async () => {
             await assertRevert(
-              Ethernauts.connect(owner).setRandomNumberForBatch(1, simulateRandomNumber(0.1)),
+              Ethernauts.connect(owner).setRandomNumberForBatch(1, 1337),
               'Cannot set for unminted tokens'
             );
+          });
+        });
+
+        describe('when the tokens for the next batch are minted', () => {
+          before('mint some tokens', async () => {
+            await mintTokens(20);
+          });
+
+          it('shows that the token supply increased accordingly', async () => {
+            assert.equal(await Ethernauts.totalSupply(), 40);
+          });
+
+          describe('before the owner mints the new random number', () => {
+            it('shows the temporary URI for all minted tokens', async () => {
+              assert.equal(await Ethernauts.tokenURI(20), `${baseURI}travelling_to_destination`);
+              assert.equal(await Ethernauts.tokenURI(21), `${baseURI}travelling_to_destination`);
+              assert.equal(await Ethernauts.tokenURI(22), `${baseURI}travelling_to_destination`);
+            });
+          });
+
+          describe('when the owner creates the new random number', () => {
+            before('set random number for batch', async () => {
+              rand = simulateRandomNumber(0.1);
+
+              await (await Ethernauts.connect(owner).setRandomNumberForBatch(1, rand)).wait();
+            });
+
+            it('shows that the random number is set', async () => {
+              assert.equal((await Ethernauts.getRandomNumberForBatch(1)).toString(), rand);
+            });
+
+            it('shows the definitive URI for all minted tokens', async () => {
+              assert.equal(await Ethernauts.tokenURI(20), `${baseURI}22`);
+              assert.equal(await Ethernauts.tokenURI(25), `${baseURI}27`);
+              assert.equal(await Ethernauts.tokenURI(30), `${baseURI}32`);
+              assert.equal(await Ethernauts.tokenURI(35), `${baseURI}37`);
+              assert.equal(await Ethernauts.tokenURI(39), `${baseURI}21`);
+            });
+
+            it('shows that all assetIds are used and are unique', async () => {
+              const uris = [];
+
+              for (let i = 0; i < maxTokens; i++) {
+                const tokenURI = await Ethernauts.tokenURI(i);
+                uris.push(tokenURI);
+              }
+              assert.equal(uris.length, 40);
+
+              const uriSet = new Set(uris);
+              assert.equal(uriSet.size, 40);
+            });
           });
         });
       });

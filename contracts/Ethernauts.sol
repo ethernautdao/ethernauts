@@ -7,8 +7,6 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
-import "hardhat/console.sol";
-
 contract Ethernauts is ERC721Enumerable, Ownable {
     using Address for address payable;
     using Strings for uint256;
@@ -40,7 +38,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     constructor(
         uint definitiveMaxGiftable,
         uint definitiveMaxTokens,
-        uint definitiveRandomnessBatchSize,
+        uint definitiveBatchSize,
         uint initialMintPrice,
         uint initialEarlyMintPrice,
         address initialCouponSigner
@@ -50,7 +48,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
 
         maxGiftable = definitiveMaxGiftable;
         maxTokens = definitiveMaxTokens;
-        batchSize = definitiveRandomnessBatchSize;
+        batchSize = definitiveBatchSize;
 
         mintPrice = initialMintPrice;
         earlyMintPrice = initialEarlyMintPrice;
