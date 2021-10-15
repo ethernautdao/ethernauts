@@ -25,7 +25,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     // Internal usage
     uint private _tokensGifted;
     mapping(address => bool) private _redeemedCoupons; // user address => if its single coupon has been redeemed
-    mapping(uint => uint) private _randomNumberForBatch; // batchId => random number used for random URI generation
+    uint[] _randomNumbers;
 
     // Three different sale stages:
     enum SaleState {
@@ -125,11 +125,11 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         string memory baseURI = _baseURI();
 
         uint batchId = tokenId / batchSize;
-        uint randomNumber = _randomNumberForBatch[batchId];
-        if (randomNumber == 0) {
+        if (batchId >= _randomNumbers.length) {
             return string(abi.encodePacked(baseURI, "travelling_to_destination"));
         }
 
+        uint randomNumber = _randomNumbers[batchId];
         uint offset = randomNumber % batchSize;
         uint maxTokenIdInBatch = batchSize * (batchId + 1) - 1;
 
@@ -143,21 +143,17 @@ contract Ethernauts is ERC721Enumerable, Ownable {
 
     // This is unprotected for now, but will actually only
     // be callable by an L1 -> L2 bridge contract.
-    function setRandomNumberForBatch(uint batchId, uint randomNumber) external onlyOwner {
-        require(_randomNumberForBatch[batchId] == 0, "Random number already set");
+    function setNextRandomNumber(uint randomNumber) external onlyOwner {
+        uint randomNumberIdx = _randomNumbers.length;
 
-        if (batchId > 0) {
-            require(_randomNumberForBatch[batchId - 1] != 0, "Previous random number not set");
-        }
-
-        uint maxTokenIdInBatch = batchSize * (batchId + 1) - 1;
+        uint maxTokenIdInBatch = batchSize * (randomNumberIdx + 1) - 1;
         require(totalSupply() >= maxTokenIdInBatch, "Cannot set for unminted tokens");
 
-        _randomNumberForBatch[batchId] = randomNumber;
+        _randomNumbers.push(randomNumber);
     }
 
     function getRandomNumberForBatch(uint batchId) public view returns (uint) {
-        return _randomNumberForBatch[batchId];
+        return _randomNumbers[batchId];
     }
 
     // -----------------------

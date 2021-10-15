@@ -67,7 +67,7 @@ describe('Random', () => {
     describe('when the owner tries to generate a random number for the current batch, before all its tokens are minted', () => {
       it('reverts', async () => {
         await assertRevert(
-          Ethernauts.connect(owner).setRandomNumberForBatch(0, 1337),
+          Ethernauts.connect(owner).setNextRandomNumber(1337),
           'Cannot set for unminted tokens'
         );
       });
@@ -88,7 +88,7 @@ describe('Random', () => {
         before('set random number for batch', async () => {
           rand = simulateRandomNumber(0.5);
 
-          await (await Ethernauts.connect(owner).setRandomNumberForBatch(0, rand)).wait();
+          await (await Ethernauts.connect(owner).setNextRandomNumber(rand)).wait();
         });
 
         it('shows that the random number is set', async () => {
@@ -103,19 +103,10 @@ describe('Random', () => {
           assert.equal(await Ethernauts.tokenURI(19), `${baseURI}9`);
         });
 
-        describe('when the owner tries to set the random number for the past batch again', () => {
-          it('reverts', async () => {
-            await assertRevert(
-              Ethernauts.connect(owner).setRandomNumberForBatch(0, 1337),
-              'Random number already set'
-            );
-          });
-        });
-
         describe('when the owner tries to set the random number for the next batch before its tokens are minted', () => {
           it('reverts', async () => {
             await assertRevert(
-              Ethernauts.connect(owner).setRandomNumberForBatch(1, 1337),
+              Ethernauts.connect(owner).setNextRandomNumber(1337),
               'Cannot set for unminted tokens'
             );
           });
@@ -142,7 +133,7 @@ describe('Random', () => {
             before('set random number for batch', async () => {
               rand = simulateRandomNumber(0.1);
 
-              await (await Ethernauts.connect(owner).setRandomNumberForBatch(1, rand)).wait();
+              await (await Ethernauts.connect(owner).setNextRandomNumber(rand)).wait();
             });
 
             it('shows that the random number is set', async () => {
