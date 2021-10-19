@@ -1,9 +1,6 @@
 const ethers = require('ethers');
 
 require('@nomiclabs/hardhat-ethers');
-//require('hardhat-deploy-ethers');
-require('hardhat-deploy');
-//require('@symfoni/hardhat-react');
 require('solidity-coverage');
 
 module.exports = {
