@@ -19,4 +19,5 @@ module.exports = {
     semi: ['error', 'always'],
     'no-inner-declarations': 'off',
   },
+  ignorePatterns: ['packages/dapp/*'],
 };

@@ -14,9 +14,9 @@ export const Home = () => {
 
   const [{ data, isLoading, isError }, fetchAvailableSupply] = useAvailableSupply();
 
-  useEffect(async () => {
-    await fetchAvailableSupply();
-  }, [state.web3Provider]);
+  useEffect(() => {
+    if (state.web3Provider) fetchAvailableSupply();
+  }, [state.web3Provider, fetchAvailableSupply]);
 
   return (
     <div className={styles.container}>

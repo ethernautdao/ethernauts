@@ -1,9 +1,11 @@
-import { useCallback, useContext, useState } from 'react';
+import { useContext, useState } from 'react';
 import { Contract, utils } from 'ethers';
 
 import { WalletContext } from '../contexts/WalletProvider';
 
 import { abi, tokenAddress } from '../config';
+
+const zeroAccount = '0x0000000000000000000000000000000000000000';
 
 const signCouponForAddress = (address, signer) => {
   const payload = `0x000000000000000000000000${address.replace('0x', '')}`;

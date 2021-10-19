@@ -81,6 +81,7 @@ const WalletProvider = ({ children }) => {
     dispatch({
       type: 'RESET_PROVIDER',
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [provider]);
 
   useEffect(() => {
