@@ -23,8 +23,9 @@ const useAvailableSupply = () => {
         const contract = new Contract(tokenAddress, abi, signer);
 
         contract.on('Transfer', async (from) => {
-          setIsLoading(true);
           if (from !== zeroAccount) return;
+
+          setIsLoading(true);
 
           const supply = await contract.availableSupply();
 
