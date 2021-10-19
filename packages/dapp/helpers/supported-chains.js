@@ -64,11 +64,11 @@ const supportedChains = [
     },
   },
   {
-    name: 'Hardhat Network',
-    short_name: 'hardhat',
+    name: 'Localhost Network',
+    short_name: 'local',
     chain: 'ETH',
-    network: 'hardhat',
-    chain_id: 1337,
+    network: 'local',
+    chain_id: 31337,
     network_id: 1337,
     rpc_url: 'http://127.0.0.1:8545',
     native_currency: {
