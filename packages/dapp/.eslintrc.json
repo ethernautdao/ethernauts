@@ -1,8 +1,0 @@
-{
-  "extends": ["next"],
-  "settings": {
-    "next": {
-      "rootDir": "/packages/dapp/"
-    }
-  }
-}
