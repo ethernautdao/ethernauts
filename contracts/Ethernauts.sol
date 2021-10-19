@@ -2,16 +2,19 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/Address.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
 contract Ethernauts is ERC721Enumerable, Ownable {
     using Address for address payable;
+    using Strings for uint256;
 
     // Can be set only once on deploy
     uint public immutable maxTokens;
     uint public immutable maxGiftable;
+    uint public immutable batchSize;
 
     // Can be changed by owner
     string public baseTokenURI;
@@ -21,7 +24,8 @@ contract Ethernauts is ERC721Enumerable, Ownable {
 
     // Internal usage
     uint private _tokensGifted;
-    mapping(address => bool) private _redeemedCoupons;
+    mapping(address => bool) private _redeemedCoupons; // user address => if its single coupon has been redeemed
+    uint[] _randomNumbers;
 
     // Three different sale stages:
     enum SaleState {
@@ -34,6 +38,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     constructor(
         uint definitiveMaxGiftable,
         uint definitiveMaxTokens,
+        uint definitiveBatchSize,
         uint initialMintPrice,
         uint initialEarlyMintPrice,
         address initialCouponSigner
@@ -43,6 +48,8 @@ contract Ethernauts is ERC721Enumerable, Ownable {
 
         maxGiftable = definitiveMaxGiftable;
         maxTokens = definitiveMaxTokens;
+        batchSize = definitiveBatchSize;
+
         mintPrice = initialMintPrice;
         earlyMintPrice = initialEarlyMintPrice;
         couponSigner = initialCouponSigner;
@@ -112,6 +119,41 @@ contract Ethernauts is ERC721Enumerable, Ownable {
 
     function userRedeemedCoupon(address user) public view returns (bool) {
         return _redeemedCoupons[user];
+    }
+
+    function tokenURI(uint256 tokenId) public view override returns (string memory) {
+        string memory baseURI = _baseURI();
+
+        uint batchId = tokenId / batchSize;
+        if (batchId >= _randomNumbers.length) {
+            return string(abi.encodePacked(baseURI, "travelling_to_destination"));
+        }
+
+        uint randomNumber = _randomNumbers[batchId];
+        uint offset = randomNumber % batchSize;
+        uint maxTokenIdInBatch = batchSize * (batchId + 1) - 1;
+
+        uint assetId = tokenId + offset;
+        if (assetId > maxTokenIdInBatch) {
+            assetId -= batchSize;
+        }
+
+        return string(abi.encodePacked(baseURI, assetId.toString()));
+    }
+
+    // This is unprotected for now, but will actually only
+    // be callable by an L1 -> L2 bridge contract.
+    function setNextRandomNumber(uint randomNumber) external onlyOwner {
+        uint randomNumberIdx = _randomNumbers.length;
+
+        uint maxTokenIdInBatch = batchSize * (randomNumberIdx + 1) - 1;
+        require(totalSupply() >= maxTokenIdInBatch, "Cannot set for unminted tokens");
+
+        _randomNumbers.push(randomNumber);
+    }
+
+    function getRandomNumberForBatch(uint batchId) public view returns (uint) {
+        return _randomNumbers[batchId];
     }
 
     // -----------------------

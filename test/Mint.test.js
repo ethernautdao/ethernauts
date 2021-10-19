@@ -101,8 +101,11 @@ describe('Mint', () => {
             receipt = await tx.wait();
           });
 
-          it('shows that the base URI is set', async () => {
-            assert.equal(await Ethernauts.tokenURI(mintedTokenId), `${baseURI}${mintedTokenId}`);
+          it('shows that the temporary base URI is set', async () => {
+            assert.equal(
+              await Ethernauts.tokenURI(mintedTokenId),
+              `${baseURI}travelling_to_destination`
+            );
           });
 
           it('shows that the token now exists', async () => {
