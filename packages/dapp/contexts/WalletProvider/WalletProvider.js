@@ -19,6 +19,7 @@ const initialState = {
 };
 
 const reducer = (state, action) => {
+  /* eslint-disable indent */
   switch (action.type) {
     case 'SET_PROVIDER':
       return {
@@ -44,6 +45,7 @@ const reducer = (state, action) => {
     default:
       throw new Error(`Unhandled action type: ${action.type}`);
   }
+  /* eslint-enable indent */
 };
 
 const WalletContext = createContext();

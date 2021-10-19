@@ -1,9 +1,4 @@
-import { useContext, useEffect } from 'react';
 import Head from 'next/head';
-
-import { WalletContext } from '../contexts/WalletProvider';
-
-import useAvailableSupply from '../hooks/useAvailableSupply';
 
 import { AvailableSupply } from '../components/AvailableSupply';
 import { EarlyMint } from '../components/Buttons/EarlyMint';
