@@ -4,6 +4,7 @@ import Head from 'next/head';
 import { WalletContext } from '../contexts/WalletProvider';
 
 import useAvailableSupply from '../hooks/useAvailableSupply';
+import useMintEarly from '../hooks/useEarlyMint';
 
 import { EarlyMint } from '../components/Buttons/EarlyMint';
 

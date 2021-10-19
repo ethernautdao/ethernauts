@@ -24,7 +24,7 @@ const EarlyMint = () => {
 
   if (isLoading) return 'Minting...';
 
-  if (data) return 'Your token id is:' + data;
+  if (data) return <p className={styles.minted}>{`Your token id is: ${data}`}</p>;
 
   return (
     <button type="button" className={styles.button} onClick={fetchMintEarly}>

@@ -4,6 +4,7 @@ import { Contract } from 'ethers';
 import { WalletContext } from '../contexts/WalletProvider';
 
 import { abi, tokenAddress } from '../config';
+import { zeroAccount } from '../constants';
 
 const useAvailableSupply = () => {
   const [data, setData] = useState(null);
@@ -20,6 +21,17 @@ const useAvailableSupply = () => {
         const signer = state.web3Provider.getSigner();
 
         const contract = new Contract(tokenAddress, abi, signer);
+
+        contract.on('Transfer', async (from) => {
+          setIsLoading(true);
+          if (from !== zeroAccount) return;
+
+          const supply = await contract.availableSupply();
+
+          setData(supply.toString());
+
+          setIsLoading(false);
+        });
 
         const supply = await contract.availableSupply();
 
