@@ -29,6 +29,7 @@
   "scripts": {
     "test": "hardhat test",
     "coverage": "hardhat coverage",
+    "start:dapp": "npm run dev -w dapp",
     "start:local:ipfs": "./scripts/start-local-ipfs-node.sh",
     "create:dummy:assets": "node scripts/create-dummy-assets.js",
     "create:ipfs:metadata": "node scripts/create-ipfs-metadata.js",
