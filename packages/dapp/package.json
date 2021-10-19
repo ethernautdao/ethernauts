@@ -4,8 +4,11 @@
   "description": "Ethernauts DAPP",
   "main": "index.js",
   "private": true,
-  "devDependencies": {},
   "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -17,5 +20,18 @@
   "bugs": {
     "url": "https://github.com/ethernautdao/ethernauts/issues"
   },
-  "homepage": "https://github.com/ethernautdao/ethernauts#readme"
+  "homepage": "https://github.com/ethernautdao/ethernauts#readme",
+  "dependencies": {
+    "classnames": "2.3.1",
+    "ethers": "5.4.7",
+    "next": "11.1.2",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "sass": "1.42.1",
+    "web3modal": "1.9.4"
+  },
+  "devDependencies": {
+    "eslint": "8.0.0",
+    "eslint-config-next": "11.1.2"
+  }
 }
