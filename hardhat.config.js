@@ -1,6 +1,9 @@
 const ethers = require('ethers');
 
 require('@nomiclabs/hardhat-ethers');
+//require('hardhat-deploy-ethers');
+require('hardhat-deploy');
+//require('@symfoni/hardhat-react');
 require('solidity-coverage');
 
 module.exports = {
@@ -10,6 +13,9 @@ module.exports = {
     hardhat: {},
     local: {
       url: 'http://localhost:8545',
+      accounts: {
+        mnemonic: 'test test test test test test test test test test test junk',
+      },
     },
   },
   defaults: {
