@@ -37,6 +37,8 @@ const useMintEarly = () => {
 
         contract.on('Transfer', async (from, to, amount, evt) => {
           if (from !== zeroAccount) return;
+          if (to !== state.address) return;
+
           const tokenId = evt.args.tokenId.toString();
 
           setData(tokenId);
