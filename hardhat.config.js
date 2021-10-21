@@ -9,11 +9,7 @@ module.exports = {
   networks: {
     hardhat: {},
     local: {
-      chainId: 31337,
       url: 'http://localhost:8545',
-      accounts: {
-        mnemonic: 'test test test test test test test test test test test junk',
-      },
     },
   },
   defaults: {
