@@ -1,0 +1,18 @@
+.header {
+  display: flex;
+
+  background-color: rgb(24, 26, 32);
+
+  .end {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+  }
+
+  .title {
+    margin: 0px;
+    letter-spacing: 1px;
+    font-size: 24px;
+    color: #fff;
+  }
+}
