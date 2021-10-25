@@ -1,15 +1,15 @@
 import { useContext } from 'react';
 
-import { WalletContext } from '../../../contexts/WalletProvider';
+import { WalletContext } from '../../../../contexts/WalletProvider';
 
-import useMintEarly from '../../../hooks/useEarlyMint';
+import useEarly from '../../../../hooks/useMint';
 
-import styles from './EarlyMint.module.scss';
+import styles from './OpenMint.module.scss';
 
-const EarlyMint = () => {
+const Mint = () => {
   const { state, connect } = useContext(WalletContext);
 
-  const [{ data, isLoading, isError }, fetchMintEarly] = useMintEarly();
+  const [{ data, isLoading, isError }, fetchMintEarly] = useEarly();
 
   const isConnected = state.web3Provider !== null;
 
@@ -33,4 +33,4 @@ const EarlyMint = () => {
   );
 };
 
-export default EarlyMint;
+export default Mint;
