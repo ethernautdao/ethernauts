@@ -1,5 +1,4 @@
 import Head from 'next/head';
-import { useEffect } from 'react';
 
 import { AvailableSupply } from '../components/AvailableSupply';
 import { Mint } from '../components/Buttons/Mint';

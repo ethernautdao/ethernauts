@@ -8,7 +8,7 @@ import { ConnectWallet } from '../ConnectWallet';
 import { EarlyMint } from './EarlyMint';
 import { OpenMint } from './OpenMint';
 
-const MintButton = {
+const mintButtons = {
   [EARLY]: <EarlyMint />,
   [OPEN]: <OpenMint />,
   [PAUSED]: <p>Sale paused</p>,
@@ -26,9 +26,9 @@ const Mint = () => {
 
   if (isError) return 'Something went wrong...';
 
-  if (!MintButton[data]) return <ConnectWallet />;
+  if (!mintButtons[data]) return <ConnectWallet />;
 
-  return MintButton[data];
+  return mintButtons[data];
 };
 
 export default Mint;
