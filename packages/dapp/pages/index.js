@@ -1,7 +1,7 @@
 import Head from 'next/head';
 
 import { AvailableSupply } from '../components/AvailableSupply';
-import { EarlyMint } from '../components/Buttons/EarlyMint';
+import { Mint } from '../components/Buttons/Mint';
 
 import styles from './index.module.scss';
 
@@ -15,7 +15,7 @@ export const Home = () => (
       <AvailableSupply />
     </section>
     <section>
-      <EarlyMint />
+      <Mint />
     </section>
   </div>
 );
