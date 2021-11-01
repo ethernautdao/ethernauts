@@ -10,7 +10,6 @@ describe('Stuck', () => {
 
   let tx;
 
-
   before('identify signers', async () => {
     users = await ethers.getSigners();
     [owner, user] = users;

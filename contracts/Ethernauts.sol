@@ -195,7 +195,11 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         beneficiary.sendValue(address(this).balance);
     }
 
-    function recoverStuckTokens(address token, address to, uint value) external onlyOwner {
+    function recoverStuckTokens(
+        address token,
+        address to,
+        uint value
+    ) external onlyOwner {
         IERC20(token).transfer(to, value);
     }
 
