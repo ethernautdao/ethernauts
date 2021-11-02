@@ -32,8 +32,8 @@
     "start:dapp": "npm run dev -w dapp",
     "lint:js": "prettier --check '**/*.js' && eslint '**/*.js' && npm run lint -w dapp",
     "lint:js:fix": "prettier --write '**/*.js' && eslint --fix '**/*.js'",
-    "lint:sol": "prettier --check 'contracts/**/*.sol' && solhint 'contracts/**/*.sol'",
-    "lint:sol:fix": "prettier --write 'contracts/**/*.sol' && solhint --fix 'contracts/**/*.sol'",
+    "lint:sol": "prettier --check 'packages/hardhat/contracts/**/*.sol' && solhint 'packages/hardhat/contracts/**/*.sol'",
+    "lint:sol:fix": "prettier --write 'packages/hardhat/contracts/**/*.sol' && solhint --fix 'packages/hardhat/contracts/**/*.sol'",
     "lint:fix": "npm run lint:js:fix && npm run lint:sol:fix",
     "lint": "npm run lint:js && npm run lint:sol"
   },
