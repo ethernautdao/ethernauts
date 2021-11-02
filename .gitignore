@@ -1,11 +1,4 @@
 .DS_Store
-.env
 .vscode
-artifacts
-cache
-deployments/local.json
-deployments/hardhat.json
 node_modules
-resources
-assets/
 coverage*
