@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-const makeDir = require('make-dir');
 const { utils } = require('ethers');
 const { ethers } = require('hardhat');
 
