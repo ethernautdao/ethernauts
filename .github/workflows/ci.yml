@@ -6,8 +6,6 @@ on:
   pull_request:
     branches: [main]
 
-  workflow_dispatch:
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -21,7 +19,7 @@ jobs:
           node-version: "16"
 
       - name: Installing dependencies
-        run: npm install
+        run: npm ci
 
       - name: Running Linters
         run: npm run lint

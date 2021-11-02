@@ -1,0 +1,40 @@
+{
+  "name": "@ethernauts/hardhat",
+  "version": "0.0.1",
+  "description": "Ethernauts server that reacts to mint events processing and uploading assets",
+  "main": "index.js",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ethernautdao/ethernauts.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ethernautdao/ethernauts/issues"
+  },
+  "homepage": "https://github.com/ethernautdao/ethernauts#readme",
+  "scripts": {
+    "test": "hardhat test",
+    "coverage": "hardhat coverage",
+    "start:local:ipfs": "./scripts/start-local-ipfs-node.sh",
+    "create:dummy:assets": "node scripts/create-dummy-assets.js",
+    "create:ipfs:metadata": "node scripts/create-ipfs-metadata.js",
+    "create:dummy:resources": "npm run create:dummy:assets && npm run create:ipfs:metadata",
+    "upload:ipfs:metadata": "./node_modules/.bin/jsipfs add -r resources/metadata"
+  },
+  "dependencies": {
+    "cids": "1.1.9",
+    "dotenv": "10.0.0",
+    "envalid": "7.2.1",
+    "fastq": "1.13.0",
+    "ipfs-http-client": "52.0.3",
+    "ipfs-only-hash": "4.0.0"
+  },
+  "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "2.0.2",
+    "@openzeppelin/contracts": "4.3.0",
+    "del": "6.0.0",
+    "solidity-coverage": "0.7.17"
+  }
+}

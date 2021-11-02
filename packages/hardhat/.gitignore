@@ -1,0 +1,7 @@
+.env
+artifacts
+assets
+cache
+deployments/hardhat.json
+deployments/local.json
+resources
