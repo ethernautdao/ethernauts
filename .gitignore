@@ -6,6 +6,8 @@ cache
 deployments/local.json
 deployments/hardhat.json
 node_modules
-resources
+resources/assets
+resources/metadata
+resources/coupons/signed-coupons.local.json
 assets/
 coverage*
