@@ -21,7 +21,7 @@
     "create:dummy:assets": "node scripts/create-dummy-assets.js",
     "create:ipfs:metadata": "node scripts/create-ipfs-metadata.js",
     "create:dummy:resources": "npm run create:dummy:assets && npm run create:ipfs:metadata",
-    "upload:ipfs:metadata": "./node_modules/.bin/jsipfs add -r resources/metadata",
+    "upload:ipfs:metadata": "./node_modules/.bin/jsipfs add -r resources/metadata"
   },
   "dependencies": {
     "cids": "1.1.9",
