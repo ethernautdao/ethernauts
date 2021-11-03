@@ -42,6 +42,20 @@ describe('Recovery', () => {
     });
   });
 
+  describe('when the owner inputs the wrong destination address', () => {
+    it('reverts', async () => {
+      const balance = await Token.balanceOf(Ethernauts.address);
+      assert.notEqual(balance, 0);
+      await assertRevert(Ethernauts.connect(owner).recoverTokens(Token.address, Token.address, balance), 'Invalid destination');
+    });
+  });
+
+  describe('when the owner tries to send too many tokens', () => {
+    it('reverts', async () => {
+      await assertRevert(Ethernauts.connect(owner).recoverTokens(Token.address, owner.address, totalSupply), 'Invalid amount');
+    });
+  });
+
   describe('when the owner recovers stuck funds', () => {
     it('allows the owner to retrieve stuck tokens from the contract', async () => {
       assert.equal(await Token.balanceOf(owner.address), totalSupply - stuck);
