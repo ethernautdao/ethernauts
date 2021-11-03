@@ -2,7 +2,7 @@ const { ethers } = require('hardhat');
 const assert = require('assert');
 const assertRevert = require('./utils/assertRevert');
 
-describe('Stuck', () => {
+describe('Recovery', () => {
   let Ethernauts;
   let Token;
 
@@ -25,7 +25,7 @@ describe('Stuck', () => {
   });
 
   before('deploy erc20', async () => {
-    const factory = await ethers.getContractFactory("Token");
+    const factory = await ethers.getContractFactory("TokenMock");
     Token = await factory.deploy(totalSupply);
   });
 
@@ -38,7 +38,7 @@ describe('Stuck', () => {
     it('reverts', async () => {
       const balance = await Token.balanceOf(Ethernauts.address);
       assert.notEqual(balance, 0);
-      await assertRevert(Ethernauts.connect(user).recoverStuckTokens(Token.address, owner.address, balance), 'caller is not the owner');
+      await assertRevert(Ethernauts.connect(user).recoverTokens(Token.address, owner.address, balance), 'caller is not the owner');
     });
   });
 
@@ -48,7 +48,7 @@ describe('Stuck', () => {
       assert.equal(await Token.balanceOf(Ethernauts.address), stuck);
 
       const balance = await Token.balanceOf(Ethernauts.address);
-      tx = await Ethernauts.connect(owner).recoverStuckTokens(Token.address, owner.address, balance);
+      tx = await Ethernauts.connect(owner).recoverTokens(Token.address, owner.address, balance);
       await tx.wait();
 
       assert.equal(await Token.balanceOf(owner.address), totalSupply);
