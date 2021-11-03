@@ -25,7 +25,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     // Internal usage
     uint private _tokensGifted;
     mapping(address => bool) private _redeemedCoupons; // user address => if its single coupon has been redeemed
-    uint[] _randomNumbers;
+    uint[] private _randomNumbers;
 
     // Three different sale stages:
     enum SaleState {
@@ -147,11 +147,8 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         uint maxTokenIdInBatch = batchSize * (randomNumberIdx + 1) - 1;
         require(totalSupply() >= maxTokenIdInBatch, "Cannot set for unminted tokens");
 
-        uint randomNumber = uint256(keccak256(abi.encodePacked(
-            msg.sender,
-            block.difficulty,
-            block.timestamp
-        )));
+        // solhint-disable-next-line not-rely-on-time
+        uint randomNumber = uint256(keccak256(abi.encodePacked(msg.sender, block.difficulty, block.timestamp)));
 
         _randomNumbers.push(randomNumber);
     }

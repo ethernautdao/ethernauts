@@ -27,7 +27,7 @@ describe('Random', () => {
 
     let assetId = tokenId + offset;
     if (assetId > maxTokenIdInBatch) {
-        assetId -= batchSize;
+      assetId -= batchSize;
     }
 
     return assetId;
@@ -35,7 +35,7 @@ describe('Random', () => {
 
   async function validateTokenUri(tokenId, randomNumber) {
     const fromContract = await Ethernauts.tokenURI(tokenId);
-    const expected = `${baseURI}${calculateAssetId(tokenId, randomNumber)}`
+    const expected = `${baseURI}${calculateAssetId(tokenId, randomNumber)}`;
 
     assert.equal(fromContract, expected);
   }
@@ -111,10 +111,7 @@ describe('Random', () => {
         });
 
         it('shows that the random number is set', async () => {
-          assert.notEqual(
-            await Ethernauts.getRandomNumberForBatch(0),
-            '0'
-          );
+          assert.notEqual(await Ethernauts.getRandomNumberForBatch(0), '0');
         });
 
         it('shows the definitive URI for all minted tokens', async () => {
