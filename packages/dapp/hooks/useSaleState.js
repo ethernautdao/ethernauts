@@ -28,7 +28,7 @@ const useSaleState = () => {
       }
     } catch (err) {
       console.error(err);
-      setIsError(true);
+      setIsError(err.message);
     }
     setIsLoading(false);
   }, [state.web3Provider]);

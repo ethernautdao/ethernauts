@@ -39,8 +39,8 @@ const useMint = () => {
       }
     } catch (err) {
       console.error(err);
+      setIsError(err.message);
       setIsLoading(false);
-      setIsError(true);
     }
   };
 
