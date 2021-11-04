@@ -1,0 +1,7 @@
+version: '3.9'
+
+services:
+  keeper:
+    build:
+      context: .
+      dockerfile: docker/keeper.Dockerfile
