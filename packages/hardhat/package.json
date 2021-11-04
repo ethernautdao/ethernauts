@@ -17,6 +17,7 @@
   "scripts": {
     "test": "hardhat test",
     "coverage": "hardhat coverage",
+    "start:keeper": "hardhat run scripts/keeper.js",
     "start:local:ipfs": "./scripts/start-local-ipfs-node.sh",
     "create:dummy:assets": "node scripts/create-dummy-assets.js",
     "create:ipfs:metadata": "node scripts/create-ipfs-metadata.js",
