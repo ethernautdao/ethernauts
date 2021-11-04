@@ -5,7 +5,7 @@ const { ethers } = require('hardhat');
 
 const constants = require('../src/constants');
 
-const accounts = require(`../src/data/addresses.${process.env.HARDHAT_NETWORK}`);
+const awardedAccounts = require(`../src/data/awarded-accounts.${process.env.HARDHAT_NETWORK}`);
 
 const signCouponForAddress = async (address, signer) => {
   const payload = `0x000000000000000000000000${address.replace('0x', '')}`;
@@ -24,10 +24,10 @@ async function main() {
 
   const signedCouponsPath = path.join(
     constants.DATA_DAPP_FOLDER,
-    `coupons.${process.env.HARDHAT_NETWORK}.json`
+    `signed-coupons.${process.env.HARDHAT_NETWORK}.json`
   );
 
-  const coupons = accounts.map((account) => signCouponForAddress(account, owner));
+  const coupons = awardedAccounts.map((account) => signCouponForAddress(account, owner));
 
   const signedCoupons = await Promise.all(coupons);
 
