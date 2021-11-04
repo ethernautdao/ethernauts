@@ -142,19 +142,24 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         return string(abi.encodePacked(baseURI, assetId.toString()));
     }
 
-    // This is unprotected for now, but will actually only
-    // be callable by an L1 -> L2 bridge contract.
-    function setNextRandomNumber(uint randomNumber) external onlyOwner {
+    function setNextRandomNumber() external onlyOwner {
         uint randomNumberIdx = _randomNumbers.length;
 
         uint maxTokenIdInBatch = batchSize * (randomNumberIdx + 1) - 1;
         require(totalSupply() >= maxTokenIdInBatch, "Cannot set for unminted tokens");
+
+        // solhint-disable-next-line not-rely-on-time
+        uint randomNumber = uint256(keccak256(abi.encodePacked(msg.sender, block.difficulty, block.timestamp)));
 
         _randomNumbers.push(randomNumber);
     }
 
     function getRandomNumberForBatch(uint batchId) public view returns (uint) {
         return _randomNumbers[batchId];
+    }
+
+    function getRandomNumberCount() public view returns (uint) {
+        return _randomNumbers.length;
     }
 
     // -----------------------
