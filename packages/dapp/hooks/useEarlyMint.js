@@ -14,7 +14,7 @@ const useMintEarly = () => {
 
   const { state } = useContext(WalletContext);
 
-  const fetchMintEarly = async () => {
+  const fetchMintEarly = async (value) => {
     try {
       setIsError(false);
       setIsLoading(true);
@@ -23,16 +23,21 @@ const useMintEarly = () => {
 
         const contract = new Contract(tokenAddress, abi, signer);
 
-        const coupons = (await import(`../data/coupons.${ethereumNetwork}.json`)).default;
+        const signedCoupons = (await import(`../data/signed-coupons.${ethereumNetwork}.json`))
+          .default;
 
-        const coupon = coupons.find((coupon) => {
-          const [address] = Object.keys(coupon);
+        const signedCoupon = signedCoupons.find((signedCoupon) => {
+          const [address] = Object.keys(signedCoupon);
           return address === state.address;
         });
 
-        if (!coupon) throw new Error('You are not able to mint in this state');
+        if (!signedCoupon) throw new Error(`You're not able to mint in this state`);
 
-        await contract.mintEarly(coupon[state.address], {
+        const isARedeemedCoupon = await contract.userRedeemedCoupon(state.address);
+
+        if (isARedeemedCoupon) throw new Error(`You're trying to use a redeemed coupon`);
+
+        await contract.mintEarly(signedCoupon[state.address], {
           value: utils.parseEther('0.015'),
         });
 

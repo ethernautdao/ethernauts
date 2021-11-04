@@ -2,14 +2,14 @@ import { useContext } from 'react';
 
 import { WalletContext } from '../../../../contexts/WalletProvider';
 
-import useEarly from '../../../../hooks/useMint';
+import useMint from '../../../../hooks/useMint';
 
 import styles from './OpenMint.module.scss';
 
 const Mint = () => {
   const { state, connect } = useContext(WalletContext);
 
-  const [{ data, isLoading, isError }, fetchMintEarly] = useEarly();
+  const [{ data, isLoading, isError }, fetchMint] = useMint();
 
   const isConnected = state.web3Provider !== null;
 
@@ -27,7 +27,7 @@ const Mint = () => {
   if (data) return <p className={styles.minted}>{`Your token id is: ${data}`}</p>;
 
   return (
-    <button type="button" className={styles.button} onClick={fetchMintEarly}>
+    <button type="button" className={styles.button} onClick={fetchMint}>
       Mint an Ethernaut
     </button>
   );
