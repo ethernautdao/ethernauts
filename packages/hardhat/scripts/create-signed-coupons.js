@@ -20,7 +20,8 @@ const signCouponForAddress = async (address, signer) => {
 };
 
 async function main() {
-  const [owner] = await ethers.getSigners();
+  // TODO: Get the signer from a .env file's private key.
+  const [couponSigner] = await ethers.getSigners();
 
   const signedCouponsPath = path.join(
     constants.DATA_DAPP_FOLDER,
