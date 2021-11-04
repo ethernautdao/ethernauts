@@ -1,4 +1,6 @@
 const fs = require('fs');
+const fsp = require('fs/promises');
+const path = require('path');
 const hre = require('hardhat');
 const Confirm = require('prompt-confirm');
 const { ethers } = hre;
@@ -24,7 +26,8 @@ async function main() {
   console.log(`Ethernauts token deployed at ${Ethernauts.address}`);
 
   data.token = Ethernauts.address;
-  fs.writeFileSync(deploymentPath, JSON.stringify(data, null, 2));
+  await fsp.mkdir(path.dirname(deploymentPath), { recursive: true });
+  await fsp.writeFile(deploymentPath, JSON.stringify(data, null, 2));
 }
 
 async function _confirmParameters() {

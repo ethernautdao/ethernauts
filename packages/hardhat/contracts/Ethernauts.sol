@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
@@ -25,7 +26,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     // Internal usage
     uint private _tokensGifted;
     mapping(address => bool) private _redeemedCoupons; // user address => if its single coupon has been redeemed
-    uint[] _randomNumbers;
+    uint[] private _randomNumbers;
 
     // Three different sale stages:
     enum SaleState {
@@ -141,19 +142,24 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         return string(abi.encodePacked(baseURI, assetId.toString()));
     }
 
-    // This is unprotected for now, but will actually only
-    // be callable by an L1 -> L2 bridge contract.
-    function setNextRandomNumber(uint randomNumber) external onlyOwner {
+    function setNextRandomNumber() external onlyOwner {
         uint randomNumberIdx = _randomNumbers.length;
 
         uint maxTokenIdInBatch = batchSize * (randomNumberIdx + 1) - 1;
         require(totalSupply() >= maxTokenIdInBatch, "Cannot set for unminted tokens");
+
+        // solhint-disable-next-line not-rely-on-time
+        uint randomNumber = uint256(keccak256(abi.encodePacked(msg.sender, block.difficulty, block.timestamp)));
 
         _randomNumbers.push(randomNumber);
     }
 
     function getRandomNumberForBatch(uint batchId) public view returns (uint) {
         return _randomNumbers[batchId];
+    }
+
+    function getRandomNumberCount() public view returns (uint) {
+        return _randomNumbers.length;
     }
 
     // -----------------------
@@ -192,6 +198,17 @@ contract Ethernauts is ERC721Enumerable, Ownable {
 
     function withdraw(address payable beneficiary) external onlyOwner {
         beneficiary.sendValue(address(this).balance);
+    }
+
+    function recoverTokens(
+        address token,
+        address to,
+        uint value
+    ) external onlyOwner {
+        require(token != to, "Invalid destination");
+        require(IERC20(token).balanceOf(address(this)) >= value, "Invalid amount");
+
+        IERC20(token).transfer(to, value);
     }
 
     // -------------------
