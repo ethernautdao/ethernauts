@@ -28,7 +28,7 @@ async function main() {
     `signed-coupons.${process.env.HARDHAT_NETWORK}.json`
   );
 
-  const coupons = awardedAccounts.map((account) => signCouponForAddress(account, owner));
+  const coupons = awardedAccounts.map((account) => signCouponForAddress(account, couponSigner));
 
   const signedCoupons = await Promise.all(coupons);
 
