@@ -12,6 +12,10 @@
     "type": "git",
     "url": "git+https://github.com/ethernautdao/ethernauts.git"
   },
+  "engines": {
+    "node": "16.8.0",
+    "npm": "7.21.0"
+  },
   "keywords": [
     "Ethereum",
     "NFT",
@@ -30,6 +34,7 @@
     "test": "npm run --workspaces --if-present test",
     "coverage": "npm run --workspaces --if-present coverage",
     "start:dapp": "npm run dev -w dapp",
+    "start:keeper": "npm run start:keeper -w @ethernauts/hardhat",
     "lint:js": "prettier --check '**/*.js' && eslint '**/*.js' && npm run lint -w dapp",
     "lint:js:fix": "prettier --write '**/*.js' && eslint --fix '**/*.js'",
     "lint:sol": "prettier --check 'packages/hardhat/contracts/**/*.sol' && solhint 'packages/hardhat/contracts/**/*.sol'",
