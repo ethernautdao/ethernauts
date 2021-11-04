@@ -25,7 +25,7 @@ describe('Recovery', () => {
   });
 
   before('deploy erc20', async () => {
-    const factory = await ethers.getContractFactory("TokenMock");
+    const factory = await ethers.getContractFactory('TokenMock');
     Token = await factory.deploy(totalSupply);
   });
 
@@ -38,7 +38,10 @@ describe('Recovery', () => {
     it('reverts', async () => {
       const balance = await Token.balanceOf(Ethernauts.address);
       assert.notEqual(balance, 0);
-      await assertRevert(Ethernauts.connect(user).recoverTokens(Token.address, owner.address, balance), 'caller is not the owner');
+      await assertRevert(
+        Ethernauts.connect(user).recoverTokens(Token.address, owner.address, balance),
+        'caller is not the owner'
+      );
     });
   });
 
@@ -46,13 +49,19 @@ describe('Recovery', () => {
     it('reverts', async () => {
       const balance = await Token.balanceOf(Ethernauts.address);
       assert.notEqual(balance, 0);
-      await assertRevert(Ethernauts.connect(owner).recoverTokens(Token.address, Token.address, balance), 'Invalid destination');
+      await assertRevert(
+        Ethernauts.connect(owner).recoverTokens(Token.address, Token.address, balance),
+        'Invalid destination'
+      );
     });
   });
 
   describe('when the owner tries to send too many tokens', () => {
     it('reverts', async () => {
-      await assertRevert(Ethernauts.connect(owner).recoverTokens(Token.address, owner.address, totalSupply), 'Invalid amount');
+      await assertRevert(
+        Ethernauts.connect(owner).recoverTokens(Token.address, owner.address, totalSupply),
+        'Invalid amount'
+      );
     });
   });
 

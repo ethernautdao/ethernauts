@@ -26,7 +26,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     // Internal usage
     uint private _tokensGifted;
     mapping(address => bool) private _redeemedCoupons; // user address => if its single coupon has been redeemed
-    uint[] _randomNumbers;
+    uint[] private _randomNumbers;
 
     // Three different sale stages:
     enum SaleState {
@@ -195,13 +195,14 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         beneficiary.sendValue(address(this).balance);
     }
 
-    function recoverTokens( address token,
+    function recoverTokens(
+        address token,
         address to,
         uint value
     ) external onlyOwner {
         require(token != to, "Invalid destination");
         require(IERC20(token).balanceOf(address(this)) >= value, "Invalid amount");
-        
+
         IERC20(token).transfer(to, value);
     }
 
