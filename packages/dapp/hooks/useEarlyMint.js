@@ -3,15 +3,9 @@ import { Contract, utils } from 'ethers';
 
 import { WalletContext } from '../contexts/WalletProvider';
 
-import { abi, tokenAddress } from '../config';
-import { zeroAccount } from '../constants';
+import { abi, tokenAddress, ethereumNetwork } from '../config';
 
-const signCouponForAddress = (address, signer) => {
-  const payload = `0x000000000000000000000000${address.replace('0x', '')}`;
-  const payloadHash = utils.keccak256(payload);
-  const payloadHashBytes = utils.arrayify(payloadHash);
-  return signer.signMessage(payloadHashBytes);
-};
+import { zeroAccount } from '../constants';
 
 const useMintEarly = () => {
   const [data, setData] = useState(null);
@@ -20,7 +14,7 @@ const useMintEarly = () => {
 
   const { state } = useContext(WalletContext);
 
-  const fetchMintEarly = async () => {
+  const fetchMintEarly = async (value) => {
     try {
       setIsError(false);
       setIsLoading(true);
@@ -29,9 +23,21 @@ const useMintEarly = () => {
 
         const contract = new Contract(tokenAddress, abi, signer);
 
-        const coupon = await signCouponForAddress(state.address, signer);
+        const signedCoupons = (await import(`../data/signed-coupons.${ethereumNetwork}.json`))
+          .default;
 
-        await contract.mintEarly(coupon, {
+        const signedCoupon = signedCoupons.find((signedCoupon) => {
+          const [address] = Object.keys(signedCoupon);
+          return address === state.address;
+        });
+
+        if (!signedCoupon) throw new Error(`You're not able to mint in this state`);
+
+        const isARedeemedCoupon = await contract.userRedeemedCoupon(state.address);
+
+        if (isARedeemedCoupon) throw new Error(`You're trying to use a redeemed coupon`);
+
+        await contract.mintEarly(signedCoupon[state.address], {
           value: utils.parseEther('0.015'),
         });
 
@@ -48,8 +54,8 @@ const useMintEarly = () => {
       }
     } catch (err) {
       console.error(err);
+      setIsError(err.message);
       setIsLoading(false);
-      setIsError(true);
     }
   };
 
