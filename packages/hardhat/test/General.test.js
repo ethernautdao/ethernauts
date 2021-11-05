@@ -48,7 +48,7 @@ describe('General', () => {
     });
 
     it('shold show the expected initial sale state', async () => {
-      assert.equal(await Ethernauts.currentSaleState(), 0); // 0 = Paused
+      assert.equal(await Ethernauts.getCurrentSaleState(), 0); // 0 = Paused
     });
 
     it('should have set the owner correctly', async () => {

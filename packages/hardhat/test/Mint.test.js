@@ -38,7 +38,7 @@ describe('Mint', () => {
 
   describe('when attempting to mint when the sale is not open', () => {
     before('set paused', async () => {
-      if ((await Ethernauts.currentSaleState()) !== 0) {
+      if ((await Ethernauts.getCurrentSaleState()) !== 0) {
         await (await Ethernauts.connect(owner).setSaleState(0)).wait();
       }
     });
@@ -214,7 +214,7 @@ describe('Mint', () => {
           Ethernauts.connect(user).mint({
             value: ethers.utils.parseEther('0.2'),
           }),
-          'No available supply'
+          'Not allowed in current state'
         );
       });
     });

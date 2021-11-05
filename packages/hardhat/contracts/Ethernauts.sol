@@ -32,9 +32,10 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     enum SaleState {
         Paused, // No one can mint, except the owner via gifting (default)
         Early, // Only community can mint, at a discount using signed messages
-        Open // Anyone can mint
+        Open, // Anyone can mint
+        Completed // No more NFT to mint
     }
-    SaleState public currentSaleState;
+    SaleState private _currentSaleState;
 
     constructor(
         uint definitiveMaxGiftable,
@@ -55,7 +56,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         earlyMintPrice = initialEarlyMintPrice;
         couponSigner = initialCouponSigner;
 
-        currentSaleState = SaleState.Paused;
+        _currentSaleState = SaleState.Paused;
     }
 
     // ----------
@@ -63,13 +64,22 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     // ----------
 
     modifier onlyOnState(SaleState definedSaleState) {
-        require(currentSaleState == definedSaleState, "Not allowed in current state");
+        require(getCurrentSaleState() == definedSaleState, "Not allowed in current state");
         _;
     }
 
     // --------------------
     // Public external ABI
     // --------------------
+
+    function getCurrentSaleState() public view returns (SaleState) {
+        if (_currentSaleState < SaleState.Open) {
+            return _currentSaleState;
+        } else {
+            // We need to check if user can mint more tokens
+            return availableToMint() > 0 ? SaleState.Open : SaleState.Completed;
+        }
+    }
 
     function mint() external payable onlyOnState(SaleState.Open) {
         require(msg.value >= mintPrice, "Invalid msg.value");
@@ -187,9 +197,10 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     }
 
     function setSaleState(SaleState newSaleState) external onlyOwner {
-        require(newSaleState != currentSaleState, "Invalid new state");
+        require(getCurrentSaleState() != SaleState.Completed, "Sale is completed");
+        require(newSaleState != _currentSaleState, "Invalid new state");
 
-        currentSaleState = newSaleState;
+        _currentSaleState = newSaleState;
     }
 
     function setCouponSigner(address newCouponSigner) external onlyOwner {

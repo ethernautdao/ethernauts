@@ -22,7 +22,7 @@ const useSaleState = () => {
 
         const contract = new Contract(tokenAddress, abi, signer);
 
-        const currentSaleState = await contract.currentSaleState();
+        const currentSaleState = await contract.getCurrentSaleState();
 
         setData(saleState[currentSaleState.toString()]);
       }
