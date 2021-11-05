@@ -7,7 +7,9 @@ module.exports = {
   solidity: '0.8.4',
   defaultNetwork: 'hardhat',
   networks: {
-    hardhat: {},
+    hardhat: {
+      allowUnlimitedContractSize: true,
+    },
     local: {
       url: 'http://localhost:8545',
     },
