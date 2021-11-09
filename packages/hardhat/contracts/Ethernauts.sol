@@ -12,6 +12,8 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     using Address for address payable;
     using Strings for uint256;
 
+    event BatchStart();
+
     // Can be set only once on deploy
     uint public immutable maxTokens;
     uint public immutable maxGiftable;
@@ -140,6 +142,23 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         }
 
         return string(abi.encodePacked(baseURI, assetId.toString()));
+    }
+
+    function setNextRandomNumber() external onlyOwner {
+        uint randomNumberIdx = _randomNumbers.length;
+
+        uint maxTokenIdInBatch = batchSize * (randomNumberIdx + 1) - 1;
+        require(totalSupply() >= maxTokenIdInBatch, "Cannot set for unminted tokens");
+
+        // solhint-disable not-rely-on-time
+        uint randomNumber = uint256(
+            keccak256(abi.encodePacked(msg.sender, block.difficulty, block.timestamp, _randomNumbers.length))
+        );
+        // solhint-enable not-rely-on-time
+
+        _randomNumbers.push(randomNumber);
+
+        emit BatchStart();
     }
 
     function getRandomNumberForBatch(uint batchId) external view returns (uint) {
