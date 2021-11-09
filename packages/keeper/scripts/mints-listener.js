@@ -17,7 +17,7 @@ async function main() {
     ipfsApiUrl: config.IPFS_API_URL,
   });
 
-  const Ethernauts = await getContractAt('EthernautsMain');
+  const Ethernauts = await getContractAt('Ethernauts');
 
   async function uploadResource(tokenId) {
     // TODO: Check if image already exists on ipfs
