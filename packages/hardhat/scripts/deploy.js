@@ -2,7 +2,6 @@ const fs = require('fs');
 const fsp = require('fs/promises');
 const path = require('path');
 const hre = require('hardhat');
-const Confirm = require('prompt-confirm');
 const { ethers } = hre;
 
 const DEPLOYMENT_SCHEMA = {
@@ -38,11 +37,6 @@ async function _confirmParameters() {
   console.log('Overrides:');
   _logObject(hre.config.overrides);
   console.log('');
-
-  const confirm = new Confirm('Do you want to depoy with these parameters?');
-  const answer = await confirm.run();
-
-  if (!answer) process.exit(0);
 }
 
 async function _deployContract() {
