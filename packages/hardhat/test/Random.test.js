@@ -1,5 +1,4 @@
 const assert = require('assert');
-const assertRevert = require('./utils/assertRevert');
 const { ethers } = require('hardhat');
 
 describe('Random', () => {
