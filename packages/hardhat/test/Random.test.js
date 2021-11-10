@@ -87,15 +87,6 @@ describe('Random', () => {
       }
     });
 
-    describe('when the owner tries to generate a random number for the current batch, before all its tokens are minted', () => {
-      it('reverts', async () => {
-        await assertRevert(
-          Ethernauts.connect(owner).setNextRandomNumber(),
-          'Cannot set for unminted tokens'
-        );
-      });
-    });
-
     describe('when all the tokens in the batch are minted', () => {
       before('mint some tokens', async () => {
         await mintTokens(batchSize - numMints);
@@ -105,93 +96,55 @@ describe('Random', () => {
         assert.equal(await Ethernauts.totalSupply(), batchSize);
       });
 
-      describe('when the random number for the current batch is set', () => {
-        before('set random number for batch', async () => {
-          await (await Ethernauts.connect(owner).setNextRandomNumber()).wait();
+      it('shows that the random number is set', async () => {
+        assert.notEqual(await Ethernauts.getRandomNumberForBatch(0), '0');
+      });
+
+      it('shows the definitive URI for all minted tokens', async () => {
+        const randomNumber = await Ethernauts.getRandomNumberForBatch(0);
+
+        for (let i = 0; i < batchSize; i++) {
+          await validateTokenUri(i, randomNumber);
+        }
+      });
+
+      describe('when the tokens for the next batch are minted', () => {
+        before('mint some tokens', async () => {
+          await mintTokens(batchSize);
+        });
+
+        it('shows that the token supply increased accordingly', async () => {
+          assert.equal(await Ethernauts.totalSupply(), 2 * batchSize);
         });
 
         it('shows that the random number is set', async () => {
-          assert.notEqual(await Ethernauts.getRandomNumberForBatch(0), '0');
+          assert.notEqual((await Ethernauts.getRandomNumberForBatch(1)).toString(), '0');
         });
 
         it('shows the definitive URI for all minted tokens', async () => {
-          const randomNumber = await Ethernauts.getRandomNumberForBatch(0);
+          const randomNumber = await Ethernauts.getRandomNumberForBatch(1);
 
-          for (let i = 0; i < batchSize; i++) {
+          for (let i = batchSize; i < 2 * batchSize; i++) {
             await validateTokenUri(i, randomNumber);
           }
         });
 
-        describe('when the owner tries to set the random number for the next batch before its tokens are minted', () => {
-          it('reverts', async () => {
-            await assertRevert(
-              Ethernauts.connect(owner).setNextRandomNumber(),
-              'Cannot set for unminted tokens'
-            );
-          });
-        });
-
-        describe('when the tokens for the next batch are minted', () => {
-          before('mint some tokens', async () => {
-            await mintTokens(batchSize);
+        describe('when the remaining batches are minted', () => {
+          before('mint all tokens', async () => {
+            await mintTokens(maxTokens - 2 * batchSize);
           });
 
-          it('shows that the token supply increased accordingly', async () => {
-            assert.equal(await Ethernauts.totalSupply(), 2 * batchSize);
-          });
+          it('shows that all assetIds are used and are unique', async () => {
+            const uris = [];
 
-          describe('before the owner triggers the new random number', () => {
-            it('shows the temporary URI for all minted tokens', async () => {
-              for (let i = batchSize; i < 2 * batchSize; i++) {
-                await validateTempTokenUri(i);
-              }
-            });
-          });
+            for (let i = 0; i < maxTokens; i++) {
+              const tokenURI = await Ethernauts.tokenURI(i);
+              uris.push(tokenURI);
+            }
+            assert.equal(uris.length, maxTokens);
 
-          describe('when the owner creates the new random number', () => {
-            before('set random number for batch', async () => {
-              await (await Ethernauts.connect(owner).setNextRandomNumber()).wait();
-            });
-
-            it('shows that the random number is set', async () => {
-              assert.notEqual((await Ethernauts.getRandomNumberForBatch(1)).toString(), '0');
-            });
-
-            it('shows the definitive URI for all minted tokens', async () => {
-              const randomNumber = await Ethernauts.getRandomNumberForBatch(1);
-
-              for (let i = batchSize; i < 2 * batchSize; i++) {
-                await validateTokenUri(i, randomNumber);
-              }
-            });
-
-            describe('when the remaining batches are minted', () => {
-              before('mint all tokens', async () => {
-                await mintTokens(maxTokens - 2 * batchSize);
-              });
-
-              before('set all random numbers', async () => {
-                const numBatches = Math.floor(maxTokens / batchSize);
-                const numRandomNumbers = (await Ethernauts.getRandomNumberCount()).toNumber();
-
-                for (let i = 0; i < numBatches - numRandomNumbers; i++) {
-                  await (await Ethernauts.connect(owner).setNextRandomNumber()).wait();
-                }
-              });
-
-              it('shows that all assetIds are used and are unique', async () => {
-                const uris = [];
-
-                for (let i = 0; i < maxTokens; i++) {
-                  const tokenURI = await Ethernauts.tokenURI(i);
-                  uris.push(tokenURI);
-                }
-                assert.equal(uris.length, maxTokens);
-
-                const uriSet = new Set(uris);
-                assert.equal(uriSet.size, maxTokens);
-              });
-            });
+            const uriSet = new Set(uris);
+            assert.equal(uriSet.size, maxTokens);
           });
         });
       });
