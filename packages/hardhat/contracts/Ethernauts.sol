@@ -148,8 +148,11 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         uint maxTokenIdInBatch = batchSize * (randomNumberIdx + 1) - 1;
         require(totalSupply() >= maxTokenIdInBatch, "Cannot set for unminted tokens");
 
-        // solhint-disable-next-line not-rely-on-time
-        uint randomNumber = uint256(keccak256(abi.encodePacked(msg.sender, block.difficulty, block.timestamp, _randomNumbers.length)));
+        // solhint-disable not-rely-on-time
+        uint randomNumber = uint256(
+            keccak256(abi.encodePacked(msg.sender, block.difficulty, block.timestamp, _randomNumbers.length))
+        );
+        // solhint-enable not-rely-on-time
 
         _randomNumbers.push(randomNumber);
     }
