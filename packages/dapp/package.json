@@ -1,5 +1,5 @@
 {
-  "name": "dapp",
+  "name": "@ethernauts/dapp",
   "version": "0.0.1",
   "description": "Ethernauts DAPP",
   "main": "index.js",
