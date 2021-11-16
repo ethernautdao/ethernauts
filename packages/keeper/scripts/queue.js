@@ -2,19 +2,6 @@ const { Queue } = require('bullmq');
 const { getContractAt } = require('@ethernauts/hardhat/src/utils/hardhat');
 const config = require('../src/config');
 
-/*
-TODO
-
-* Listen to mints (event 'Transfer')
-  + If its the start of a new batch, Call as owner to `Ethernauts.setNextRandomNumber()`
-
-* Listen to batch start event (event 'BatchStart')
-  + For each asset from the previous batch, enqueue the upload of the resources
-
-* Create the script to upload resources pending on the queue
-
-*/
-
 const mintsQueue = new Queue('mints', {
   connection: {
     host: config.REDIS_HOST,
