@@ -15,12 +15,12 @@
   },
   "homepage": "https://github.com/ethernautdao/ethernauts#readme",
   "scripts": {
-    "start:mints-listener": "hardhat run scripts/mints-listener.js"
+    "queue": "hardhat run scripts/queue.js"
   },
   "dependencies": {
     "@nomiclabs/hardhat-ethers": "2.0.2",
     "bullmq": "1.51.3",
-    "fastq": "1.13.0",
-    "hardhat-dependency-compiler": "1.1.2"
+    "dotenv": "10.0.0",
+    "envalid": "7.2.2"
   }
 }
