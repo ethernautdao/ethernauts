@@ -1,34 +1,32 @@
 const fs = require('fs');
 const fsp = require('fs/promises');
 const path = require('path');
-const Confirm = require('prompt-confirm');
 const { task } = require('hardhat/config');
 
 const DEPLOYMENT_SCHEMA = {
   token: '',
 };
 
-task('deploy', 'Deploys the Ethernauts NFT contract')
-  .setAction(async (taskArguments, hre) => {
-    console.log(`Deploying Ethernauts in network: ${hre.network.name}`);
+task('deploy', 'Deploys the Ethernauts NFT contract').setAction(async (taskArguments, hre) => {
+  console.log(`Deploying Ethernauts in network: ${hre.network.name}`);
 
-    const deploymentPath = `./deployments/${hre.network.name}.json`;
+  const deploymentPath = `./deployments/${hre.network.name}.json`;
 
-    const data = _loadOrCreateDeploymentFile(deploymentPath);
+  const data = _loadOrCreateDeploymentFile(deploymentPath);
 
-    if (hre.network.name !== 'local' && data.token !== '') {
-      throw new Error(`Token already exists at ${data.token}`);
-    }
+  if (hre.network.name !== 'local' && data.token !== '') {
+    throw new Error(`Token already exists at ${data.token}`);
+  }
 
-    await _confirmParameters();
+  await _confirmParameters();
 
-    const Ethernauts = await _deployContract();
-    console.log(`Ethernauts token deployed at ${Ethernauts.address}`);
+  const Ethernauts = await _deployContract();
+  console.log(`Ethernauts token deployed at ${Ethernauts.address}`);
 
-    data.token = Ethernauts.address;
-    await fsp.mkdir(path.dirname(deploymentPath), { recursive: true });
-    await fsp.writeFile(deploymentPath, JSON.stringify(data, null, 2));
-  });
+  data.token = Ethernauts.address;
+  await fsp.mkdir(path.dirname(deploymentPath), { recursive: true });
+  await fsp.writeFile(deploymentPath, JSON.stringify(data, null, 2));
+});
 
 async function _confirmParameters() {
   console.log('Constructor parameters:');
@@ -38,11 +36,6 @@ async function _confirmParameters() {
   console.log('Overrides:');
   _logObject(hre.config.overrides);
   console.log('');
-
-  const confirm = new Confirm('Do you want to depoy with these parameters?');
-  const answer = await confirm.run();
-
-  if (!answer) process.exit(0);
 }
 
 async function _deployContract() {
@@ -76,4 +69,3 @@ function _loadOrCreateDeploymentFile(filepath) {
     return DEPLOYMENT_SCHEMA;
   }
 }
-

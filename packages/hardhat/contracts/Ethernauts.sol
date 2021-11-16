@@ -142,21 +142,6 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         return string(abi.encodePacked(baseURI, assetId.toString()));
     }
 
-    function setNextRandomNumber() external onlyOwner {
-        uint randomNumberIdx = _randomNumbers.length;
-
-        uint maxTokenIdInBatch = batchSize * (randomNumberIdx + 1) - 1;
-        require(totalSupply() >= maxTokenIdInBatch, "Cannot set for unminted tokens");
-
-        // solhint-disable not-rely-on-time
-        uint randomNumber = uint256(
-            keccak256(abi.encodePacked(msg.sender, block.difficulty, block.timestamp, _randomNumbers.length))
-        );
-        // solhint-enable not-rely-on-time
-
-        _randomNumbers.push(randomNumber);
-    }
-
     function getRandomNumberForBatch(uint batchId) public view returns (uint) {
         return _randomNumbers[batchId];
     }
@@ -226,11 +211,30 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         uint tokenId = totalSupply();
 
         _mint(to, tokenId);
+
+        _tryGenerateRandomNumber();
     }
 
     function _mint(address to, uint tokenId) internal virtual override {
         require(totalSupply() < maxTokens, "No available supply");
 
         super._mint(to, tokenId);
+    }
+
+    function _tryGenerateRandomNumber() private {
+        uint randomNumberIdx = _randomNumbers.length;
+
+        uint maxTokenIdInBatch = batchSize * (randomNumberIdx + 1) - 1;
+        if (totalSupply() < maxTokenIdInBatch) {
+            return;
+        }
+
+        // solhint-disable not-rely-on-time
+        uint randomNumber = uint256(
+            keccak256(abi.encodePacked(msg.sender, block.difficulty, block.timestamp, randomNumberIdx))
+        );
+        // solhint-enable not-rely-on-time
+
+        _randomNumbers.push(randomNumber);
     }
 }
