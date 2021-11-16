@@ -12,8 +12,6 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     using Address for address payable;
     using Strings for uint256;
 
-    event BatchStart();
-
     // Can be set only once on deploy
     uint public immutable maxTokens;
     uint public immutable maxGiftable;
@@ -157,8 +155,6 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         // solhint-enable not-rely-on-time
 
         _randomNumbers.push(randomNumber);
-
-        emit BatchStart();
     }
 
     function getRandomNumberForBatch(uint batchId) external view returns (uint) {
