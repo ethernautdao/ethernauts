@@ -231,7 +231,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
 
         // solhint-disable not-rely-on-time
         uint randomNumber = uint256(
-            keccak256(abi.encodePacked(msg.sender, block.difficulty, block.timestamp, _randomNumbers.length))
+            keccak256(abi.encodePacked(msg.sender, block.difficulty, block.timestamp, randomNumberIdx))
         );
         // solhint-enable not-rely-on-time
 
