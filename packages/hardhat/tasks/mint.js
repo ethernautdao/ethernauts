@@ -2,8 +2,6 @@ const { NumberPrompt } = require('enquirer');
 const { getContractAt } = require('../src/utils/hardhat');
 const { task } = require('hardhat/config');
 
-const SALE_STATES = ['Paused', 'Early', 'Open'];
-
 task('mint', 'Mints Ethernauts tokens').setAction(async (taskArguments, hre) => {
   const Ethernauts = await getContractAt('Ethernauts');
 
