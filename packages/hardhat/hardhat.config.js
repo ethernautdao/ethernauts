@@ -1,7 +1,12 @@
+const fs = require('fs');
+const path = require('path');
 const ethers = require('ethers');
 
 require('@nomiclabs/hardhat-ethers');
 require('solidity-coverage');
+
+require('./tasks/deploy')
+require('./tasks/sale-state')
 
 module.exports = {
   solidity: '0.8.4',
