@@ -1,16 +1,15 @@
 const fs = require('fs');
 const fsp = require('fs/promises');
 const path = require('path');
-const hre = require('hardhat');
-const { ethers } = hre;
+const { task } = require('hardhat/config');
 
 const DEPLOYMENT_SCHEMA = {
   token: '',
 };
 
-// TODO: Specify gas limit and price to use
-// TODO: Specify owner/deployer EOA
-async function main() {
+task('deploy', 'Deploys the Ethernauts NFT contract').setAction(async (taskArguments, hre) => {
+  console.log(`Deploying Ethernauts in network: ${hre.network.name}`);
+
   const deploymentPath = `./deployments/${hre.network.name}.json`;
 
   const data = _loadOrCreateDeploymentFile(deploymentPath);
@@ -27,7 +26,7 @@ async function main() {
   data.token = Ethernauts.address;
   await fsp.mkdir(path.dirname(deploymentPath), { recursive: true });
   await fsp.writeFile(deploymentPath, JSON.stringify(data, null, 2));
-}
+});
 
 async function _confirmParameters() {
   console.log('Constructor parameters:');
@@ -40,7 +39,7 @@ async function _confirmParameters() {
 }
 
 async function _deployContract() {
-  const factory = await ethers.getContractFactory('Ethernauts');
+  const factory = await hre.ethers.getContractFactory('Ethernauts');
   const Ethernauts = await factory.deploy(
     ...Object.values(hre.config.defaults),
     hre.config.overrides
@@ -70,10 +69,3 @@ function _loadOrCreateDeploymentFile(filepath) {
     return DEPLOYMENT_SCHEMA;
   }
 }
-
-main()
-  .then(() => process.exit(0))
-  .catch((error) => {
-    console.error(error);
-    process.exit(1);
-  });
