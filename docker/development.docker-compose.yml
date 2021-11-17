@@ -9,7 +9,7 @@ services:
     restart: always
     ports:
       - 8545:8545
-    command: npm run start:hardhat:node
+    command: npm run start:hardhat:node -w @ethernauts/hardhat
   hardhat-deploy:
     container_name: hardhat-deploy
     build:
@@ -17,7 +17,7 @@ services:
       dockerfile: docker/hardhat.Dockerfile
     volumes:
       - ../packages/hardhat/deployments:/src/packages/hardhat/deployments
-    command: npm run start:hardhat:deploy:docker
+    command: npm run start:hardhat:deploy:docker -w @ethernauts/hardhat
     depends_on:
       - hardhat-node
   ipfs:
