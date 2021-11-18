@@ -2,11 +2,14 @@
 
 WIP implementation for https://forum.ethernautdao.io/t/deploy-ethernaut-avatar-nfts-to-bootstrap-the-dao-s-tokenomics/299
 
-## Getting Started
+## Requirements
 
-Lorem ipsum
+- Node.js v16.8.0
+- NPM v7.21.0
+- Docker
+- Docker Compose
 
-### Solidity development
+## Solidity development
 
 The following hardhat tasks will help you to:
 
@@ -15,7 +18,7 @@ The following hardhat tasks will help you to:
 - Open the sale: `npx hardhat sale-state`
 - Mint sample tokens: `npx hardhat mint`
 
-### DAPP development
+## DAPP development
 
 We use Docker and Docker Compose to run the development environment.
 
