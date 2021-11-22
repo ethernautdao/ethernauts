@@ -1,16 +1,15 @@
 .button {
-  height: 48px;
-  width: 180px;
+  padding: 10px 24px;
   outline: none;
-  font-size: 16px;
-  line-height: 1em;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 21px;
   border: 0;
   border-color: #181a20;
-  border-radius: 5px;
+  border-radius: 8px;
   border: 1px solid;
   background-color: #fff;
   color: #181a20;
-  font-weight: 500;
   cursor: pointer;
   letter-spacing: 1px;
   text-align: center;
@@ -20,4 +19,8 @@
     border-color: #fff !important;
     color: #fff;
   }
+}
+
+.w-100 {
+  width: 100%;
 }
