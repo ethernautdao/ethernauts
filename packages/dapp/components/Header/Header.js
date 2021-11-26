@@ -6,9 +6,7 @@ import styles from './Header.module.scss';
 const Header = () => {
   return (
     <header className={styles.header}>
-      <div>
-        <h1 className={styles.title}>EthernautDAO</h1>
-      </div>
+      <h1 className={styles.title}>Ethernauts</h1>
       <div className={styles.end}>
         <WalletInfo />
         <ConnectWallet />

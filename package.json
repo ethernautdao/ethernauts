@@ -35,8 +35,6 @@
     "coverage": "npm run --workspaces --if-present coverage",
     "start:dapp": "npm run dev -w @ethernauts/dapp",
     "start:keeper": "npm run start:keeper -w @ethernauts/hardhat",
-    "start:hardhat:node": "npm run start:hardhat:node -w @ethernauts/hardhat",
-    "start:hardhat:deploy:docker": "npm run start:hardhat:deploy:docker -w @ethernauts/hardhat",
     "lint:js": "prettier --check '**/*.js' && eslint '**/*.js' && npm run lint -w @ethernauts/dapp",
     "lint:js:fix": "prettier --write '**/*.js' && eslint --fix '**/*.js'",
     "lint:sol": "prettier --check 'packages/hardhat/contracts/**/*.sol' && solhint 'packages/hardhat/contracts/**/*.sol'",

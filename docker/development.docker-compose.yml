@@ -9,15 +9,18 @@ services:
     restart: always
     ports:
       - 8545:8545
-    command: npm run start:hardhat:node
+    command: npm run start:hardhat:node -w @ethernauts/hardhat
   hardhat-deploy:
     container_name: hardhat-deploy
     build:
       context: ..
       dockerfile: docker/hardhat.Dockerfile
     volumes:
-      - ../packages/hardhat/deployments:/src/packages/hardhat/deployments
-    command: npm run start:hardhat:deploy:docker
+      - ../packages/hardhat/artifacts:/src/packages/hardhat/artifacts
+      - ../packages/hardhat/cache:/src/packages/hardhat/cache
+    command: sh -c "/wait && npm run start:hardhat:compile -w @ethernauts/hardhat && npm run start:hardhat:deploy:docker -w @ethernauts/hardhat"
+    environment:
+      WAIT_HOSTS: hardhat-node:8545
     depends_on:
       - hardhat-node
   ipfs:
@@ -34,6 +37,7 @@ services:
       dockerfile: docker/dapp.Dockerfile
     volumes:
       - ../packages/dapp:/src/packages/dapp
+      - ../packages/hardhat/artifacts:/src/packages/hardhat/artifacts
       - ../packages/hardhat/deployments:/src/packages/hardhat/deployments
       - /src/node_modules
       - /src/packages/dapp/node_modules

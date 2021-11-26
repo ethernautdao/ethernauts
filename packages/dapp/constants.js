@@ -10,4 +10,7 @@ const saleState = {
   2: OPEN,
 };
 
-export { zeroAccount, saleState, EARLY, PAUSED, OPEN };
+const INITIAL_DONATION = 1;
+const MAX_DONATION = 30;
+
+export { zeroAccount, saleState, EARLY, PAUSED, OPEN, INITIAL_DONATION, MAX_DONATION };

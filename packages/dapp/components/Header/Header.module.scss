@@ -1,6 +1,8 @@
+@import "../../styles/breakpoints.scss";
+
 .header {
   display: flex;
-
+  align-items: center;
   background-color: rgb(24, 26, 32);
 
   .end {
@@ -14,5 +16,6 @@
     letter-spacing: 1px;
     font-size: 24px;
     color: #fff;
+    margin: 0px;
   }
 }

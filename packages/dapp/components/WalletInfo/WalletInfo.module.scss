@@ -1,14 +1,28 @@
+@import "../../styles/breakpoints.scss";
+
 .container {
   margin-right: 30px;
   height: 30px;
+
+  @include breakpoint(xs) {
+    margin-right: 0;
+  }
 }
 
 .network {
   color: #fff;
   font-size: 12px;
+
+  @include breakpoint(xs) {
+    display: none;
+  }
 }
 
 .address {
   color: #fff;
   font-size: 12px;
+
+  @include breakpoint(xs) {
+    display: none;
+  }
 }
