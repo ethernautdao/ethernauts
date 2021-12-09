@@ -89,7 +89,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         _redeemedCoupons[msg.sender] = true;
     }
 
-    function tokensGifted() public view returns (uint) {
+    function tokensGifted() external view returns (uint) {
         return _tokensGifted;
     }
 
@@ -105,7 +105,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         return maxGiftable - _tokensGifted;
     }
 
-    function exists(uint tokenId) public view returns (bool) {
+    function exists(uint tokenId) external view returns (bool) {
         return _exists(tokenId);
     }
 
@@ -142,11 +142,11 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         return string(abi.encodePacked(baseURI, assetId.toString()));
     }
 
-    function getRandomNumberForBatch(uint batchId) public view returns (uint) {
+    function getRandomNumberForBatch(uint batchId) external view returns (uint) {
         return _randomNumbers[batchId];
     }
 
-    function getRandomNumberCount() public view returns (uint) {
+    function getRandomNumberCount() external view returns (uint) {
         return _randomNumbers.length;
     }
 
