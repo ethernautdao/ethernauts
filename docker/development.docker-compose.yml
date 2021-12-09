@@ -2,7 +2,6 @@ version: "3.9"
 
 services:
   hardhat-node:
-    container_name: hardhat-node
     build:
       context: ..
       dockerfile: docker/hardhat.Dockerfile
@@ -11,7 +10,6 @@ services:
       - 8545:8545
     command: npm run start:hardhat:node -w @ethernauts/hardhat
   hardhat-deploy:
-    container_name: hardhat-deploy
     build:
       context: ..
       dockerfile: docker/hardhat.Dockerfile
@@ -24,15 +22,43 @@ services:
       WAIT_HOSTS: hardhat-node:8545
     depends_on:
       - hardhat-node
+
   ipfs:
     image: ipfs/go-ipfs:master-latest
-    container_name: ipfs
     ports:
       - 5001:5001
     volumes:
       - ./data/ipfs:/data/ipfs
+
+  redis:
+    image: redis:6.2-alpine
+    command: redis-server --appendonly yes
+    volumes:
+      - ./data/redis:/data
+    ports:
+      - 6379:6379
+
+  keeper-queue:
+    build:
+      context: ..
+      dockerfile: docker/keeper.Dockerfile
+    restart: always
+    command: npm run -w @ethernauts/keeper queue -- --network docker
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    volumes:
+      - ../packages/keeper:/src/packages/keeper
+      - ../packages/hardhat/deployments:/src/packages/hardhat/deployments
+      - /src/node_modules
+      - /src/packages/keeper/node_modules
+    depends_on:
+      - hardhat-node
+      - hardhat-deploy
+      - ipfs
+      - redis
+
   dapp:
-    container_name: dapp
     build:
       context: ..
       dockerfile: docker/dapp.Dockerfile

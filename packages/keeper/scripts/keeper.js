@@ -1,10 +1,10 @@
 const path = require('path');
 const fastq = require('fastq');
 
-const { getContractAt } = require('../src/utils/hardhat');
-const IPFS = require('../src/ipfs');
-const config = require('../src/config');
-const constants = require('../src/constants');
+const { getContractAt } = require('@ethernauts/hardhat/src/utils/hardhat');
+const IPFS = require('@ethernauts/hardhat/src/ipfs');
+const config = require('@ethernauts/hardhat/src/config');
+const constants = require('@ethernauts/hardhat/src/constants');
 
 async function main() {
   const ipfs = new IPFS({
