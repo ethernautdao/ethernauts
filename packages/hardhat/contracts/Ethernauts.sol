@@ -19,9 +19,16 @@ contract Ethernauts is ERC721Enumerable, Ownable {
 
     // Can be changed by owner
     string public baseTokenURI;
+    event BaseTokenURIChanged(string baseTokenURI);
+
     uint public mintPrice;
+    event MintPriceChanged(uint mintPrice);
+
     uint public earlyMintPrice;
+    event EarlyMintPriceChanged(uint earlyMintPrice);
+
     address public couponSigner;
+    event CouponSignerChanged(address couponSigner);
 
     // Internal usage
     uint private _tokensGifted;
@@ -35,6 +42,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         Open // Anyone can mint
     }
     SaleState public currentSaleState;
+    event SaleStateChanged(SaleState state);
 
     constructor(
         uint definitiveMaxGiftable,
@@ -164,24 +172,29 @@ contract Ethernauts is ERC721Enumerable, Ownable {
 
     function setMintPrice(uint newMintPrice) external onlyOwner {
         mintPrice = newMintPrice;
+        emit MintPriceChanged(newMintPrice);
     }
 
     function setEarlyMintPrice(uint newEarlyMintPrice) external onlyOwner {
         earlyMintPrice = newEarlyMintPrice;
+        emit EarlyMintPriceChanged(newEarlyMintPrice);
     }
 
     function setBaseURI(string memory newBaseTokenURI) external onlyOwner {
         baseTokenURI = newBaseTokenURI;
+        emit BaseTokenURIChanged(newBaseTokenURI);
     }
 
     function setSaleState(SaleState newSaleState) external onlyOwner {
         require(newSaleState != currentSaleState, "Invalid new state");
 
         currentSaleState = newSaleState;
+        emit SaleStateChanged(newSaleState);
     }
 
     function setCouponSigner(address newCouponSigner) external onlyOwner {
         couponSigner = newCouponSigner;
+        emit CouponSignerChanged(newCouponSigner);
     }
 
     function withdraw(address payable beneficiary) external onlyOwner {
