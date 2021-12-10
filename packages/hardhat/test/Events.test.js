@@ -80,4 +80,20 @@ describe('Test events emitted', () => {
       assert.equal(event.args.baseTokenURI, 'http://pinedead.io/');
     });
   });
+
+  describe('When Withdraw is triggered', () => {
+    it('shows WithdrawTriggered event is emitted', async () => {
+      receipt = await (await Ethernauts.connect(owner).withdraw(user.address)).wait();
+      const event = receipt.events.find((e) => e.event === 'WithdrawTriggered');
+      assert.equal(event.args.beneficiary, user.address);
+    });
+  });
+
+  describe('When PermanentURL is locked', () => {
+    it('shows PermanentURITriggered event is emitted', async () => {
+      receipt = await (await Ethernauts.connect(owner).setPermanentURI()).wait();
+      const event = receipt.events.find((e) => e.event === 'PermanentURITriggered');
+      assert.equal(event.args.value, true);
+    });
+  });
 });

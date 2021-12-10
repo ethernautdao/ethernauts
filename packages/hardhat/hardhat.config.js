@@ -8,7 +8,7 @@ require('./tasks/sale-state');
 require('./tasks/mint');
 
 module.exports = {
-  solidity: '0.8.4',
+  solidity: '0.8.9',
   defaultNetwork: 'hardhat',
   networks: {
     hardhat: {
