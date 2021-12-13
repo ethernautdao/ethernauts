@@ -1,6 +1,10 @@
 @import "../../styles/breakpoints.scss";
 
 .header {
+  @include breakpoint(xs) {
+    display: none;
+  }
+
   display: flex;
   align-items: center;
   background-color: rgb(24, 26, 32);
@@ -10,12 +14,20 @@
     align-items: center;
     margin-left: auto;
   }
+}
 
-  .title {
-    margin: 0px;
-    letter-spacing: 1px;
-    font-size: 24px;
-    color: #fff;
-    margin: 0px;
+.title {
+  text-align: center;
+  margin: 0px;
+  letter-spacing: 1px;
+  font-size: 50px;
+  color: #fff;
+  margin: 0px;
+
+  .subtitle {
+    font-size: 18px;
+    margin: 7px 0;
+    text-transform: uppercase;
+    letter-spacing: 5px;
   }
 }
