@@ -1,0 +1,26 @@
+{
+  "name": "@ethernauts/keeper",
+  "version": "0.0.1",
+  "description": "Ethernauts server that reacts to mint events processing and uploading assets",
+  "main": "index.js",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ethernautdao/ethernauts.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ethernautdao/ethernauts/issues"
+  },
+  "homepage": "https://github.com/ethernautdao/ethernauts#readme",
+  "scripts": {
+    "queue": "hardhat run scripts/queue.js"
+  },
+  "dependencies": {
+    "@nomiclabs/hardhat-ethers": "2.0.2",
+    "bullmq": "1.51.3",
+    "dotenv": "10.0.0",
+    "envalid": "7.2.2"
+  }
+}

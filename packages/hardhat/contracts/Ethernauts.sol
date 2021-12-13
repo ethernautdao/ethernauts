@@ -155,11 +155,11 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         return string(abi.encodePacked(baseURI, assetId.toString()));
     }
 
-    function getRandomNumberForBatch(uint256 batchId) external view returns (uint256) {
+    function getRandomNumberForBatch(uint batchId) public view returns (uint) {
         return _randomNumbers[batchId];
     }
 
-    function getRandomNumberCount() external view returns (uint256) {
+    function getRandomNumberCount() public view returns (uint) {
         return _randomNumbers.length;
     }
 
