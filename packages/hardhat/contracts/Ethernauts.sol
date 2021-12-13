@@ -186,7 +186,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     }
 
     function setBaseURI(string calldata newBaseTokenURI) external onlyOwner {
-        require(!permanentUrl, "NFTs minting finished, changing URL not possible");
+        require(!permanentUrl, "NFTs minting finished");
         baseTokenURI = newBaseTokenURI;
         emit BaseTokenURIChanged(newBaseTokenURI);
     }
