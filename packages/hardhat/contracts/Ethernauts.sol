@@ -1,5 +1,5 @@
 //SPDX-License-Identifier: Unlicense
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
@@ -13,20 +13,25 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     using Strings for uint256;
 
     // Can be set only once on deploy
-    uint public immutable maxTokens;
-    uint public immutable maxGiftable;
-    uint public immutable batchSize;
+    uint256 public immutable maxTokens;
+    uint256 public immutable maxGiftable;
+    uint256 public immutable batchSize;
 
-    // Can be changed by owner
+    // Can be changed by owner until minting stopped
     string public baseTokenURI;
-    uint public mintPrice;
-    uint public earlyMintPrice;
+
+    uint256 public mintPrice;
+
+    uint256 public earlyMintPrice;
+
     address public couponSigner;
 
     // Internal usage
-    uint private _tokensGifted;
+    uint256 private _tokensGifted;
     mapping(address => bool) private _redeemedCoupons; // user address => if its single coupon has been redeemed
-    uint[] private _randomNumbers;
+    uint256[] private _randomNumbers;
+
+    bool public permanentUrl;
 
     // Three different sale stages:
     enum SaleState {
@@ -34,14 +39,22 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         Early, // Only community can mint, at a discount using signed messages
         Open // Anyone can mint
     }
+
     SaleState public currentSaleState;
+    event SaleStateChanged(SaleState state);
+    event BaseTokenURIChanged(string baseTokenURI);
+    event EarlyMintPriceChanged(uint256 earlyMintPrice);
+    event MintPriceChanged(uint256 mintPrice);
+    event CouponSignerChanged(address couponSigner);
+    event WithdrawTriggered(address beneficiary);
+    event PermanentURITriggered(bool value);
 
     constructor(
-        uint definitiveMaxGiftable,
-        uint definitiveMaxTokens,
-        uint definitiveBatchSize,
-        uint initialMintPrice,
-        uint initialEarlyMintPrice,
+        uint256 definitiveMaxGiftable,
+        uint256 definitiveMaxTokens,
+        uint256 definitiveBatchSize,
+        uint256 initialMintPrice,
+        uint256 initialEarlyMintPrice,
         address initialCouponSigner
     ) ERC721("Ethernauts", "NAUTS") {
         require(definitiveMaxGiftable <= 100, "Max giftable supply too large");
@@ -89,23 +102,23 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         _redeemedCoupons[msg.sender] = true;
     }
 
-    function tokensGifted() external view returns (uint) {
+    function tokensGifted() external view returns (uint256) {
         return _tokensGifted;
     }
 
-    function availableSupply() public view returns (uint) {
+    function availableSupply() public view returns (uint256) {
         return maxTokens - totalSupply();
     }
 
-    function availableToMint() public view returns (uint) {
+    function availableToMint() public view returns (uint256) {
         return availableSupply() - availableToGift();
     }
 
-    function availableToGift() public view returns (uint) {
+    function availableToGift() public view returns (uint256) {
         return maxGiftable - _tokensGifted;
     }
 
-    function exists(uint tokenId) external view returns (bool) {
+    function exists(uint256 tokenId) external view returns (bool) {
         return _exists(tokenId);
     }
 
@@ -125,16 +138,16 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     function tokenURI(uint256 tokenId) public view override returns (string memory) {
         string memory baseURI = _baseURI();
 
-        uint batchId = tokenId / batchSize;
+        uint256 batchId = tokenId / batchSize;
         if (batchId >= _randomNumbers.length) {
             return string(abi.encodePacked(baseURI, "travelling_to_destination"));
         }
 
-        uint randomNumber = _randomNumbers[batchId];
-        uint offset = randomNumber % batchSize;
-        uint maxTokenIdInBatch = batchSize * (batchId + 1) - 1;
+        uint256 randomNumber = _randomNumbers[batchId];
+        uint256 offset = randomNumber % batchSize;
+        uint256 maxTokenIdInBatch = batchSize * (batchId + 1) - 1;
 
-        uint assetId = tokenId + offset;
+        uint256 assetId = tokenId + offset;
         if (assetId > maxTokenIdInBatch) {
             assetId -= batchSize;
         }
@@ -142,26 +155,11 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         return string(abi.encodePacked(baseURI, assetId.toString()));
     }
 
-    function setNextRandomNumber() external onlyOwner {
-        uint randomNumberIdx = _randomNumbers.length;
-
-        uint maxTokenIdInBatch = batchSize * (randomNumberIdx + 1) - 1;
-        require(totalSupply() >= maxTokenIdInBatch, "Cannot set for unminted tokens");
-
-        // solhint-disable not-rely-on-time
-        uint randomNumber = uint256(
-            keccak256(abi.encodePacked(msg.sender, block.difficulty, block.timestamp, _randomNumbers.length))
-        );
-        // solhint-enable not-rely-on-time
-
-        _randomNumbers.push(randomNumber);
-    }
-
-    function getRandomNumberForBatch(uint batchId) external view returns (uint) {
+    function getRandomNumberForBatch(uint batchId) public view returns (uint) {
         return _randomNumbers[batchId];
     }
 
-    function getRandomNumberCount() external view returns (uint) {
+    function getRandomNumberCount() public view returns (uint) {
         return _randomNumbers.length;
     }
 
@@ -177,36 +175,47 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         _tokensGifted += 1;
     }
 
-    function setMintPrice(uint newMintPrice) external onlyOwner {
+    function setMintPrice(uint256 newMintPrice) external onlyOwner {
         mintPrice = newMintPrice;
+        emit MintPriceChanged(newMintPrice);
     }
 
-    function setEarlyMintPrice(uint newEarlyMintPrice) external onlyOwner {
+    function setEarlyMintPrice(uint256 newEarlyMintPrice) external onlyOwner {
         earlyMintPrice = newEarlyMintPrice;
+        emit EarlyMintPriceChanged(newEarlyMintPrice);
     }
 
-    function setBaseURI(string memory newBaseTokenURI) external onlyOwner {
+    function setBaseURI(string calldata newBaseTokenURI) external onlyOwner {
+        require(!permanentUrl, "NFTs minting finished");
         baseTokenURI = newBaseTokenURI;
+        emit BaseTokenURIChanged(newBaseTokenURI);
     }
 
     function setSaleState(SaleState newSaleState) external onlyOwner {
         require(newSaleState != currentSaleState, "Invalid new state");
-
         currentSaleState = newSaleState;
+        emit SaleStateChanged(newSaleState);
     }
 
     function setCouponSigner(address newCouponSigner) external onlyOwner {
         couponSigner = newCouponSigner;
+        emit CouponSignerChanged(newCouponSigner);
+    }
+
+    function setPermanentURI() external onlyOwner {
+        permanentUrl = true;
+        emit PermanentURITriggered(true);
     }
 
     function withdraw(address payable beneficiary) external onlyOwner {
         beneficiary.sendValue(address(this).balance);
+        emit WithdrawTriggered(beneficiary);
     }
 
     function recoverTokens(
         address token,
         address to,
-        uint value
+        uint256 value
     ) external onlyOwner {
         require(token != to, "Invalid destination");
         require(IERC20(token).balanceOf(address(this)) >= value, "Invalid amount");
@@ -223,29 +232,29 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     }
 
     function _mintNext(address to) private {
-        uint tokenId = totalSupply();
+        uint256 tokenId = totalSupply();
 
         _mint(to, tokenId);
 
         _tryGenerateRandomNumber();
     }
 
-    function _mint(address to, uint tokenId) internal virtual override {
+    function _mint(address to, uint256 tokenId) internal virtual override {
         require(totalSupply() < maxTokens, "No available supply");
 
         super._mint(to, tokenId);
     }
 
     function _tryGenerateRandomNumber() private {
-        uint randomNumberIdx = _randomNumbers.length;
+        uint256 randomNumberIdx = _randomNumbers.length;
 
-        uint maxTokenIdInBatch = batchSize * (randomNumberIdx + 1) - 1;
+        uint256 maxTokenIdInBatch = batchSize * (randomNumberIdx + 1) - 1;
         if (totalSupply() < maxTokenIdInBatch) {
             return;
         }
 
         // solhint-disable not-rely-on-time
-        uint randomNumber = uint256(
+        uint256 randomNumber = uint256(
             keccak256(abi.encodePacked(msg.sender, block.difficulty, block.timestamp, randomNumberIdx))
         );
         // solhint-enable not-rely-on-time
