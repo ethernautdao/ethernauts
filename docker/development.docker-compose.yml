@@ -14,6 +14,7 @@ services:
       context: ..
       dockerfile: docker/hardhat.Dockerfile
     volumes:
+      - ../packages/hardhat/deployments:/src/packages/hardhat/deployments
       - ../packages/hardhat/artifacts:/src/packages/hardhat/artifacts
       - ../packages/hardhat/cache:/src/packages/hardhat/cache
     command: sh -c "/wait && npm run start:hardhat:compile -w @ethernauts/hardhat && npm run start:hardhat:deploy:docker -w @ethernauts/hardhat"
@@ -23,7 +24,7 @@ services:
       - hardhat-node
 
   ipfs:
-    image: ipfs/go-ipfs:master-latest
+    image: ipfs/go-ipfs:v0.10.0
     ports:
       - 5001:5001
     volumes:
@@ -72,7 +73,9 @@ services:
       - 3000:3000
     env_file:
       - ../packages/dapp/.env.local
-    command: npm run start:dapp
+    command: sh -c "/wait && npm run start:dapp"
+    environment:
+      WAIT_HOSTS: hardhat-node:8545
     depends_on:
       - hardhat-node
       - hardhat-deploy
