@@ -22,7 +22,7 @@ async function main() {
     if (from !== '0x0000000000000000000000000000000000000000') return;
     const tokenId = evt.args.tokenId.toString();
     console.log(`Mint detected, tokenId: ${tokenId}`);
-    mintsQueue.add('cars', { tokenId, to, amount });
+    mintsQueue.add('mint', { tokenId, to, amount });
   });
 }
 
