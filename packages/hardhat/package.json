@@ -19,7 +19,8 @@
     "coverage": "hardhat coverage",
     "start:keeper": "hardhat run scripts/keeper.js",
     "start:hardhat:node": "npx hardhat node",
-    "start:hardhat:deploy:docker": "npx hardhat run scripts/deploy.js --network docker",
+    "start:hardhat:compile": "npx hardhat compile",
+    "start:hardhat:deploy:docker": "npx hardhat deploy --network docker",
     "create:dummy:assets": "node scripts/create-dummy-assets.js",
     "create:ipfs:metadata": "node scripts/create-ipfs-metadata.js",
     "create:dummy:resources": "npm run create:dummy:assets && npm run create:ipfs:metadata",
@@ -29,7 +30,6 @@
     "cids": "1.1.9",
     "dotenv": "10.0.0",
     "envalid": "7.2.1",
-    "fastq": "1.13.0",
     "ipfs-http-client": "52.0.3",
     "ipfs-only-hash": "4.0.0"
   },
@@ -37,6 +37,8 @@
     "@nomiclabs/hardhat-ethers": "2.0.2",
     "@openzeppelin/contracts": "4.3.0",
     "del": "6.0.0",
+    "enquirer": "2.3.6",
+    "prompt-list": "3.2.0",
     "solidity-coverage": "0.7.17"
   }
 }

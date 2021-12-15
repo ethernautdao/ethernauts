@@ -1,7 +1,12 @@
-version: '3.9'
+version: "3.9"
 
 services:
   keeper:
     build:
       context: https://github.com/ethernautdao/ethernauts.git
       dockerfile: docker/keeper.Dockerfile
+
+  redis:
+    image: redis:6.2-alpine
+    volumes:
+      - /mnt/ethernauts_volume/redis-data:/data

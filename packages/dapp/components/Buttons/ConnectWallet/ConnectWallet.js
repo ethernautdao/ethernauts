@@ -1,25 +1,34 @@
 import { useContext } from 'react';
+import cn from 'classnames';
 
 import { WalletContext } from '../../../contexts/WalletProvider';
 
 import styles from './ConnectWallet.module.scss';
 
-const ConnectWallet = () => {
+const ConnectWallet = ({ width }) => {
   const { state, connect, disconnect } = useContext(WalletContext);
 
   const isConnected = state.web3Provider !== null;
 
   if (isConnected) {
     return (
-      <button type="button" className={styles.button} onClick={disconnect}>
-        Disconnect Wallet
+      <button
+        type="button"
+        className={cn(styles.button, { [styles[`w-${width}`]]: !!width })}
+        onClick={disconnect}
+      >
+        Disconnect wallet
       </button>
     );
   }
 
   return (
-    <button type="button" className={styles.button} onClick={connect}>
-      Connect Wallet
+    <button
+      type="button"
+      className={cn(styles.button, { [styles[`w-${width}`]]: !!width })}
+      onClick={connect}
+    >
+      Connect wallet
     </button>
   );
 };

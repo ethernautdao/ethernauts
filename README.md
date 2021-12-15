@@ -2,20 +2,40 @@
 
 WIP implementation for https://forum.ethernautdao.io/t/deploy-ethernaut-avatar-nfts-to-bootstrap-the-dao-s-tokenomics/299
 
-#### IPFS Demo
-* Init and start IPFS daemon
-  * Non M1 macs: `start:local:ipfs`
-  * M1 macs: Install ipfs natively, then `ipfs init`, then `ipfs daemon`
-* Confirm IPFS node is running with dashboard at `localhost:5001/webui`
-* Configure local node with Pinata
-  * On dashboard settings
-  * If Pinata service exists, delete it
-  * Add service, Pinata, set JWT token
-* Run `npm run create:dummy:assets`
-* Run `npx hardhat node`
-* Run `npx hardhat run scripts/deploy.js --network local`
-* Run `npx hardhat run scripts/bot.js --network local`
-* Run `npx hardhat run scripts/simulate-mints.js --network local`
-* Press keys on simulate mints
-* Observe activity on dashboard
-* Use brave to browse metadata.image url
+## Requirements
+
+- Node.js v16.8.0
+- NPM v7.21.0
+- Docker
+- Docker Compose
+
+## Solidity development
+
+The following hardhat tasks will help you to:
+
+- Start a local node: `npx hardhat node`
+- Deploy the contract: `npx hardhat deploy`
+- Open the sale: `npx hardhat sale-state`
+- Mint sample tokens: `npx hardhat mint`
+
+## DAPP development
+
+We use Docker and Docker Compose to run the development environment.
+
+Run `docker-compose -f docker/development.docker-compose.yml up` to start the whole project. It includes the following services:
+
+- `hardhat-node`: (http://localhost:4585)
+- `hardhat-deploy`
+- `ipfs` (http://localhost:5001)
+- `dapp` (Next.js) (http://localhost:3000)
+- `redis` (https://localhost:6379)
+- `keeper`
+
+Run `docker-compose -f docker/development.docker-compose.yml down` to stop them.
+
+---
+
+You can also run/stop a single service using:
+
+- `docker-compose -f docker/development.docker-compose.yml up service-name`
+- `docker-compose -f docker/development.docker-compose.yml down service-name`

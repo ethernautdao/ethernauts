@@ -1,12 +1,17 @@
-const hre = require('hardhat');
+const { NumberPrompt } = require('enquirer');
 const { getContractAt } = require('../src/utils/hardhat');
-const onAnyKeypress = require('../src/utils/on-any-keypress');
+const { task } = require('hardhat/config');
 
-async function main() {
+task('mint', 'Mints Ethernauts tokens').setAction(async (taskArguments, hre) => {
   const Ethernauts = await getContractAt('Ethernauts');
 
-  console.log(`Interacting with Ethernauts token at ${Ethernauts.address}`);
-  console.log(`Tokens minted so far: ${(await Ethernauts.totalSupply()).toString()}`);
+  const prompt = new NumberPrompt({
+    name: 'Number of tokens to mint',
+    message: 'How many tokens would you like to mint?',
+  });
+
+  const answer = await prompt.run();
+  console.log(answer);
 
   Ethernauts.on('Transfer', async (from, to, amount, event) => {
     if (from === '0x0000000000000000000000000000000000000000') {
@@ -19,14 +24,11 @@ async function main() {
     }
   });
 
-  console.log('Press any key to mint tokens (press q to exit)...');
+  if (isNaN(answer)) {
+    throw new Error(`Invalid amount ${answer}`);
+  }
 
-  for await (const key of onAnyKeypress()) {
-    if (key.ctrl && key.name === 'c') break;
-    if (key.name === 'q') break;
-
-    console.log('Minting a token...');
-
+  for (let i = 0; i < answer; i++) {
     const value = Math.random() * 13.4 + 0.2;
 
     const tx = await Ethernauts.mint({
@@ -37,11 +39,4 @@ async function main() {
 
     console.log('Token minted!');
   }
-
-  process.exit(0);
-}
-
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
 });

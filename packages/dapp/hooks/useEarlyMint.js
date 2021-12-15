@@ -2,6 +2,7 @@ import { useContext, useState } from 'react';
 import { Contract, utils } from 'ethers';
 
 import { WalletContext } from '../contexts/WalletProvider';
+import { DonationContext } from '../contexts/DonationProvider';
 
 import { abi, tokenAddress, ethereumNetwork } from '../config';
 
@@ -13,8 +14,9 @@ const useMintEarly = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const { state } = useContext(WalletContext);
+  const { donation } = useContext(DonationContext);
 
-  const fetchMintEarly = async (value) => {
+  const fetchMintEarly = async () => {
     try {
       setIsError(false);
       setIsLoading(true);
@@ -38,7 +40,7 @@ const useMintEarly = () => {
         if (isARedeemedCoupon) throw new Error(`You're trying to use a redeemed coupon`);
 
         await contract.mintEarly(signedCoupon[state.address], {
-          value: utils.parseEther('0.015'),
+          value: utils.parseEther(String(donation)),
         });
 
         contract.on('Transfer', async (from, to, amount, evt) => {

@@ -3,6 +3,10 @@ const ethers = require('ethers');
 require('@nomiclabs/hardhat-ethers');
 require('solidity-coverage');
 
+require('./tasks/deploy');
+require('./tasks/sale-state');
+require('./tasks/mint');
+
 module.exports = {
   solidity: {
     compilers: [

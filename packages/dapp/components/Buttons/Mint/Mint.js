@@ -26,7 +26,7 @@ const Mint = () => {
 
   if (isError) return 'Something went wrong...';
 
-  if (!mintButtons[data]) return <ConnectWallet />;
+  if (!mintButtons[data]) return <ConnectWallet width={100} />;
 
   return mintButtons[data];
 };
