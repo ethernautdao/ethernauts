@@ -44,11 +44,10 @@ services:
       context: ..
       dockerfile: docker/keeper.Dockerfile
     restart: always
-    command: sh -c "/wait && npm run -w @ethernauts/keeper queue -- --network docker"
+    command: sh -c "npx just-wait -p ./packages/hardhat/deployments/docker.json --timeout 10 && npm run -w @ethernauts/keeper queue -- --network docker"
     environment:
       REDIS_HOST: redis
       REDIS_PORT: 6379
-      WAIT_HOSTS: hardhat-node:8545
     volumes:
       - ../packages/keeper:/src/packages/keeper
       - ../packages/hardhat/deployments:/src/packages/hardhat/deployments
