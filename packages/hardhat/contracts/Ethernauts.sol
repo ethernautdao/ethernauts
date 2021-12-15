@@ -8,6 +8,8 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
+import "hardhat/console.sol";
+
 contract Ethernauts is ERC721Enumerable, Ownable {
     using Address for address payable;
     using Strings for uint256;
@@ -33,7 +35,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         Paused, // No one can mint, except the owner via gifting (default)
         Early, // Only community can mint, at a discount using signed messages
         Open, // Anyone can mint
-        Completed // No more NFT to mint
+        PublicCompleted // Public sale completed
     }
     SaleState private _currentSaleState;
 
@@ -73,12 +75,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     // --------------------
 
     function getCurrentSaleState() public view returns (SaleState) {
-        if (_currentSaleState < SaleState.Open) {
-            return _currentSaleState;
-        } else {
-            // We need to check if user can mint more tokens
-            return availableToMint() > 0 ? SaleState.Open : SaleState.Completed;
-        }
+        return _currentSaleState;
     }
 
     function mint() external payable onlyOnState(SaleState.Open) {
@@ -86,6 +83,10 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         require(availableToMint() > 0, "No available supply");
 
         _mintNext(msg.sender);
+
+        if (availableToMint() == 0) {
+            _currentSaleState = SaleState.PublicCompleted;
+        }
     }
 
     function mintEarly(bytes memory signedCoupon) external payable onlyOnState(SaleState.Early) {
@@ -200,8 +201,8 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     }
 
     function setSaleState(SaleState newSaleState) external onlyOwner {
-        require(getCurrentSaleState() != SaleState.Completed, "Sale is completed");
-        require(newSaleState != _currentSaleState, "Invalid new state");
+        require(getCurrentSaleState() != SaleState.PublicCompleted, "Sale is completed");
+        require(newSaleState != _currentSaleState && newSaleState != SaleState.PublicCompleted, "Invalid new state");
 
         _currentSaleState = newSaleState;
     }
@@ -241,7 +242,6 @@ contract Ethernauts is ERC721Enumerable, Ownable {
 
     function _mint(address to, uint tokenId) internal virtual override {
         require(totalSupply() < maxTokens, "No available supply");
-
         super._mint(to, tokenId);
     }
 }
