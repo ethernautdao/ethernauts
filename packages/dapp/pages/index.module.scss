@@ -59,16 +59,16 @@
   padding-bottom: 25px;
 }
 
-.borderRight {
-  border-right: 2px solid #fff;
+.borderLeft {
+  border-left: 2px solid #fff;
 }
 
 .image {
   width: 100%;
   height: 100%;
-  border-top-right-radius: 17px;
+  border-top-left-radius: 17px;
 
   @include breakpoint(xs) {
-    border-top-left-radius: 17px;
+    border-top-right-radius: 17px;
   }
 }
