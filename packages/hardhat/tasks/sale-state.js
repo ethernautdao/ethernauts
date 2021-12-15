@@ -10,7 +10,7 @@ task('sale-state', 'Changes the sale state of the Ethernauts NFT contract').setA
   const saleStateIdxToName = (idx) => SALE_STATES[idx];
   const saleStateNameToIdx = (name) => SALE_STATES.indexOf(name);
 
-  console.log(`Current sale state ${saleStateIdxToName(await Ethernauts.currentSaleState())}`);
+  console.log(`Current sale state: "${saleStateIdxToName(await Ethernauts.currentSaleState())}"`);
 
   const list = new List({
     name: 'Sale state',
@@ -24,4 +24,6 @@ task('sale-state', 'Changes the sale state of the Ethernauts NFT contract').setA
   const tx = await Ethernauts.setSaleState(saleStateNameToIdx(answer));
   const receipt = await tx.wait();
   console.log(receipt);
+
+  console.log(`Current sale state: "${saleStateIdxToName(await Ethernauts.currentSaleState())}"`);
 });

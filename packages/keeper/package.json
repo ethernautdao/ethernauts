@@ -15,7 +15,8 @@
   },
   "homepage": "https://github.com/ethernautdao/ethernauts#readme",
   "scripts": {
-    "queue": "hardhat run scripts/queue.js"
+    "queue": "hardhat run scripts/queue.js",
+    "jobs": "node scripts/jobs.js"
   },
   "dependencies": {
     "@nomiclabs/hardhat-ethers": "2.0.2",
