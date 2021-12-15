@@ -44,7 +44,7 @@ services:
       context: ..
       dockerfile: docker/keeper.Dockerfile
     restart: always
-    command: npm run -w @ethernauts/keeper queue -- --network docker
+    command: sh -c "/wait && npm run -w @ethernauts/keeper queue -- --network docker"
     environment:
       REDIS_HOST: redis
       REDIS_PORT: 6379
