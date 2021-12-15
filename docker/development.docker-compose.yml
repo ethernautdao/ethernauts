@@ -9,6 +9,7 @@ services:
     ports:
       - 8545:8545
     command: npm run start:hardhat:node -w @ethernauts/hardhat
+
   hardhat-deploy:
     build:
       context: ..
@@ -17,7 +18,7 @@ services:
       - ../packages/hardhat/deployments:/src/packages/hardhat/deployments
       - ../packages/hardhat/artifacts:/src/packages/hardhat/artifacts
       - ../packages/hardhat/cache:/src/packages/hardhat/cache
-    command: sh -c "/wait && npm run start:hardhat:compile -w @ethernauts/hardhat && npm run start:hardhat:deploy:docker -w @ethernauts/hardhat"
+    command: sh -c "/wait && rm ./packages/hardhat/deployments/docker.json && npm run start:hardhat:compile -w @ethernauts/hardhat && npm run start:hardhat:deploy:docker -w @ethernauts/hardhat"
     environment:
       WAIT_HOSTS: hardhat-node:8545
     depends_on:
@@ -43,10 +44,10 @@ services:
       context: ..
       dockerfile: docker/keeper.Dockerfile
     restart: always
-    command: npm run -w @ethernauts/keeper queue -- --network docker
+    command: sh -c "npx just-wait -p ./packages/hardhat/deployments/docker.json --timeout 10 && npm run -w @ethernauts/keeper queue -- --network docker"
     environment:
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
     volumes:
       - ../packages/keeper:/src/packages/keeper
       - ../packages/hardhat/deployments:/src/packages/hardhat/deployments
