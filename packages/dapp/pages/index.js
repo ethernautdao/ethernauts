@@ -30,7 +30,7 @@ export const HomePage = () => (
           <div className={cn(styles.row, styles.secondRow)}>
             <DonationSlide />
           </div>
-          <div className={cn(cn(styles.row, styles.lastRow))}>
+          <div className={cn(styles.row, styles.lastRow)}>
             <Mint />
           </div>
         </div>

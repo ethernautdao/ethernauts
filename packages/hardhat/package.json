@@ -20,7 +20,6 @@
     "start:keeper": "hardhat run scripts/keeper.js",
     "start:hardhat:node": "npx hardhat node",
     "start:hardhat:compile": "npx hardhat compile",
-    "start:hardhat:clean": "npx hardhat clean",
     "start:hardhat:deploy:docker": "npx hardhat deploy --network docker",
     "create:dummy:assets": "node scripts/create-dummy-assets.js",
     "create:ipfs:metadata": "node scripts/create-ipfs-metadata.js",
