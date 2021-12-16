@@ -5,9 +5,12 @@ import { WalletContext } from '../../contexts/WalletProvider';
 
 import useGallery from '../../hooks/useGallery';
 
+import { GoToGallery } from '../Buttons/GoToGallery';
+
 import styles from './Gallery.module.scss';
 
-const Gallery = ({ showAllItems }) => {
+const Gallery = ({ showAllItems = false }) => {
+  console.log('showAllItems: ', showAllItems);
   const { state } = useContext(WalletContext);
 
   const [{ data, isLoading, isError }, fetchGalleryItems] = useGallery();
@@ -22,29 +25,34 @@ const Gallery = ({ showAllItems }) => {
 
   if (!state.web3Provider) return null;
 
+  console.log('EYYY');
+
   return (
     <div>
-      <h3 className={styles.title}>Your NFTs</h3>
-      <div className={styles.imageOuterContainer}>
-        <div className={styles.myNFTsGrid}>
-          {data?.myGalleryItems.map((item) => {
-            return (
-              <div key={item.args.tokenId.toString()} className={styles.imageInnerContainer}>
-                <Image
-                  // TODO: Use the URL of the fleek ipfs gateway to display the NFT
-                  src="https://via.placeholder.com/470x220"
-                  className={styles.image}
-                  layout="fill"
-                  objectFit="cover"
-                />
-                <span>{item.args.tokenId.toString()}</span>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {showAllItems && (
+      {!!data?.myGalleryItems.length && (
+        <>
+          <h3 className={styles.title}>Your NFTs</h3>
+          <div className={styles.imageOuterContainer}>
+            <div className={styles.myNFTsGrid}>
+              {data?.myGalleryItems.map((item) => {
+                return (
+                  <div key={item.args.tokenId.toString()} className={styles.imageInnerContainer}>
+                    <Image
+                      // TODO: Use the URL of the fleek ipfs gateway to display the NFT
+                      src="https://via.placeholder.com/470x220"
+                      className={styles.image}
+                      layout="fill"
+                      objectFit="cover"
+                    />
+                    <span>{item.args.tokenId.toString()}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </>
+      )}
+      {showAllItems && !!data?.allGalleryItems.length && (
         <div>
           <h3 className={styles.title}>Gallery</h3>
           <div className={styles.imageOuterContainer}>
@@ -67,6 +75,7 @@ const Gallery = ({ showAllItems }) => {
           </div>
         </div>
       )}
+      {!showAllItems && <GoToGallery />}
     </div>
   );
 };

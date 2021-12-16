@@ -5,7 +5,6 @@ import cn from 'classnames';
 import { Logs } from '../components/Logs';
 import { Gallery } from '../components/Gallery';
 import { Mint } from '../components/Buttons/Mint';
-import { GoToGallery } from '../components/Buttons/GoToGallery';
 import { DonationSlide } from '../components/DonationSlide';
 
 import styles from './index.module.scss';
@@ -42,7 +41,6 @@ export const HomePage = () => (
     <section className={styles.outerContainer}>
       <Gallery />
     </section>
-    <GoToGallery />
   </>
 );
 
