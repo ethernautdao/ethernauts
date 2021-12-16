@@ -37,7 +37,8 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     enum SaleState {
         Paused, // No one can mint, except the owner via gifting (default)
         Early, // Only community can mint, at a discount using signed messages
-        Open // Anyone can mint
+        Open, // Anyone can mint
+        PublicCompleted // Public sale completed
     }
 
     SaleState public currentSaleState;
@@ -89,6 +90,10 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         require(availableToMint() > 0, "No available supply");
 
         _mintNext(msg.sender);
+
+        if (availableToMint() == 0) {
+            currentSaleState = SaleState.PublicCompleted;
+        }
     }
 
     function mintEarly(bytes memory signedCoupon) external payable onlyOnState(SaleState.Early) {
@@ -192,7 +197,9 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     }
 
     function setSaleState(SaleState newSaleState) external onlyOwner {
-        require(newSaleState != currentSaleState, "Invalid new state");
+        require(currentSaleState != SaleState.PublicCompleted, "Sale is completed");
+        require(newSaleState != currentSaleState && newSaleState != SaleState.PublicCompleted, "Invalid new state");
+
         currentSaleState = newSaleState;
         emit SaleStateChanged(newSaleState);
     }
@@ -241,7 +248,6 @@ contract Ethernauts is ERC721Enumerable, Ownable {
 
     function _mint(address to, uint256 tokenId) internal virtual override {
         require(totalSupply() < maxTokens, "No available supply");
-
         super._mint(to, tokenId);
     }
 
