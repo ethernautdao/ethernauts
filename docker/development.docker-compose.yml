@@ -98,9 +98,7 @@ services:
       - 3000:3000
     env_file:
       - ../packages/dapp/.env.local
-    command: sh -c "/wait && npm run start:dapp"
-    environment:
-      WAIT_HOSTS: hardhat-node:8545
+    command: sh -c "npx --yes just-wait -p ./packages/hardhat/deployments/docker.json --timeout 10 && npm run start:dapp"
     depends_on:
       - hardhat-node
       - hardhat-deploy
