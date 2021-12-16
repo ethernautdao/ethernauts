@@ -2,7 +2,7 @@ const { Queue } = require('bullmq');
 const { getContractFromAbi } = require('@ethernauts/hardhat/src/utils/hardhat');
 const config = require('../src/config');
 
-const mintsQueue = new Queue('mints', {
+const mintsQueue = new Queue(config.MINTS_QUEUE_NAME, {
   connection: {
     host: config.REDIS_HOST,
     port: config.REDIS_PORT,
