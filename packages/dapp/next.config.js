@@ -9,4 +9,8 @@ module.exports = {
 
     return config;
   },
+  images: {
+    // TODO: Replace this with the URL of the fleek gateway ipfs
+    domains: ['via.placeholder.com'],
+  },
 };

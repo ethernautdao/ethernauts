@@ -22,9 +22,9 @@ const useSaleState = () => {
 
         const contract = new Contract(tokenAddress, abi, signer);
 
-        // const currentSaleState = await contract.currentSaleState();
+        const currentSaleState = await contract.currentSaleState();
 
-        setData(saleState[2]);
+        setData(saleState[currentSaleState.toString()]);
       }
     } catch (err) {
       console.error(err);

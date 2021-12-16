@@ -1,4 +1,3 @@
-import { utils } from 'ethers';
 import { createContext, useState } from 'react';
 
 import { INITIAL_DONATION } from '../../constants';
