@@ -17,7 +17,6 @@
   "scripts": {
     "test": "hardhat test",
     "coverage": "hardhat coverage",
-    "start:keeper": "hardhat run scripts/keeper.js",
     "start:hardhat:node": "npx hardhat node",
     "start:hardhat:compile": "npx hardhat compile",
     "start:hardhat:deploy:docker": "npx hardhat deploy --network docker",
