@@ -77,17 +77,13 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     // ----------
 
     modifier onlyOnState(SaleState definedSaleState) {
-        require(getCurrentSaleState() == definedSaleState, "Not allowed in current state");
+        require(currentSaleState == definedSaleState, "Not allowed in current state");
         _;
     }
 
     // --------------------
     // Public external ABI
     // --------------------
-
-    function getCurrentSaleState() public view returns (SaleState) {
-        return currentSaleState;
-    }
 
     function mint() external payable onlyOnState(SaleState.Open) {
         require(msg.value >= mintPrice, "Invalid msg.value");

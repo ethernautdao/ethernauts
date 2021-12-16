@@ -24,31 +24,31 @@ describe('State Changes', () => {
   });
 
   it('contract starts in state paused', async () => {
-    assert.equal(await Ethernauts.getCurrentSaleState(), 0);
+    assert.equal(await Ethernauts.currentSaleState(), 0);
   });
 
   it('owner can freele change from one state to another (not complete)', async () => {
     await (await Ethernauts.connect(owner).setSaleState(1)).wait();
-    assert.equal(await Ethernauts.getCurrentSaleState(), 1);
+    assert.equal(await Ethernauts.currentSaleState(), 1);
 
     await (await Ethernauts.connect(owner).setSaleState(2)).wait();
-    assert.equal(await Ethernauts.getCurrentSaleState(), 2);
+    assert.equal(await Ethernauts.currentSaleState(), 2);
 
     await (await Ethernauts.connect(owner).setSaleState(1)).wait();
-    assert.equal(await Ethernauts.getCurrentSaleState(), 1);
+    assert.equal(await Ethernauts.currentSaleState(), 1);
 
     await (await Ethernauts.connect(owner).setSaleState(0)).wait();
-    assert.equal(await Ethernauts.getCurrentSaleState(), 0);
+    assert.equal(await Ethernauts.currentSaleState(), 0);
   });
 
   it('owner cannot switch to sale complete', async () => {
     await assertRevert(Ethernauts.connect(owner).setSaleState(3), 'Invalid new state');
-    assert.equal(await Ethernauts.getCurrentSaleState(), 0);
+    assert.equal(await Ethernauts.currentSaleState(), 0);
   });
 
   it('state cannot be overriden with the same value', async () => {
     await assertRevert(Ethernauts.connect(owner).setSaleState(0), 'Invalid new state');
-    assert.equal(await Ethernauts.getCurrentSaleState(), 0);
+    assert.equal(await Ethernauts.currentSaleState(), 0);
   });
 
   it('state cannot be changed after public sale is completed', async () => {
@@ -69,7 +69,7 @@ describe('State Changes', () => {
       );
     }
     await Promise.all(promises);
-    assert.equal(await Ethernauts.getCurrentSaleState(), 3);
+    assert.equal(await Ethernauts.currentSaleState(), 3);
 
     await assertRevert(Ethernauts.connect(owner).setSaleState(2), 'Sale is completed');
   });

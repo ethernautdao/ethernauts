@@ -38,7 +38,7 @@ describe('Mint', () => {
 
   describe('when attempting to mint when the sale is not open', () => {
     before('set paused', async () => {
-      if ((await Ethernauts.getCurrentSaleState()) !== 0) {
+      if ((await Ethernauts.currentSaleState()) !== 0) {
         await (await Ethernauts.connect(owner).setSaleState(0)).wait();
       }
     });
@@ -210,7 +210,7 @@ describe('Mint', () => {
       });
 
       it('public sale status is now completed', async () => {
-        assert.equal(await Ethernauts.getCurrentSaleState(), 3);
+        assert.equal(await Ethernauts.currentSaleState(), 3);
       });
 
       it('reverts', async () => {
@@ -243,7 +243,7 @@ describe('Mint', () => {
 
         await Promise.all(promises);
 
-        assert.equal(await Ethernauts.getCurrentSaleState(), 3);
+        assert.equal(await Ethernauts.currentSaleState(), 3);
       });
 
       it('mint all giftable', async () => {
@@ -255,7 +255,7 @@ describe('Mint', () => {
 
         assert.equal(await Ethernauts.tokensGifted(), giftables);
         assert.equal(await Ethernauts.availableToMint(), 0);
-        assert.equal(await Ethernauts.getCurrentSaleState(), 3);
+        assert.equal(await Ethernauts.currentSaleState(), 3);
       });
     });
   });
