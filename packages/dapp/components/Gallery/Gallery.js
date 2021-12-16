@@ -10,7 +10,6 @@ import { GoToGallery } from '../Buttons/GoToGallery';
 import styles from './Gallery.module.scss';
 
 const Gallery = ({ showAllItems = false }) => {
-  console.log('showAllItems: ', showAllItems);
   const { state } = useContext(WalletContext);
 
   const [{ data, isLoading, isError }, fetchGalleryItems] = useGallery();
@@ -24,8 +23,6 @@ const Gallery = ({ showAllItems = false }) => {
   if (isLoading) return 'Loading...';
 
   if (!state.web3Provider) return null;
-
-  console.log('EYYY');
 
   return (
     <div>

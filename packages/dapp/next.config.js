@@ -10,7 +10,7 @@ module.exports = {
     return config;
   },
   images: {
-    // TODO: Replace this with the URL of the fleek gateway ipfs
+    // TODO: Replace this with the URL of the fleek ipfs gateway
     domains: ['via.placeholder.com'],
   },
 };
