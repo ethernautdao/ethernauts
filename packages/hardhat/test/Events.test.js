@@ -95,5 +95,14 @@ describe('Test events emitted', () => {
       const event = receipt.events.find((e) => e.event === 'PermanentURITriggered');
       assert.equal(event.args.value, true);
     });
+    context('and owner attempts to set baseURI', () => {
+      it('reverts', async () => {
+        await (await Ethernauts.connect(owner).setPermanentURI()).wait();
+        await assertRevert(
+          Ethernauts.connect(owner).setBaseURI('http://pinedead.io/'),
+          'NFTs minting finished'
+        );
+      });
+    });
   });
 });
