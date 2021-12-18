@@ -15,13 +15,16 @@
   },
   "homepage": "https://github.com/ethernautdao/ethernauts#readme",
   "scripts": {
+    "test": "hardhat test",
     "queue": "hardhat run scripts/queue.js",
     "jobs": "node scripts/jobs.js"
   },
   "dependencies": {
+    "@fleekhq/fleek-storage-js": "1.0.20",
     "@nomiclabs/hardhat-ethers": "2.0.2",
     "bullmq": "1.51.3",
     "dotenv": "10.0.0",
-    "envalid": "7.2.2"
+    "envalid": "7.2.2",
+    "hardhat": "2.8.1"
   }
 }
