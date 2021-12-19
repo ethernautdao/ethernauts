@@ -22,8 +22,7 @@ describe('General', () => {
         params.maxGiftable = 200;
 
         await assertRevert(
-          factory.deploy(...Object.values(params)),
-          'Max giftable supply too large'
+          factory.deploy(...Object.values(params))
         );
       });
     });
@@ -33,7 +32,7 @@ describe('General', () => {
         const params = Object.assign({}, hre.config.defaults);
         params.maxTokens = 12000;
 
-        await assertRevert(factory.deploy(...Object.values(params)), 'Max token supply too large');
+        await assertRevert(factory.deploy(...Object.values(params)));
       });
     });
   });

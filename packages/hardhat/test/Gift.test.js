@@ -101,8 +101,7 @@ describe('Gift', () => {
 
     it('reverts', async () => {
       await assertRevert(
-        Ethernauts.connect(owner).gift(owner.address),
-        'No more Ethernauts can be gifted'
+        Ethernauts.connect(owner).gift(owner.address)
       );
     });
   });

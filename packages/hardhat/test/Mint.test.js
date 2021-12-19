@@ -47,8 +47,7 @@ describe('Mint', () => {
       await assertRevert(
         Ethernauts.connect(user).mint({
           value: ethers.utils.parseEther('15'),
-        }),
-        'Not allowed in current state'
+        })
       );
     });
   });
@@ -63,8 +62,7 @@ describe('Mint', () => {
         await assertRevert(
           Ethernauts.connect(user).mint({
             value: ethers.utils.parseEther('0.01'),
-          }),
-          'Invalid msg.value'
+          })
         );
       });
     });
@@ -217,8 +215,7 @@ describe('Mint', () => {
         await assertRevert(
           Ethernauts.connect(user).mint({
             value: ethers.utils.parseEther('0.2'),
-          }),
-          'Not allowed in current state'
+          })
         );
       });
     });

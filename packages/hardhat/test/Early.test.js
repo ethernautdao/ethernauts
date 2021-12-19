@@ -50,8 +50,7 @@ describe('Early mint', () => {
       await assertRevert(
         Ethernauts.connect(user).mintEarly(coupon, {
           value: ethers.utils.parseEther('15'),
-        }),
-        'Not allowed in current state'
+        })
       );
     });
   });
@@ -66,8 +65,7 @@ describe('Early mint', () => {
         await assertRevert(
           Ethernauts.connect(user).mintEarly(coupon, {
             value: ethers.utils.parseEther('0.01'),
-          }),
-          'Invalid msg.value'
+          })
         );
       });
     });
@@ -85,8 +83,7 @@ describe('Early mint', () => {
         await assertRevert(
           Ethernauts.connect(user).mintEarly(coupon, {
             value: hre.config.defaults.earlyMintPrice,
-          }),
-          'Invalid coupon'
+          })
         );
       });
     });
@@ -213,8 +210,7 @@ describe('Early mint', () => {
           await assertRevert(
             Ethernauts.connect(someUser).mintEarly(await signCouponForAddress(someUser.address), {
               value: hre.config.defaults.earlyMintPrice,
-            }),
-            'Used coupon'
+            })
           );
         });
       });
@@ -226,8 +222,7 @@ describe('Early mint', () => {
           await assertRevert(
             Ethernauts.connect(someUser).mintEarly(await signCouponForAddress(user.address), {
               value: hre.config.defaults.earlyMintPrice,
-            }),
-            'Invalid coupon'
+            })
           );
         });
       });
