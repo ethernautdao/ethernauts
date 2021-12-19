@@ -1,5 +1,6 @@
 const assert = require('assert');
 const { ethers } = require('hardhat');
+const assertRevert = require('./utils/assertRevert');
 
 describe('Test events emitted', () => {
   let Ethernauts;
