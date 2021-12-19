@@ -60,7 +60,6 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         uint256 initialEarlyMintPrice,
         address initialCouponSigner
     ) ERC721("Ethernauts", "NAUTS") {
-
         if (definitiveMaxGiftable > 100) {
             revert CustomError("Max giftable supply too large");
         }
@@ -226,9 +225,6 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     }
 
     function setSaleState(SaleState newSaleState) external onlyOwner {
-        // require(currentSaleState != SaleState.PublicCompleted, "Sale is completed");
-        // require(newSaleState != currentSaleState && newSaleState != SaleState.PublicCompleted, "Invalid new state");
-
         if (currentSaleState == SaleState.PublicCompleted) {
             revert CustomError("Sale is completed");
         }
@@ -284,7 +280,6 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     }
 
     function _mint(address to, uint256 tokenId) internal virtual override {
-        // require(totalSupply() < maxTokens, "No available supply");
         if (totalSupply() > maxTokens) {
             revert CustomError("No available supply");
         } 
