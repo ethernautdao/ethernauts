@@ -6,8 +6,8 @@ describe('Random', () => {
 
   let owner;
 
-  const maxTokens = 1000;
-  const batchSize = 100;
+  const maxTokens = 100;
+  const batchSize = 10;
 
   const baseURI = 'http://deadpine.io/';
 
