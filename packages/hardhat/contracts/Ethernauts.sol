@@ -99,7 +99,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
             revert CustomError("Invalid msg.value");
         }
 
-        if (availableToMint() < 0 ) {
+        if (availableToMint() == 0 ) {
             revert CustomError("No available supply");
         }
 
@@ -115,7 +115,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
             revert CustomError("Invalid msg.value");
         }
 
-        if (availableToMint() < 0 ) {
+        if (availableToMint() == 0 ) {
             revert CustomError("No available supply");
         }
 
@@ -199,7 +199,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     // -----------------------
 
     function gift(address to) external onlyOwner {
-        if (_tokensGifted > maxGiftable) {
+        if (_tokensGifted >= maxGiftable) {
             revert CustomError("No more Ethernauts can be gifted");
         }
 
@@ -280,7 +280,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     }
 
     function _mint(address to, uint256 tokenId) internal virtual override {
-        if (totalSupply() > maxTokens) {
+        if (totalSupply() >= maxTokens) {
             revert CustomError("No available supply");
         } 
         super._mint(to, tokenId);
