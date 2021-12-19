@@ -97,25 +97,25 @@ describe('Random', () => {
 
       it('shows that the random number is set', async () => {
         assert.notEqual(await Ethernauts.getRandomNumberForBatch(0), '0');
-        assert.equal(await Ethernauts.getRandomNumberCount(), 1)
+        assert.equal(await Ethernauts.getRandomNumberCount(), 1);
       });
-      
+
       it('shows the definitive URI for all minted tokens', async () => {
         const randomNumber = await Ethernauts.getRandomNumberForBatch(0);
-        
+
         for (let i = 0; i < batchSize; i++) {
           await validateTokenUri(i, randomNumber);
         }
       });
-      
+
       describe('when the tokens for the next batch are minted', () => {
         before('mint some tokens', async () => {
           await mintTokens(batchSize);
         });
-        
+
         it('shows that the token supply increased accordingly', async () => {
           assert.equal(await Ethernauts.totalSupply(), 2 * batchSize);
-          assert.equal(await Ethernauts.getRandomNumberCount(), '2')
+          assert.equal(await Ethernauts.getRandomNumberCount(), '2');
         });
 
         it('shows that the random number is set', async () => {
