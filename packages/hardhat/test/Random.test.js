@@ -6,8 +6,8 @@ describe('Random', () => {
 
   let owner;
 
-  const maxTokens = 1000;
-  const batchSize = 100;
+  const maxTokens = 100;
+  const batchSize = 10;
 
   const baseURI = 'http://deadpine.io/';
 
@@ -97,6 +97,7 @@ describe('Random', () => {
 
       it('shows that the random number is set', async () => {
         assert.notEqual(await Ethernauts.getRandomNumberForBatch(0), '0');
+        assert.equal(await Ethernauts.getRandomNumberCount(), 1);
       });
 
       it('shows the definitive URI for all minted tokens', async () => {
@@ -114,6 +115,7 @@ describe('Random', () => {
 
         it('shows that the token supply increased accordingly', async () => {
           assert.equal(await Ethernauts.totalSupply(), 2 * batchSize);
+          assert.equal(await Ethernauts.getRandomNumberCount(), '2');
         });
 
         it('shows that the random number is set', async () => {

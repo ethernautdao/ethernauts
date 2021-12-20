@@ -27,7 +27,7 @@ describe('State Changes', () => {
     assert.equal(await Ethernauts.currentSaleState(), 0);
   });
 
-  it('owner can freele change from one state to another (not complete)', async () => {
+  it('owner can freely change from one state to another (not complete)', async () => {
     await (await Ethernauts.connect(owner).setSaleState(1)).wait();
     assert.equal(await Ethernauts.currentSaleState(), 1);
 
