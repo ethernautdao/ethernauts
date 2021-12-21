@@ -49,6 +49,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     event CouponSignerChanged(address couponSigner);
     event WithdrawTriggered(address beneficiary);
     event PermanentURITriggered(bool value);
+    event BatchEnd(uint256 batchId);
 
     constructor(
         uint256 definitiveMaxGiftable,
@@ -243,7 +244,14 @@ contract Ethernauts is ERC721Enumerable, Ownable {
 
         _mint(to, tokenId);
 
-        _tryGenerateRandomNumber();
+        uint256 currentBatchId = _randomNumbers.length;
+        uint256 maxTokenIdInBatch = batchSize * (currentBatchId + 1) - 2;
+
+        if (tokenId == maxTokenIdInBatch) {
+            emit BatchEnd(currentBatchId);
+        } else if (tokenId == maxTokenIdInBatch + 1) {
+            _generateRandomNumber();
+        }
     }
 
     function _mint(address to, uint256 tokenId) internal virtual override {
@@ -251,17 +259,10 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         super._mint(to, tokenId);
     }
 
-    function _tryGenerateRandomNumber() private {
-        uint256 randomNumberIdx = _randomNumbers.length;
-
-        uint256 maxTokenIdInBatch = batchSize * (randomNumberIdx + 1) - 1;
-        if (totalSupply() < maxTokenIdInBatch) {
-            return;
-        }
-
+    function _generateRandomNumber() private {
         // solhint-disable not-rely-on-time
         uint256 randomNumber = uint256(
-            keccak256(abi.encodePacked(msg.sender, block.difficulty, block.timestamp, randomNumberIdx))
+            keccak256(abi.encodePacked(msg.sender, block.difficulty, block.timestamp, _randomNumbers.length))
         );
         // solhint-enable not-rely-on-time
 
