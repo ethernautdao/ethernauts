@@ -22,7 +22,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     error InvalidUserCouponError(bool userCoupon);
     error TokensGiftError(uint256 gifted, uint256 maxToGift);
     error PermanentUrlError(bool permanentURI);
-    error CurrentStateError(SaleState current, SaleState available);
+    error CurrentStateError(SaleState currentState, SaleState availableState);
     error SaleStateError(SaleState newState, SaleState current, SaleState completed);
     error RecoverTokenError(address tokenAddress, address toAddress);
     error TokenBalanceError(uint256 tokenBalance, uint256 amount);
@@ -272,8 +272,8 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     function setSaleState(SaleState newSaleState) external onlyOwner {
         if (currentSaleState == SaleState.PublicCompleted) {
             revert CurrentStateError({
-                current: currentSaleState,
-                available: SaleState.PublicCompleted
+                currentState: currentSaleState,
+                availableState: SaleState.PublicCompleted
             });
         }
 
