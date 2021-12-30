@@ -4,16 +4,16 @@ const assertRevert = require('./utils/assertRevert');
 
 describe('Gift', () => {
   let Ethernauts;
-  
+
   let users;
   let owner, user;
-  
+
   let tx;
-  
+
   let mintedTokenId;
   let tokensMinted = 0;
   let tokensGifted = 0;
-  
+
   let gifted = 100;
   let maxToGift = 100;
 
@@ -103,7 +103,10 @@ describe('Gift', () => {
     });
 
     it('reverts', async () => {
-      await assertRevert(Ethernauts.connect(owner).gift(owner.address), `TokensGiftError(${gifted}, ${maxToGift})`);
+      await assertRevert(
+        Ethernauts.connect(owner).gift(owner.address),
+        `TokensGiftError(${gifted}, ${maxToGift})`
+      );
     });
   });
 });

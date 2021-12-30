@@ -2,14 +2,14 @@ const assert = require('assert');
 const assertRevert = require('./utils/assertRevert');
 const { ethers } = require('hardhat');
 
-const convertToWei = (payloadAmount) => ethers.utils.parseEther(payloadAmount.toString())
+const convertToWei = (payloadAmount) => ethers.utils.parseEther(payloadAmount.toString());
 
 describe('Early mint', () => {
   let Ethernauts;
-  
+
   let users;
   let owner, user, nextUser;
-  
+
   let mintedTokenId;
   let tokensMinted = 0;
   let tokenIds = [];
@@ -215,7 +215,8 @@ describe('Early mint', () => {
           await assertRevert(
             Ethernauts.connect(someUser).mintEarly(await signCouponForAddress(someUser.address), {
               value: hre.config.defaults.earlyMintPrice,
-            }),'RedeemedCouponError(true)'
+            }),
+            'RedeemedCouponError(true)'
           );
         });
       });
@@ -227,7 +228,8 @@ describe('Early mint', () => {
           await assertRevert(
             Ethernauts.connect(someUser).mintEarly(await signCouponForAddress(user.address), {
               value: hre.config.defaults.earlyMintPrice,
-            }), 'InvalidUserCouponError(false)'
+            }),
+            'InvalidUserCouponError(false)'
           );
         });
       });

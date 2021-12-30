@@ -2,7 +2,7 @@ const assert = require('assert');
 const assertRevert = require('./utils/assertRevert');
 const { ethers } = require('hardhat');
 
-const convertToWei = (payloadAmount) => ethers.utils.parseEther(payloadAmount.toString())
+const convertToWei = (payloadAmount) => ethers.utils.parseEther(payloadAmount.toString());
 
 describe('Mint', () => {
   let Ethernauts;
