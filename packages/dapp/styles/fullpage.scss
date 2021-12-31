@@ -1,0 +1,19 @@
+#fullpage {
+  .section {
+    background-size: cover;
+    background-position: center center;
+
+    &:first-child {
+      background-image: url(/assets/bg-first-section.png);
+    }
+
+    &:last-child {
+      background-image: url(/assets/bg-second-section.png);
+    }
+  }
+
+  .fp-tableCell {
+    display: inline-block;
+    vertical-align: inherit;
+  }
+}
