@@ -1,0 +1,49 @@
+@import "../../styles/breakpoints.scss";
+
+.imageOuterContainer {
+  display: flex;
+}
+
+.title {
+  text-align: start;
+  color: #fff;
+}
+
+.myNFTsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 16px;
+
+  @include breakpoint(xs) {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+
+.allNFTsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 16px;
+
+  .imageInnerContainer {
+    width: 227px;
+    height: 220px;
+  }
+
+  @include breakpoint(xs) {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+
+.imageInnerContainer {
+  position: relative;
+  width: 470px;
+  height: 220px;
+
+  @include breakpoint(xs) {
+    width: 360px;
+  }
+}
+
+.image {
+  border-radius: 12px;
+}

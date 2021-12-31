@@ -3,16 +3,15 @@ import Head from 'next/head';
 import ReactFullpage from '@fullpage/react-fullpage';
 
 import { Outline } from '../components/Buttons/Outline';
-
 import { Hero } from '../components/Hero';
 import { Mint } from '../components/Mint';
+import { Header } from '../components/Header';
 
 import styles from './index.module.scss';
-import Header from '../components/Header/Header';
 
 const sectionsColor = ['#000000', '#000000'];
 
-export const Home = () => {
+export const HomePage = () => {
   const sections = useMemo(
     () => [
       {
@@ -55,4 +54,4 @@ export const Home = () => {
   );
 };
 
-export default Home;
+export default HomePage;

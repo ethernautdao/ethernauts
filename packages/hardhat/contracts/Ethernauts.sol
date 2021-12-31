@@ -37,7 +37,8 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     enum SaleState {
         Paused, // No one can mint, except the owner via gifting (default)
         Early, // Only community can mint, at a discount using signed messages
-        Open // Anyone can mint
+        Open, // Anyone can mint
+        PublicCompleted // Public sale completed
     }
 
     SaleState public currentSaleState;
@@ -48,6 +49,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     event CouponSignerChanged(address couponSigner);
     event WithdrawTriggered(address beneficiary);
     event PermanentURITriggered(bool value);
+    event BatchEnd(uint256 batchId);
 
     constructor(
         uint256 definitiveMaxGiftable,
@@ -89,6 +91,10 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         require(availableToMint() > 0, "No available supply");
 
         _mintNext(msg.sender);
+
+        if (availableToMint() == 0) {
+            currentSaleState = SaleState.PublicCompleted;
+        }
     }
 
     function mintEarly(bytes memory signedCoupon) external payable onlyOnState(SaleState.Early) {
@@ -192,7 +198,9 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     }
 
     function setSaleState(SaleState newSaleState) external onlyOwner {
-        require(newSaleState != currentSaleState, "Invalid new state");
+        require(currentSaleState != SaleState.PublicCompleted, "Sale is completed");
+        require(newSaleState != currentSaleState && newSaleState != SaleState.PublicCompleted, "Invalid new state");
+
         currentSaleState = newSaleState;
         emit SaleStateChanged(newSaleState);
     }
@@ -236,26 +244,25 @@ contract Ethernauts is ERC721Enumerable, Ownable {
 
         _mint(to, tokenId);
 
-        _tryGenerateRandomNumber();
+        uint256 currentBatchId = _randomNumbers.length;
+        uint256 maxTokenIdInBatch = batchSize * (currentBatchId + 1) - 2;
+
+        if (tokenId == maxTokenIdInBatch) {
+            emit BatchEnd(currentBatchId);
+        } else if (tokenId == maxTokenIdInBatch + 1) {
+            _generateRandomNumber();
+        }
     }
 
     function _mint(address to, uint256 tokenId) internal virtual override {
         require(totalSupply() < maxTokens, "No available supply");
-
         super._mint(to, tokenId);
     }
 
-    function _tryGenerateRandomNumber() private {
-        uint256 randomNumberIdx = _randomNumbers.length;
-
-        uint256 maxTokenIdInBatch = batchSize * (randomNumberIdx + 1) - 1;
-        if (totalSupply() < maxTokenIdInBatch) {
-            return;
-        }
-
+    function _generateRandomNumber() private {
         // solhint-disable not-rely-on-time
         uint256 randomNumber = uint256(
-            keccak256(abi.encodePacked(msg.sender, block.difficulty, block.timestamp, randomNumberIdx))
+            keccak256(abi.encodePacked(msg.sender, block.difficulty, block.timestamp, _randomNumbers.length))
         );
         // solhint-enable not-rely-on-time
 

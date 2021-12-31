@@ -1,0 +1,28 @@
+.container {
+  display: flex;
+  justify-content: center;
+  padding: 40px 0;
+}
+
+.button {
+  padding: 10px 24px;
+  outline: none;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 21px;
+  border: 0;
+  border-color: #181a20;
+  border-radius: 8px;
+  border: 1px solid;
+  background-color: #fff;
+  color: #181a20;
+  cursor: pointer;
+  letter-spacing: 1px;
+  text-align: center;
+
+  &:hover {
+    background-color: #181a20;
+    border-color: #fff !important;
+    color: #fff;
+  }
+}

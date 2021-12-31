@@ -209,13 +209,53 @@ describe('Mint', () => {
         await Promise.all(promises);
       });
 
+      it('public sale status is now completed', async () => {
+        assert.equal(await Ethernauts.currentSaleState(), 3);
+      });
+
       it('reverts', async () => {
         await assertRevert(
           Ethernauts.connect(user).mint({
             value: ethers.utils.parseEther('0.2'),
           }),
-          'No available supply'
+          'Not allowed in current state'
         );
+      });
+    });
+
+    describe('when trying to mint giftable after public sale has ended', () => {
+      before('mint all public nft available', async () => {
+        const num =
+          (await Ethernauts.maxTokens()).toNumber() -
+          (await Ethernauts.maxGiftable()).toNumber() -
+          (await Ethernauts.totalSupply()).toNumber();
+
+        let promises = [];
+        for (let i = 0; i < num; i++) {
+          promises.push(
+            (
+              await Ethernauts.connect(user).mint({
+                value: ethers.utils.parseEther('0.2'),
+              })
+            ).wait()
+          );
+        }
+
+        await Promise.all(promises);
+
+        assert.equal(await Ethernauts.currentSaleState(), 3);
+      });
+
+      it('mint all giftable', async () => {
+        const giftables = (await Ethernauts.maxGiftable()).toNumber();
+
+        for (let i = 0; i < giftables; i++) {
+          (await Ethernauts.connect(owner).gift(user.address)).wait();
+        }
+
+        assert.equal(await Ethernauts.tokensGifted(), giftables);
+        assert.equal(await Ethernauts.availableToMint(), 0);
+        assert.equal(await Ethernauts.currentSaleState(), 3);
       });
     });
   });
