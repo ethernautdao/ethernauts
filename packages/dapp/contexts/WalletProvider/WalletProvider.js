@@ -12,6 +12,7 @@ if (typeof window !== 'undefined') {
 }
 
 const initialState = {
+  balance: null,
   provider: null,
   web3Provider: null,
   address: null,
@@ -62,11 +63,13 @@ const WalletProvider = ({ children }) => {
 
     const signer = web3Provider.getSigner();
     const address = await signer.getAddress();
+    const balance = await web3Provider.getBalance(address);
 
     const { chainId } = await web3Provider.getNetwork();
 
     dispatch({
       type: 'SET_PROVIDER',
+      balance,
       provider,
       web3Provider,
       address,
