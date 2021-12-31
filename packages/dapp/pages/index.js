@@ -1,5 +1,5 @@
-import { useMemo } from 'react';
 import Head from 'next/head';
+import { useMemo } from 'react';
 import ReactFullpage from '@fullpage/react-fullpage';
 
 import { Outline } from '../components/Buttons/Outline';
