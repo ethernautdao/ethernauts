@@ -1,20 +1,35 @@
+import { useEffect } from 'react';
+
 import useMintEarly from '../../../../hooks/useEarlyMint';
 
-import styles from './EarlyMint.module.scss';
+import { Toast, notify } from '../../../Toast';
+import { Error } from '../../Error';
+import { Primary } from '../../Primary';
 
 const EarlyMint = () => {
   const [{ data, isLoading, isError }, fetchMintEarly] = useMintEarly();
 
-  if (isError) return 'Something went wrong...';
+  useEffect(() => {
+    if (!data) return;
+    notify();
+  }, [data]);
 
-  if (isLoading) return 'Minting...';
+  const isDisabled = isError || isLoading;
 
-  if (data) return <p className={styles.minted}>{`Your token id is: ${data}`}</p>;
+  if (isLoading) return <Primary isDisabled fullWidth text="Loading..." />;
+
+  if (isError) return <Error isDisabled fullWidth text="Something went wrong" />;
 
   return (
-    <button type="button" className={styles.button} onClick={fetchMintEarly}>
-      Early Mint an Ethernaut
-    </button>
+    <>
+      <Primary
+        fullWidth
+        isDisabled={isDisabled}
+        onClick={fetchMintEarly}
+        text="Donate and mint your NFT"
+      />
+      <Toast />
+    </>
   );
 };
 

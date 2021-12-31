@@ -1,26 +1,21 @@
 .button {
-  padding: 10px 24px;
-  outline: none;
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 21px;
   border: 0;
-  border-color: #181a20;
-  border-radius: 8px;
-  border: 1px solid;
-  background-color: #fff;
-  color: #181a20;
+  outline: none;
   cursor: pointer;
-  letter-spacing: 1px;
-  text-align: center;
+  padding: 10px 24px;
+  border-radius: 32px;
+  background: var(--button-primary-background-color);
 
-  &:hover {
-    background-color: #181a20;
-    border-color: #fff !important;
-    color: #fff;
+  .text {
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 21px;
+    color: #181a20;
+    letter-spacing: 0.5px;
+    text-align: center;
   }
 }
 
-.w-100 {
+.fullWidth {
   width: 100%;
 }
