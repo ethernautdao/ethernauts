@@ -50,7 +50,7 @@ describe('Mint', () => {
         Ethernauts.connect(user).mint({
           value: ethers.utils.parseEther('15'),
         }),
-        `StateMismatchError(0, 2)`
+        'StateMismatchError(0, 2)'
       );
     });
   });
@@ -220,7 +220,7 @@ describe('Mint', () => {
           Ethernauts.connect(user).mint({
             value: ethers.utils.parseEther('0.2'),
           }),
-          `StateMismatchError(3, 2)`
+          'StateMismatchError(3, 2)'
         );
       });
     });

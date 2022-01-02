@@ -53,7 +53,7 @@ describe('Early mint', () => {
         Ethernauts.connect(user).mintEarly(coupon, {
           value: ethers.utils.parseEther('15'),
         }),
-        `StateMismatchError(0, 1)`
+        'StateMismatchError(0, 1)'
       );
     });
   });
@@ -88,7 +88,7 @@ describe('Early mint', () => {
           Ethernauts.connect(user).mintEarly(coupon, {
             value: hre.config.defaults.earlyMintPrice,
           }),
-          `InvalidUserCouponError(false)`
+          'InvalidUserCouponError(false)'
         );
       });
     });
