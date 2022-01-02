@@ -25,6 +25,9 @@ module.exports = {
   networks: {
     local: {
       url: 'http://localhost:8545',
+      accounts: {
+        mnemonic: 'test test test test test test test test test test test junk',
+      },
     },
     docker: {
       url: 'http://hardhat-node:8545',
