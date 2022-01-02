@@ -13,7 +13,7 @@ import styles from './DonationSlide.module.scss';
 const SelectDonation = () => {
   const { state } = useContext(WalletContext);
   const { donation, setDonation } = useContext(DonationContext);
-  const [{ data, isLoading, isError }, fetchSaleState] = useSaleState();
+  const [{ data }, fetchSaleState] = useSaleState();
 
   useEffect(() => {
     if (state.web3Provider) fetchSaleState();

@@ -9,9 +9,9 @@ const OpenMint = () => {
   const [{ data, isLoading, isError }, fetchMint] = useMint();
 
   useEffect(() => {
-    if (!isError) return;
+    if (!data) return;
     notify();
-  }, [isError]);
+  }, [data]);
 
   const isDisabled = isError || isLoading;
 
