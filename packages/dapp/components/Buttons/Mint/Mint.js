@@ -6,7 +6,7 @@ import { DonationContext } from '../../../contexts/DonationProvider';
 
 import useSaleState from '../../../hooks/useSaleState';
 
-import { EARLY, OPEN, PAUSED, COMPLETED } from '../../../constants';
+import { EARLY, OPEN, PAUSED, COMPLETED } from '../../../constants/sale-state';
 
 import { ConnectWallet } from '../ConnectWallet';
 import { Primary } from '../Primary';
