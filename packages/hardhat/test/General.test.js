@@ -20,10 +20,11 @@ describe('General', () => {
       it('reverts', async () => {
         const params = Object.assign({}, hre.config.defaults);
         params.maxGiftable = 200;
+        const max = 100;
 
         await assertRevert(
           factory.deploy(...Object.values(params)),
-          'Max giftable supply too large'
+          `MaxGiftableError(${params.maxGiftable}, ${max})`
         );
       });
     });
@@ -32,8 +33,12 @@ describe('General', () => {
       it('reverts', async () => {
         const params = Object.assign({}, hre.config.defaults);
         params.maxTokens = 12000;
+        const max = 10000;
 
-        await assertRevert(factory.deploy(...Object.values(params)), 'Max token supply too large');
+        await assertRevert(
+          factory.deploy(...Object.values(params)),
+          `MaxTokensError(${params.maxTokens}, ${max})`
+        );
       });
     });
   });
