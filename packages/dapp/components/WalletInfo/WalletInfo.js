@@ -4,7 +4,7 @@ import { WalletContext } from '../../contexts/WalletProvider';
 import ellipseAddress from '../../helpers/ellipse-address';
 import getChainData from '../../helpers/get-chain-data';
 
-import { Dot } from '../Dot';
+import { Dot } from './Dot';
 
 import styles from './WalletInfo.module.scss';
 

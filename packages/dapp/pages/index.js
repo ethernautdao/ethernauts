@@ -2,14 +2,14 @@ import Head from 'next/head';
 import { useMemo } from 'react';
 import ReactFullpage from '@fullpage/react-fullpage';
 
-import { Outline } from '../components/Buttons/Outline';
 import { Hero } from '../components/Hero';
 import { Mint } from '../components/Mint';
 import { Header } from '../components/Header';
+import { Outline } from '../components/Buttons/Outline';
 
 import styles from './index.module.scss';
 
-const sectionsColor = ['#000000', '#000000'];
+const sectionsColor = ['#0f1012', '#0f1012'];
 
 export const HomePage = () => {
   const sections = useMemo(
@@ -31,7 +31,7 @@ export const HomePage = () => {
   return (
     <div className={styles.outerContainer}>
       <Head>
-        <title>EthernautDAO</title>
+        <title>EthernautDAO - Home</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
