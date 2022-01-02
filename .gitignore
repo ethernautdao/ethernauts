@@ -4,3 +4,4 @@ node_modules
 coverage*
 
 docker/data
+package-lock.json
