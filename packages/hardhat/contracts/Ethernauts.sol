@@ -23,8 +23,8 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     error TokensGiftError(uint256 gifted, uint256 maxToGift);
     error PermanentUrlError(bool permanentURI);
     error CurrentStateError(SaleState currentState, SaleState availableState);
-    error SaleStateError(SaleState newState, SaleState current, SaleState completed);
-    error RecoverTokenError(address tokenAddress, address toAddress);
+    error SaleStateError(SaleState newState, SaleState current);
+    error RecoverTokenError(string message);
     error TokenBalanceError(uint256 tokenBalance, uint256 amount);
     error TotalSupplyError(uint256 total, uint256 max);
 
@@ -246,8 +246,12 @@ contract Ethernauts is ERC721Enumerable, Ownable {
             revert CurrentStateError({currentState: currentSaleState, availableState: SaleState.PublicCompleted});
         }
 
-        if (newSaleState == currentSaleState && newSaleState == SaleState.PublicCompleted) {
-            revert SaleStateError({newState: newSaleState, current: currentSaleState, completed: SaleState.PublicCompleted});
+        if (newSaleState == currentSaleState) {
+            revert SaleStateError({newState: newSaleState, current: currentSaleState});
+        }
+
+        if (newSaleState == SaleState.PublicCompleted) {
+            revert SaleStateError({newState: newSaleState, current: SaleState.PublicCompleted});
         }
 
         currentSaleState = newSaleState;
@@ -275,7 +279,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         uint256 value
     ) external onlyOwner {
         if (token == to) {
-            revert RecoverTokenError({tokenAddress: token, toAddress: to});
+            revert RecoverTokenError("Invalid Address");
         }
 
         if (IERC20(token).balanceOf(address(this)) < value) {
