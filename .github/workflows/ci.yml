@@ -21,13 +21,6 @@ jobs:
       - name: Installing dependencies
         run: npm ci
 
-      - name: Create env file
-              run: |
-                touch .env
-                echo DEPLOYER_KEY="95e3fe10f5d1d8a3fc7971a5cc65776ae80453f354f17f61a714fb8f9790b915" >> .env
-                echo ETHERSCAN_API=dsadsae44sadsadsa >> .env
-                cat .env
-                
       - name: Running Linters
         run: npm run lint
 

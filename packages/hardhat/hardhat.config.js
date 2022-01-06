@@ -33,7 +33,7 @@ module.exports = {
     },
     goerli: {
       url: 'https://rpc.goerli.mudit.blog/',
-      accounts: [`${process.env.DEPLOYER_KEY}`],
+      accounts: process.env.DEPLOYER_KEY ? [`${process.env.DEPLOYER_KEY}`] : [],
     },
   },
   etherscan: {
