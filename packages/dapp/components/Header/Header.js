@@ -9,6 +9,7 @@ import { ConnectWallet } from '../Buttons/ConnectWallet';
 import { Navigation } from './Navigation';
 
 import styles from './Header.module.scss';
+import Logo from '../../public/assets/logo.png';
 
 const Header = () => {
   return (

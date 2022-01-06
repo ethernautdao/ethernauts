@@ -2,6 +2,8 @@ const ethers = require('ethers');
 
 require('@nomiclabs/hardhat-ethers');
 require('solidity-coverage');
+require('@nomiclabs/hardhat-etherscan');
+require('dotenv').config();
 
 require('./tasks/deploy');
 require('./tasks/sale-state');
@@ -32,11 +34,18 @@ module.exports = {
     docker: {
       url: 'http://hardhat-node:8545',
     },
+    goerli: {
+      url: 'https://rpc.goerli.mudit.blog/',
+      accounts: process.env.DEPLOYER_KEY ? [`${process.env.DEPLOYER_KEY}`] : [],
+    },
+  },
+  etherscan: {
+    apiKey: `${process.env.ETHERSCAN_API}`,
   },
   defaults: {
     maxGiftable: 100,
     maxTokens: 10000,
-    batchSize: 500,
+    batchSize: 50,
     mintPrice: ethers.utils.parseEther('0.2'),
     earlyMintPrice: ethers.utils.parseEther('0.015'),
     initialCouponSigner: '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266', // Default hardhat signer[0]
