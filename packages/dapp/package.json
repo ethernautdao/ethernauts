@@ -22,12 +22,14 @@
   },
   "homepage": "https://github.com/ethernautdao/ethernauts#readme",
   "dependencies": {
+    "@fullpage/react-fullpage": "0.1.19",
     "classnames": "2.3.1",
     "ethers": "5.4.7",
     "next": "11.1.2",
     "rc-slider": "9.7.4",
     "react": "17.0.2",
     "react-dom": "17.0.2",
+    "react-hot-toast": "2.1.1",
     "sass": "1.42.1",
     "web3modal": "1.9.4"
   },

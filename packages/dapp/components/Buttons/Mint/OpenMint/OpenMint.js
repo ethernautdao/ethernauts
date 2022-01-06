@@ -1,36 +1,35 @@
-import { useContext } from 'react';
-
-import { WalletContext } from '../../../../contexts/WalletProvider';
-
+import { useEffect } from 'react';
 import useMint from '../../../../hooks/useMint';
 
-import styles from './OpenMint.module.scss';
+import { Toast, notify } from '../../../Toast';
+import { Error } from '../../Error';
+import { Primary } from '../../Primary';
 
-const Mint = () => {
-  const { state, connect } = useContext(WalletContext);
-
+const OpenMint = () => {
   const [{ data, isLoading, isError }, fetchMint] = useMint();
 
-  const isConnected = state.web3Provider !== null;
+  useEffect(() => {
+    if (!data) return;
+    notify();
+  }, [data]);
 
-  if (!isConnected)
-    return (
-      <button type="button" className={styles.button} onClick={connect}>
-        Connect Wallet
-      </button>
-    );
+  const isDisabled = isError || isLoading;
 
-  if (isError) return 'Something went wrong...';
+  if (isLoading) return <Primary isDisabled fullWidth text="Loading..." />;
 
-  if (isLoading) return 'Minting...';
-
-  if (data) return <p className={styles.minted}>{`Your token id is: ${data}`}</p>;
+  if (isError) return <Error isDisabled fullWidth text="Something went wrong" />;
 
   return (
-    <button type="button" className={styles.button} onClick={fetchMint}>
-      Mint an Ethernaut
-    </button>
+    <>
+      <Primary
+        fullWidth
+        isDisabled={isDisabled}
+        onClick={fetchMint}
+        text="Donate and mint your NFT"
+      />
+      <Toast />
+    </>
   );
 };
 
-export default Mint;
+export default OpenMint;

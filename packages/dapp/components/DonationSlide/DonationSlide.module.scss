@@ -1,17 +1,48 @@
+.earlyText {
+  width: 100%;
+  margin-bottom: 5px;
+  text-align: center;
+  font-size: 1rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  background: var(--logs-text-color);
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.donationTitle {
+  font-size: 1.15rem;
+  font-weight: 400;
+  color: var(--donation-title-color);
+}
+
 .donationDescription {
-  color: #fff;
+  color: var(--white);
   margin-top: 5px;
-  font-size: 20px;
+  font-size: 2rem;
+  font-weight: 500;
+}
+
+.range {
+  margin: 5px 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+
+  > span {
+    font-size: 0.8rem;
+    color: var(--donation-range-color);
+  }
 }
 
 .input {
   margin: 0;
   border: 0;
-  color: #fff;
+  color: var(--white);
   width: 70px;
   outline: none;
-  font-size: 28px;
+  font-size: 2rem;
+  font-weight: bold;
   text-align: center;
   background-color: transparent;
-  border-bottom: 1px solid #c2c4cc;
 }

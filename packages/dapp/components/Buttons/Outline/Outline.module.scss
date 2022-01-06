@@ -1,0 +1,41 @@
+.container {
+  display: flex;
+  justify-content: center;
+  padding-top: 1rem;
+
+  .scroll {
+    z-index: 0;
+    outline: 0;
+    border: 0;
+    margin: 0;
+    cursor: pointer;
+    padding: 15px 30px;
+    display: inline-block;
+    position: relative;
+    background: transparent;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 2px;
+      border-radius: 24px;
+      background: var(--button-outline-border-color);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: destination-out;
+      mask-composite: exclude;
+    }
+
+    .text {
+      font-size: 1.2rem;
+      line-height: 1.2rem;
+      font-weight: bold;
+      background: var(--button-outline-background-color);
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  }
+}

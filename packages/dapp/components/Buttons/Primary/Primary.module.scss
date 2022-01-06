@@ -6,11 +6,15 @@
   border-radius: 32px;
   background: var(--button-primary-background-color);
 
+  &:disabled {
+    cursor: not-allowed;
+  }
+
   .text {
     font-size: 1rem;
     font-weight: 700;
     line-height: 21px;
-    color: #181a20;
+    color: var(--button-primary-text-color);
     letter-spacing: 0.5px;
     text-align: center;
   }

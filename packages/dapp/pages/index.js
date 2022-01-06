@@ -1,47 +1,57 @@
 import Head from 'next/head';
-import Image from 'next/image';
-import cn from 'classnames';
+import { useMemo } from 'react';
+import ReactFullpage from '@fullpage/react-fullpage';
 
-import { Logs } from '../components/Logs';
-import { Gallery } from '../components/Gallery';
-import { Mint } from '../components/Buttons/Mint';
-import { DonationSlide } from '../components/DonationSlide';
+import { Outline } from '../components/Buttons/Outline';
+import { Hero } from '../components/Hero';
+import { Mint } from '../components/Mint';
+import { Header } from '../components/Header';
 
 import styles from './index.module.scss';
 
-export const HomePage = () => (
-  <>
-    <Head>
-      <title>EthernautDAO</title>
-      <link rel="icon" href="/favicon.ico" />
-    </Head>
-    <section className={styles.outerContainer}>
-      <div className={styles.innerContainer}>
-        <div className={cn(styles.column, styles.rightColumn)}>
-          <div className={cn(styles.row, styles.firstRow)}>
-            <Image
-              src="https://via.placeholder.com/550"
-              layout="fill"
-              objectFit="cover"
-              className={styles.image}
-            />
-          </div>
-          <div className={cn(styles.row, styles.secondRow)}>
-            <DonationSlide />
-          </div>
-          <div className={cn(styles.row, styles.lastRow)}>
-            <Mint />
-          </div>
-        </div>
-        <div className={cn(styles.column, styles.leftColumn, styles.borderLeft)}>
-          <Logs />
-        </div>
-      </div>
-    </section>
-    <section className={styles.outerContainer}>
-      <Gallery />
-    </section>
-  </>
-);
+const sectionsColor = ['#000000', '#000000'];
+
+export const HomePage = () => {
+  const sections = useMemo(
+    () => [
+      {
+        title: <Header />,
+        content: ({ fullpageApi }) => (
+          <>
+            <Hero />
+            <Outline text="Mint Now" onClick={() => fullpageApi.moveSectionDown()} />
+          </>
+        ),
+      },
+      { title: <></>, content: () => <Mint /> },
+    ],
+    []
+  );
+
+  return (
+    <div className={styles.outerContainer}>
+      <Head>
+        <title>EthernautDAO</title>
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+
+      <ReactFullpage
+        navigation
+        sectionsColor={sectionsColor}
+        onLeave={() => {}}
+        render={({ fullpageApi }) => (
+          <ReactFullpage.Wrapper>
+            {sections.map(({ title, content }, index) => (
+              <div key={index} className="section">
+                {title}
+                {content({ fullpageApi })}
+              </div>
+            ))}
+          </ReactFullpage.Wrapper>
+        )}
+      />
+    </div>
+  );
+};
 
 export default HomePage;
