@@ -2,6 +2,8 @@
   --white: #fff;
   --black: #000;
 
+  --default-background-color: #0f1012;
+
   --button-disabled-color: #40434d;
   --button-disabled-text-color: #c3ced9;
 
@@ -36,4 +38,8 @@
   --toast-background-color: var(--white);
   --toast-text-background-color: #40434d;
   --toast-text-color: #9cfef2;
+
+  --navigation-text-color: #9cabb0;
+  --navigation-active-text-color: var(--white);
+  --navigation-border-color: #cdffe6;
 }
