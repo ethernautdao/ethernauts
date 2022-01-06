@@ -3,7 +3,7 @@ const ethers = require('ethers');
 require('@nomiclabs/hardhat-ethers');
 require('solidity-coverage');
 require('@nomiclabs/hardhat-etherscan');
-require('dotenv').config({ path: './.env' });
+require('dotenv').config();
 
 require('./tasks/deploy');
 require('./tasks/sale-state');
