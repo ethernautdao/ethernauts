@@ -31,8 +31,7 @@
     "envalid": "7.2.1",
     "hardhat": "2.8.0",
     "ipfs-http-client": "52.0.3",
-    "ipfs-only-hash": "4.0.0",
-    "prettier": "2.5.1"
+    "ipfs-only-hash": "4.0.0"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "2.0.2",
