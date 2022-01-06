@@ -24,7 +24,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     error PermanentUrlError(bool permanentURI);
     error CurrentStateError(SaleState currentState, SaleState availableState);
     error SaleStateError(SaleState newState, SaleState current);
-    error RecoverTokenError(string message);
+    error RecoverTokenError(address tokenAddress, address toAddress);
     error TokenBalanceError(uint256 tokenBalance, uint256 amount);
     error TotalSupplyError(uint256 total, uint256 max);
 
@@ -279,7 +279,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         uint256 value
     ) external onlyOwner {
         if (token == to) {
-            revert RecoverTokenError("Invalid Address");
+            revert RecoverTokenError(token, to);
         }
 
         if (IERC20(token).balanceOf(address(this)) < value) {

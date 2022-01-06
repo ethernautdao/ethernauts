@@ -51,7 +51,7 @@ describe('Recovery', () => {
       assert.notEqual(balance, 0);
       await assertRevert(
         Ethernauts.connect(owner).recoverTokens(Token.address, Token.address, balance),
-        'Invalid Address'
+        'RecoverTokenError("' + Token.address + '", "' + Token.address + '")'
       );
     });
   });
