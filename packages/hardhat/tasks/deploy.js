@@ -2,7 +2,6 @@ const fs = require('fs');
 const fsp = require('fs/promises');
 const path = require('path');
 const { task } = require('hardhat/config');
-require('dotenv').config();
 
 const DEPLOYMENT_SCHEMA = {
   token: '',
