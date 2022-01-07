@@ -22,7 +22,7 @@ The following hardhat tasks will help you to:
 
 We use Docker and Docker Compose to run the development environment.
 
-Run `docker-compose -f docker/development.docker-compose.yml up` to start the whole project. It includes the following services:
+Run `docker compose up -d` to start the whole project. It includes the following services:
 
 - `hardhat-node`: (http://localhost:4585)
 - `hardhat-deploy`: Takes care of deploying the Ethernauts.sol contract to the docker hardhat network for development
@@ -32,14 +32,14 @@ Run `docker-compose -f docker/development.docker-compose.yml up` to start the wh
 - `keeper-queue`: Node server that listens to mint & batch events and enqueues the necessary jobs to be processed.
 - `keeper-jobs`: Node server processes the enqueued jobs by `keeper-queue` and executes them with the desired concurrency.
 
-Run `docker-compose -f docker/development.docker-compose.yml down` to stop them.
+Run `docker compose ps` to check the status of the running services and `docker compose down` to stop them.
 
 ---
 
 You can also run/stop a single service using:
 
-- `docker-compose -f docker/development.docker-compose.yml up service-name`
-- `docker-compose -f docker/development.docker-compose.yml down service-name`
+- `docker compose up service-name`
+- `docker compose down service-name`
 
 ### Interacting with the Ethernauts Contract
 
@@ -48,11 +48,11 @@ You can run hardhat tasks inside running docker containers using the `docker com
 So, first you want to open the sale state, and you can do it with the `sale-state` hardhat task, like so:
 
 ```bash
-docker compose -f docker/development.docker-compose.yml exec hardhat-node sh -c 'cd /src/packages/hardhat && npx hardhat --network docker sale-state'
+docker compose exec hardhat-node sh -c 'cd /src/packages/hardhat && npx hardhat --network docker sale-state'
 ```
 
 Then, you will be able to mint any amount of tokens using the `mint` task:
 
 ```bash
-docker compose -f docker/development.docker-compose.yml exec hardhat-node sh -c 'cd /src/packages/hardhat && npx hardhat --network docker mint'
+docker compose exec hardhat-node sh -c 'cd /src/packages/hardhat && npx hardhat --network docker mint'
 ```
