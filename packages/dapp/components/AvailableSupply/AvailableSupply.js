@@ -17,12 +17,14 @@ const AvailableSupply = () => {
 
   if (!state.web3Provider) return null;
 
+  if (isLoading) return <span className={styles.availableSupply}>Loading...</span>;
+
+  if (isError) return <span className={styles.availableSupply}>Something went wrong</span>;
+
   return (
-    <>
-      {isLoading && <span>Loading...</span>}
-      {isError && <span>There was an unexpected error</span>}
-      {data && <p className={styles.availableSupply}>There are {data} ethernauts available</p>}
-    </>
+    <p className={styles.availableSupply}>
+      <span className={styles.number}>{data}</span>/10000 NFTs minted
+    </p>
   );
 };
 
