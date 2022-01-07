@@ -1,8 +1,6 @@
-const { createReadStream, constants } = require('fs');
-const { access } = require('fs/promises');
-const fleekStorage = require('@fleekhq/fleek-storage-js');
-const config = require('./config');
 const path = require('path');
+const fleek = require('./fleek');
+const config = require('./config');
 
 /**
  * Get a mint process job and upload to necessary asset to IPFS
@@ -10,45 +8,31 @@ const path = require('path');
  * @param {string} job.tokenId
  */
 module.exports = async function processMint(job) {
-  const exists = await fleekStorage.get({
-    apiKey: config.FLEEK_STORAGE_API_KEY,
-    apiSecret: config.FLEEK_STORAGE_API_SECRET,
-    getOptions: ['hash', 'publicUrl'],
-    key: `${config.FLEEK_METADATA_FOLDER}/${job.tokenId}.json`,
+  const metadataKey = `${config.FLEEK_METADATA_FOLDER}/${job.tokenId}`;
+  const assetKey = `${config.FLEEK_ASSETS_FOLDER}/${job.tokenId}.png`;
+
+  const exists = await fleek.fileExists({
+    key: metadataKey,
   });
 
-  if (exists && exists.hash) {
+  if (exists) {
     throw new Error(`Resource with tokenId "${job.tokenId}" already uploaded`);
   }
 
-  const resources = [
-    {
-      key: `${config.FLEEK_METADATA_FOLDER}/${job.tokenId}.json`,
+  const result = await Promise.all([
+    fleek.uploadFile({
+      key: metadataKey,
       location: path.join(config.RESOURCES_METADATA_FOLDER, `${job.tokenId}.json`),
-    },
-    {
-      key: `${config.FLEEK_ASSETS_FOLDER}/${job.tokenId}.png`,
+    }),
+    fleek.uploadFile({
+      key: assetKey,
       location: path.join(config.RESOURCES_ASSETS_FOLDER, `${job.tokenId}.png`),
-    },
-  ];
+    }),
+  ]);
 
-  const result = await Promise.all(
-    resources.map(async (resource) => {
-      await access(resource.location, constants.R_OK);
-
-      return fleekStorage.streamUpload({
-        apiKey: config.FLEEK_STORAGE_API_KEY,
-        apiSecret: config.FLEEK_STORAGE_API_SECRET,
-        key: resource.key,
-        stream: createReadStream(resource.location),
-      });
-    })
-  );
-
-  console.log(`==== Job Processed ===
-  ${JSON.stringify(job)}
-  ${JSON.stringify(result)}
-  ======================`);
-
-  console.log('processed: ', JSON.stringify(job));
+  console.log('==== Job Processed ===');
+  console.log(JSON.stringify(job));
+  console.log(JSON.stringify(result[0]));
+  console.log(JSON.stringify(result[1]));
+  console.log('======================');
 };

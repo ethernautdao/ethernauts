@@ -14,6 +14,7 @@ module.exports = cleanEnv(process.env, {
   RESOURCES_ASSETS_FOLDER: str({
     devDefault: path.join(__dirname, '..', '..', 'hardhat', 'resources', 'assets'),
   }),
+  FLEEK_API_KEY: str({ devDefault: '' }),
   FLEEK_STORAGE_API_KEY: str({ devDefault: '' }),
   FLEEK_STORAGE_API_SECRET: str({ devDefault: '' }),
   FLEEK_METADATA_FOLDER: str({ default: 'metadata' }),
