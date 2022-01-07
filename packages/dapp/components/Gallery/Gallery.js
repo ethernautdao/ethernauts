@@ -17,7 +17,7 @@ const Gallery = () => {
 
   useEffect(() => {
     if (state.web3Provider) fetchGalleryItems();
-  }, [fetchGalleryItems]);
+  }, [state.web3Provider, fetchGalleryItems]);
 
   if (isLoading) return 'Loading...';
 

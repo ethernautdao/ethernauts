@@ -32,13 +32,15 @@ const useGallery = () => {
           (acumm, curr) => {
             const parsedLog = iface.parseLog(curr);
 
+            if (parsedLog.name !== 'Transfer') return acumm;
+
             // Push nfts based on the current address
-            if (parsedLog.name === 'Transfer' && parsedLog.args.to === state.address) {
+            if (parsedLog.args.to.toLowerCase() === state.address.toLowerCase()) {
               acumm.myGalleryItems.push(parsedLog);
             }
 
             // Push all nfts
-            if (parsedLog.name === 'Transfer' && parsedLog.args.from === zeroAccount) {
+            if (parsedLog.args.from.toLowerCase() === zeroAccount.toLowerCase()) {
               acumm.allGalleryItems.push(parsedLog);
             }
 
