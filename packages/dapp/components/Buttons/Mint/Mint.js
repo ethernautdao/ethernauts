@@ -8,10 +8,10 @@ import useSaleState from '../../../hooks/useSaleState';
 
 import { EARLY, OPEN, PAUSED, COMPLETED } from '../../../constants/sale-state';
 
-import { ConnectWallet } from '../ConnectWallet';
+import { Error } from '../Error';
 import { Primary } from '../Primary';
 import { Disabled } from '../Disabled';
-import { Error } from '../Error';
+import { ConnectWallet } from '../ConnectWallet';
 
 import { EarlyMint } from './EarlyMint';
 import { OpenMint } from './OpenMint';
@@ -37,7 +37,7 @@ const Mint = () => {
   const hasInsufficientBalance =
     state.balance !== null ? donation > Number(utils.formatEther(state.balance)) : false;
 
-  if (isLoading) return <Primary isDisabled fullWidth text="Loading..." />;
+  if (isLoading) return <Primary isDisabled fullWidth text="Pending transaction..." />;
 
   if (isError) return <Error isDisabled fullWidth text="Something went wrong" />;
 
