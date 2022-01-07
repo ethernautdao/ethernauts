@@ -1,0 +1,37 @@
+@import "../../../styles/breakpoints.scss";
+
+.cellContainer {
+  display: inline-grid;
+
+  .image {
+    border-radius: 12px;
+  }
+
+  @include breakpoint(xs) {
+    width: 360px;
+  }
+
+  .tokenId {
+    top: -22px;
+    position: relative;
+    left: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--white);
+  }
+}
+
+.all {
+  width: 455px;
+  height: 180px;
+}
+
+.me {
+  width: 960px;
+  height: 400px;
+}
+
+.middle {
+  top: -80px;
+  position: relative;
+}
