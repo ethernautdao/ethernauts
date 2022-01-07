@@ -3,6 +3,7 @@ import { DonationProvider } from '../contexts/DonationProvider';
 
 import { Layout } from '../components/Layout';
 
+
 import 'react-medium-image-zoom/dist/styles.css';
 import 'rc-slider/assets/index.css';
 

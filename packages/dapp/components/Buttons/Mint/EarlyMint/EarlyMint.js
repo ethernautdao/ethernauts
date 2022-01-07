@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import useMintEarly from '../../../../hooks/useEarlyMint';
 
 import { Toast, notify } from '../../../Toast';
+
 import { SUCCESS_KIND, ERROR_KIND } from '../../../Toast/Kind';
 
 import { Primary } from '../../Primary';

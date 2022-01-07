@@ -24,9 +24,19 @@ task('deploy', 'Deploys the Ethernauts NFT contract').setAction(async (taskArgum
   console.log(`Ethernauts token deployed at ${Ethernauts.address}`);
 
   data.token = Ethernauts.address;
+  await _verify(Ethernauts.address);
   await fsp.mkdir(path.dirname(deploymentPath), { recursive: true });
   await fsp.writeFile(deploymentPath, JSON.stringify(data, null, 2));
 });
+
+async function _verify(contractAddress) {
+  await hre.run('verify:verify', {
+    address: contractAddress,
+    apiKey: `${process.env.ETHERSCAN_API}`,
+    constructorArguments: Object.values(hre.config.defaults),
+  });
+  console.log('Verified');
+}
 
 async function _confirmParameters() {
   console.log('Constructor parameters:');

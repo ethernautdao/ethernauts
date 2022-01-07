@@ -12,6 +12,22 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     using Address for address payable;
     using Strings for uint256;
 
+    error MaxGiftableError(uint256 gifted, uint256 maxGift);
+    error MaxTokensError(uint256 definedMax, uint256 maxToken);
+    error StateMismatchError(SaleState current, SaleState defined);
+    error MintPriceError(uint256 sent, uint256 required);
+    error InsufficientToMint(uint available);
+    error EarlyMintPriceError(uint256 sent, uint256 required);
+    error RedeemedCouponError(bool redeemed);
+    error InvalidUserCouponError(bool userCoupon);
+    error TokensGiftError(uint256 gifted, uint256 maxToGift);
+    error PermanentUrlError(bool permanentURI);
+    error CurrentStateError(SaleState currentState, SaleState availableState);
+    error SaleStateError(SaleState newState, SaleState current);
+    error RecoverTokenError(address tokenAddress, address toAddress);
+    error TokenBalanceError(uint256 tokenBalance, uint256 amount);
+    error TotalSupplyError(uint256 total, uint256 max);
+
     // Can be set only once on deploy
     uint256 public immutable maxTokens;
     uint256 public immutable maxGiftable;
@@ -59,8 +75,13 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         uint256 initialEarlyMintPrice,
         address initialCouponSigner
     ) ERC721("Ethernauts", "NAUTS") {
-        require(definitiveMaxGiftable <= 100, "Max giftable supply too large");
-        require(definitiveMaxTokens <= 10000, "Max token supply too large");
+        if (definitiveMaxGiftable > 100) {
+            revert MaxGiftableError({gifted: definitiveMaxGiftable, maxGift: 100});
+        }
+
+        if (definitiveMaxTokens > 10000) {
+            revert MaxTokensError({definedMax: definitiveMaxTokens, maxToken: 10000});
+        }
 
         maxGiftable = definitiveMaxGiftable;
         maxTokens = definitiveMaxTokens;
@@ -78,7 +99,9 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     // ----------
 
     modifier onlyOnState(SaleState definedSaleState) {
-        require(currentSaleState == definedSaleState, "Not allowed in current state");
+        if (currentSaleState != definedSaleState) {
+            revert StateMismatchError({current: currentSaleState, defined: definedSaleState});
+        }
         _;
     }
 
@@ -87,8 +110,13 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     // --------------------
 
     function mint() external payable onlyOnState(SaleState.Open) {
-        require(msg.value >= mintPrice, "Invalid msg.value");
-        require(availableToMint() > 0, "No available supply");
+        if (msg.value < mintPrice) {
+            revert MintPriceError({sent: msg.value, required: mintPrice});
+        }
+
+        if (availableToMint() == 0) {
+            revert InsufficientToMint({available: availableToMint()});
+        }
 
         _mintNext(msg.sender);
 
@@ -98,10 +126,21 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     }
 
     function mintEarly(bytes memory signedCoupon) external payable onlyOnState(SaleState.Early) {
-        require(msg.value >= earlyMintPrice, "Invalid msg.value");
-        require(availableToMint() > 0, "No available supply");
-        require(!userRedeemedCoupon(msg.sender), "Used coupon");
-        require(isCouponSignedForUser(msg.sender, signedCoupon), "Invalid coupon");
+        if (msg.value < earlyMintPrice) {
+            revert EarlyMintPriceError({sent: msg.value, required: earlyMintPrice});
+        }
+
+        if (availableToMint() == 0) {
+            revert InsufficientToMint({available: availableToMint()});
+        }
+
+        if (userRedeemedCoupon(msg.sender)) {
+            revert RedeemedCouponError({redeemed: userRedeemedCoupon(msg.sender)});
+        }
+
+        if (!isCouponSignedForUser(msg.sender, signedCoupon)) {
+            revert InvalidUserCouponError({userCoupon: isCouponSignedForUser(msg.sender, signedCoupon)});
+        }
 
         _mintNext(msg.sender);
 
@@ -174,7 +213,9 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     // -----------------------
 
     function gift(address to) external onlyOwner {
-        require(_tokensGifted < maxGiftable, "No more Ethernauts can be gifted");
+        if (_tokensGifted >= maxGiftable) {
+            revert TokensGiftError({gifted: _tokensGifted, maxToGift: maxGiftable});
+        }
 
         _mintNext(to);
 
@@ -192,14 +233,26 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     }
 
     function setBaseURI(string calldata newBaseTokenURI) external onlyOwner {
-        require(!permanentUrl, "NFTs minting finished");
+        if (permanentUrl) {
+            revert PermanentUrlError({permanentURI: permanentUrl});
+        }
+
         baseTokenURI = newBaseTokenURI;
         emit BaseTokenURIChanged(newBaseTokenURI);
     }
 
     function setSaleState(SaleState newSaleState) external onlyOwner {
-        require(currentSaleState != SaleState.PublicCompleted, "Sale is completed");
-        require(newSaleState != currentSaleState && newSaleState != SaleState.PublicCompleted, "Invalid new state");
+        if (currentSaleState == SaleState.PublicCompleted) {
+            revert CurrentStateError({currentState: currentSaleState, availableState: SaleState.PublicCompleted});
+        }
+
+        if (newSaleState == currentSaleState) {
+            revert SaleStateError({newState: newSaleState, current: currentSaleState});
+        }
+
+        if (newSaleState == SaleState.PublicCompleted) {
+            revert SaleStateError({newState: newSaleState, current: SaleState.PublicCompleted});
+        }
 
         currentSaleState = newSaleState;
         emit SaleStateChanged(newSaleState);
@@ -225,8 +278,13 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         address to,
         uint256 value
     ) external onlyOwner {
-        require(token != to, "Invalid destination");
-        require(IERC20(token).balanceOf(address(this)) >= value, "Invalid amount");
+        if (token == to) {
+            revert RecoverTokenError(token, to);
+        }
+
+        if (IERC20(token).balanceOf(address(this)) < value) {
+            revert TokenBalanceError({tokenBalance: IERC20(token).balanceOf(address(this)), amount: value});
+        }
 
         IERC20(token).transfer(to, value);
     }
@@ -255,7 +313,9 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     }
 
     function _mint(address to, uint256 tokenId) internal virtual override {
-        require(totalSupply() < maxTokens, "No available supply");
+        if (totalSupply() >= maxTokens) {
+            revert TotalSupplyError({total: totalSupply(), max: maxTokens});
+        }
         super._mint(to, tokenId);
     }
 
