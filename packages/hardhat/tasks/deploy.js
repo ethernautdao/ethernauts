@@ -30,11 +30,14 @@ task('deploy', 'Deploys the Ethernauts NFT contract').setAction(async (taskArgum
 });
 
 async function _verify(contractAddress) {
+  if (!process.env.ETHERSCAN_API) return;
+
   await hre.run('verify:verify', {
     address: contractAddress,
     apiKey: `${process.env.ETHERSCAN_API}`,
     constructorArguments: Object.values(hre.config.defaults),
   });
+
   console.log('Verified');
 }
 

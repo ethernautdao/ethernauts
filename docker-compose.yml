@@ -3,27 +3,28 @@ version: "3.9"
 services:
   hardhat-node:
     build:
-      context: ..
+      context: .
       dockerfile: docker/hardhat.Dockerfile
     restart: always
     volumes:
-      - ../packages/hardhat/deployments:/src/packages/hardhat/deployments
-      - ../packages/hardhat/artifacts:/src/packages/hardhat/artifacts
-      - ../packages/hardhat/cache:/src/packages/hardhat/cache
-      - ../packages/hardhat/tasks:/src/packages/hardhat/tasks
+      - ./packages/hardhat/deployments:/src/packages/hardhat/deployments
+      - ./packages/hardhat/artifacts:/src/packages/hardhat/artifacts
+      - ./packages/hardhat/cache:/src/packages/hardhat/cache
+      - ./packages/hardhat/tasks:/src/packages/hardhat/tasks
     ports:
       - 8545:8545
     command: npm run start:hardhat:node -w @ethernauts/hardhat
 
   hardhat-deploy:
     build:
-      context: ..
+      context: .
       dockerfile: docker/hardhat.Dockerfile
     volumes:
-      - ../packages/hardhat/deployments:/src/packages/hardhat/deployments
-      - ../packages/hardhat/artifacts:/src/packages/hardhat/artifacts
-      - ../packages/hardhat/cache:/src/packages/hardhat/cache
-    command: sh -c "/wait && rm ./packages/hardhat/deployments/docker.json && npm run start:hardhat:compile -w @ethernauts/hardhat && npm run start:hardhat:deploy:docker -w @ethernauts/hardhat"
+      - ./packages/hardhat/deployments:/src/packages/hardhat/deployments
+      - ./packages/hardhat/artifacts:/src/packages/hardhat/artifacts
+      - ./packages/hardhat/cache:/src/packages/hardhat/cache
+      - ./packages/hardhat/tasks:/src/packages/hardhat/tasks
+    command: sh -c "/wait && rm -f ./packages/hardhat/deployments/docker.json && npm run -w @ethernauts/hardhat start:hardhat:compile && npm run -w @ethernauts/hardhat start:hardhat:deploy -- --network docker"
     environment:
       WAIT_HOSTS: hardhat-node:8545
     depends_on:
@@ -46,7 +47,7 @@ services:
 
   keeper-queue:
     build:
-      context: ..
+      context: .
       dockerfile: docker/keeper.Dockerfile
     restart: always
     command: sh -c "npx --yes just-wait -p ./packages/hardhat/deployments/docker.json --timeout 10 && npm run -w @ethernauts/keeper queue -- --network docker"
@@ -55,8 +56,8 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: 6379
     volumes:
-      - ../packages/keeper:/src/packages/keeper
-      - ../packages/hardhat/deployments:/src/packages/hardhat/deployments
+      - ./packages/keeper:/src/packages/keeper
+      - ./packages/hardhat/deployments:/src/packages/hardhat/deployments
       - /src/node_modules
       - /src/packages/keeper/node_modules
     depends_on:
@@ -67,7 +68,7 @@ services:
 
   keeper-jobs:
     build:
-      context: ..
+      context: .
       dockerfile: docker/keeper.Dockerfile
     restart: always
     command: npm run -w @ethernauts/keeper jobs
@@ -76,8 +77,8 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: 6379
     volumes:
-      - ../packages/keeper:/src/packages/keeper
-      - ../packages/hardhat/deployments:/src/packages/hardhat/deployments
+      - ./packages/keeper:/src/packages/keeper
+      - ./packages/hardhat/deployments:/src/packages/hardhat/deployments
       - /src/node_modules
       - /src/packages/keeper/node_modules
     depends_on:
@@ -85,19 +86,19 @@ services:
 
   dapp:
     build:
-      context: ..
+      context: .
       dockerfile: docker/dapp.Dockerfile
     volumes:
-      - ../packages/dapp:/src/packages/dapp
-      - ../packages/hardhat/artifacts:/src/packages/hardhat/artifacts
-      - ../packages/hardhat/deployments:/src/packages/hardhat/deployments
+      - ./packages/dapp:/src/packages/dapp
+      - ./packages/hardhat/artifacts:/src/packages/hardhat/artifacts
+      - ./packages/hardhat/deployments:/src/packages/hardhat/deployments
       - /src/node_modules
       - /src/packages/dapp/node_modules
       - /src/packages/dapp/.next
     ports:
       - 3000:3000
     env_file:
-      - ../packages/dapp/.env.local
+      - ./packages/dapp/.env.local
     command: sh -c "npx --yes just-wait -p ./packages/hardhat/deployments/docker.json --timeout 10 && npm run start:dapp"
     depends_on:
       - hardhat-node
