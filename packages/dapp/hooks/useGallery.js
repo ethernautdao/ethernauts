@@ -54,7 +54,7 @@ const useGallery = () => {
       setIsError(err.message);
     }
     setIsLoading(false);
-  }, [state.web3Provider]);
+  }, [state.address]);
 
   return [{ data, isLoading, isError }, fetchGalleryItems];
 };
