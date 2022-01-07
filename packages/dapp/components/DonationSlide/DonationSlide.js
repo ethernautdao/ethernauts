@@ -3,10 +3,10 @@ import Slider from 'rc-slider';
 
 import useSaleState from '../../hooks/useSaleState';
 
-import { INITIAL_DONATION, MIN_DONATION, MAX_DONATION, EARLY } from '../../constants';
-
 import { WalletContext } from '../../contexts/WalletProvider';
 import { DonationContext } from '../../contexts/DonationProvider';
+
+import { INITIAL_DONATION, MIN_DONATION, MAX_DONATION, EARLY } from '../../constants/common';
 
 import styles from './DonationSlide.module.scss';
 

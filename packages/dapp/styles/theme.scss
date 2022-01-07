@@ -35,9 +35,12 @@
   --donation-slider-rail-color: linear-gradient(to right, #ccfff0, #5bfff5);
   --donation-bullet-color: #9cfef2;
 
-  --toast-background-color: var(--white);
-  --toast-text-background-color: #40434d;
-  --toast-text-color: #9cfef2;
+  --toast-background-color: #232429;
+  --toast-title-color: var(--white);
+  --toast-text-color: #adbdcc;
+  --toast-link-color: #cdffe6;
+  --toast-success-border-color: #cdffe6;
+  --toast-error-border-color: #ff6666;
 
   --navigation-text-color: #9cabb0;
   --navigation-active-text-color: var(--white);

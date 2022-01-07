@@ -5,7 +5,7 @@ import { WalletContext } from '../contexts/WalletProvider';
 import { DonationContext } from '../contexts/DonationProvider';
 
 import { abi, tokenAddress } from '../config';
-import { zeroAccount } from '../constants';
+import { zeroAccount } from '../constants/common';
 
 const useMint = () => {
   const [data, setData] = useState(null);

@@ -1,24 +1,22 @@
-import Link from 'next/link';
 import { Toaster, toast } from 'react-hot-toast';
 
-import styles from './Toast.module.scss';
+import Error from './Error';
+import Success from './Success';
+import { ERROR_KIND, SUCCESS_KIND } from './Kind';
 
-const notify = () =>
-  toast.custom(
-    <div className={styles.container}>
-      Your Ethernaut was minted{' '}
-      <Link href="/gallery/me">
-        <a className={styles.link}>View gallery</a>
-      </Link>
-    </div>
-  );
+const ToastKind = {
+  [ERROR_KIND]: (t) => <Error t={t} />,
+  [SUCCESS_KIND]: (t) => <Success t={t} />,
+};
+
+const notify = ({ kind }) => toast.custom((t) => ToastKind[kind](t));
 
 const Toast = () => (
   <Toaster
-    position="bottom-center"
+    position="bottom-left"
     containerStyle={{ position: 'absolute', marginBottom: '10px' }}
     toastOptions={{
-      duration: 50000,
+      duration: 5000,
     }}
   />
 );

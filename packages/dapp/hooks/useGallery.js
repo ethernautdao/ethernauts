@@ -4,7 +4,7 @@ import { useCallback, useContext, useState } from 'react';
 import { WalletContext } from '../contexts/WalletProvider';
 
 import { abi } from '../config';
-import { zeroAccount } from '../constants';
+import { zeroAccount } from '../constants/common';
 
 const useGallery = () => {
   const [data, setData] = useState(null);
@@ -54,7 +54,7 @@ const useGallery = () => {
       setIsError(err.message);
     }
     setIsLoading(false);
-  }, [state.web3Provider]);
+  }, [state.address]);
 
   return [{ data, isLoading, isError }, fetchGalleryItems];
 };

@@ -4,11 +4,11 @@
     background-position: center center;
 
     &:first-child {
-      background-image: url(/assets/bg-first-section.png);
+      background-image: url(/assets/main-background.png);
     }
 
     &:last-child {
-      background-image: url(/assets/bg-second-section.png);
+      background-image: url(/assets/dark-background.png);
     }
   }
 

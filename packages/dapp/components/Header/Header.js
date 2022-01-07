@@ -3,13 +3,13 @@ import Image from 'next/image';
 
 import Logo from '../../public/assets/ethernaut-logo.svg';
 
+import { MAIN_ROUTES } from '../../constants/routes';
+
 import { WalletInfo } from '../WalletInfo';
+import { Navigation } from '../Navigation';
 import { ConnectWallet } from '../Buttons/ConnectWallet';
 
-import { Navigation } from './Navigation';
-
 import styles from './Header.module.scss';
-import Logo from '../../public/assets/logo.png';
 
 const Header = () => {
   return (
@@ -21,7 +21,7 @@ const Header = () => {
           </a>
         </Link>
         <div className={styles.end}>
-          <Navigation />
+          <Navigation routes={MAIN_ROUTES} />
           <WalletInfo />
           <ConnectWallet />
         </div>

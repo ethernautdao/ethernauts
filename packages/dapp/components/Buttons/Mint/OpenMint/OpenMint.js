@@ -1,8 +1,10 @@
 import { useEffect } from 'react';
+
 import useMint from '../../../../hooks/useMint';
 
 import { Toast, notify } from '../../../Toast';
-import { Error } from '../../Error';
+import { SUCCESS_KIND, ERROR_KIND } from '../../../Toast/Kind';
+
 import { Primary } from '../../Primary';
 
 const OpenMint = () => {
@@ -10,23 +12,21 @@ const OpenMint = () => {
 
   useEffect(() => {
     if (!data) return;
-    notify();
+
+    notify({ kind: SUCCESS_KIND });
   }, [data]);
 
-  const isDisabled = isError || isLoading;
+  useEffect(() => {
+    if (!isError) return;
+
+    notify({ kind: ERROR_KIND });
+  }, [isError]);
 
   if (isLoading) return <Primary isDisabled fullWidth text="Loading..." />;
 
-  if (isError) return <Error isDisabled fullWidth text="Something went wrong" />;
-
   return (
     <>
-      <Primary
-        fullWidth
-        isDisabled={isDisabled}
-        onClick={fetchMint}
-        text="Donate and mint your NFT"
-      />
+      <Primary fullWidth onClick={fetchMint} text="Donate and mint your NFT" />
       <Toast />
     </>
   );
