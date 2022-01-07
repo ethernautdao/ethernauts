@@ -25,11 +25,13 @@
     "@fullpage/react-fullpage": "0.1.19",
     "classnames": "2.3.1",
     "ethers": "5.4.7",
+    "lodash.chunk": "4.2.0",
     "next": "11.1.2",
     "rc-slider": "9.7.4",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-hot-toast": "2.1.1",
+    "react-medium-image-zoom": "4.3.5",
     "sass": "1.42.1",
     "web3modal": "1.9.4"
   },
