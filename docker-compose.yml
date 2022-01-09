@@ -24,7 +24,7 @@ services:
       - ./packages/hardhat/artifacts:/src/packages/hardhat/artifacts
       - ./packages/hardhat/cache:/src/packages/hardhat/cache
       - ./packages/hardhat/tasks:/src/packages/hardhat/tasks
-    command: sh -c "/wait && rm -f ./packages/hardhat/deployments/docker.json && npm run -w @ethernauts/hardhat start:hardhat:compile && npm run -w @ethernauts/hardhat start:hardhat:deploy -- --network docker"
+    command: sh -c "/wait && rm -f /src/packages/hardhat/deployments/docker.json && npm run -w @ethernauts/hardhat start:hardhat:compile && npm run -w @ethernauts/hardhat start:hardhat:deploy -- --network docker"
     environment:
       WAIT_HOSTS: hardhat-node:8545
     depends_on:
@@ -50,7 +50,7 @@ services:
       context: .
       dockerfile: docker/keeper.Dockerfile
     restart: always
-    command: sh -c "npx --yes just-wait -p ./packages/hardhat/deployments/docker.json --timeout 10 && npm run -w @ethernauts/keeper queue -- --network docker"
+    command: sh -c "npx --yes wait-on -l ./packages/hardhat/deployments/docker.json && npm run -w @ethernauts/keeper queue -- --network docker"
     environment:
       NODE_ENV: development
       REDIS_HOST: redis
