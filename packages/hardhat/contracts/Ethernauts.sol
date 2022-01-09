@@ -68,7 +68,6 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     event CouponSignerChanged(address couponSigner);
     event WithdrawTriggered(address beneficiary);
     event PermanentURITriggered(bool value);
-    event BatchEnd(uint256 batchId);
     event UrlChangerChanged(address urlChanger);
 
     constructor(
@@ -317,7 +316,6 @@ contract Ethernauts is ERC721Enumerable, Ownable {
 
         if (tokenId == maxTokenIdInBatch) {
             _generateRandomNumber();
-            emit BatchEnd(currentBatchId);
         }
     }
 
