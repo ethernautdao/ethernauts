@@ -16,13 +16,12 @@ async function main() {
   const Ethernauts = await getContractFromAbi('Ethernauts');
 
   const batchSize = await Ethernauts.batchSize();
+  console.log(' - Keeper Queue started -');
+  console.log(`   Address: ${Ethernauts.address}`);
+  console.log(`   BatchSize: ${Number(batchSize)} `);
 
-  console.log({ batchSize });
-
-  console.log(`Listening for events on Ethernauts token at ${Ethernauts.address}`);
-
-  Ethernauts.on('BatchEnd', (...args) => {
-    console.log('BatchEnd', ...args);
+  Ethernauts.on('BatchEnd', (batchId) => {
+    console.log('BatchEnd', { batchId: Number(batchId) });
     // const result = parseMint(...args);
 
     // if (result) {
@@ -32,8 +31,8 @@ async function main() {
     // }
   });
 
-  Ethernauts.on('Transfer', (...args) => {
-    console.log('Transfer', ...args);
+  Ethernauts.on('Transfer', (from, to, tokenId) => {
+    console.log('Transfer', { from, to, tokenId: Number(tokenId) });
     // const result = parseMint(...args);
 
     // if (result) {

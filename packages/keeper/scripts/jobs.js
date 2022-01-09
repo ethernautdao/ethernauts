@@ -18,7 +18,7 @@ async function main() {
 
   await worker.waitUntilReady();
 
-  console.log(' - worker started - ');
+  console.log(' - keeper jobs started - ');
 }
 
 main().catch((err) => {
