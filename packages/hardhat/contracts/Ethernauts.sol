@@ -312,13 +312,12 @@ contract Ethernauts is ERC721Enumerable, Ownable {
 
         _mint(to, tokenId);
 
-        uint256 currentBatchId = _randomNumbers.length;
-        uint256 maxTokenIdInBatch = batchSize * (currentBatchId + 1) - 2;
+        uint256 currentBatchId = tokenId / batchSize;
+        uint256 maxTokenIdInBatch = batchSize * (currentBatchId + 1) - 1;
 
         if (tokenId == maxTokenIdInBatch) {
-            emit BatchEnd(currentBatchId);
-        } else if (tokenId == maxTokenIdInBatch + 1) {
             _generateRandomNumber();
+            emit BatchEnd(currentBatchId);
         }
     }
 

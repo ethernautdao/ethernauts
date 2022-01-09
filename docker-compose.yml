@@ -6,11 +6,6 @@ services:
       context: .
       dockerfile: docker/hardhat.Dockerfile
     restart: always
-    volumes:
-      - ./packages/hardhat/deployments:/src/packages/hardhat/deployments
-      - ./packages/hardhat/artifacts:/src/packages/hardhat/artifacts
-      - ./packages/hardhat/cache:/src/packages/hardhat/cache
-      - ./packages/hardhat/tasks:/src/packages/hardhat/tasks
     ports:
       - 8545:8545
     command: npm run start:hardhat:node -w @ethernauts/hardhat
@@ -20,6 +15,7 @@ services:
       context: .
       dockerfile: docker/hardhat.Dockerfile
     volumes:
+      - ./packages/hardhat/contracts:/src/packages/hardhat/contracts
       - ./packages/hardhat/deployments:/src/packages/hardhat/deployments
       - ./packages/hardhat/artifacts:/src/packages/hardhat/artifacts
       - ./packages/hardhat/cache:/src/packages/hardhat/cache
