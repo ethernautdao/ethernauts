@@ -10,36 +10,28 @@ const mintsFlow = new FlowProducer({
   },
 });
 
-//config.MINTS_QUEUE_NAME,
-
 async function main() {
   const Ethernauts = await getContractFromAbi('Ethernauts');
 
-  const batchSize = await Ethernauts.batchSize();
   console.log(' - Keeper Queue started -');
   console.log(`   Address: ${Ethernauts.address}`);
-  console.log(`   BatchSize: ${Number(batchSize)} `);
 
-  Ethernauts.on('BatchEnd', (batchId) => {
-    console.log('BatchEnd', { batchId: Number(batchId) });
-    // const result = parseMint(...args);
+  const batchSize = Number(await Ethernauts.batchSize());
 
-    // if (result) {
-    //   const { to, tokenId } = result;
-    //   mintsQueue.add('mints', { to, tokenId });
-    //   console.log(`Mint detected, tokenId: ${tokenId}`);
-    // }
-  });
+  console.log(`   BatchSize: ${batchSize} `);
 
   Ethernauts.on('Transfer', (from, to, tokenId) => {
-    console.log('Transfer', { from, to, tokenId: Number(tokenId) });
-    // const result = parseMint(...args);
+    if (from !== '0x0000000000000000000000000000000000000000') return;
 
-    // if (result) {
-    //   const { to, tokenId } = result;
-    //   mintsQueue.add('mints', { to, tokenId });
-    //   console.log(`Mint detected, tokenId: ${tokenId}`);
-    // }
+    tokenId = Number(tokenId);
+    const currentBatchId = Math.floor(tokenId / batchSize);
+    const maxTokenIdInBatch = batchSize * (currentBatchId + 1) - 1;
+
+    console.log('Transfer', { from, to, tokenId });
+
+    if (tokenId == maxTokenIdInBatch) {
+      console.log('Batch end: ', { currentBatchId, maxTokenIdInBatch });
+    }
   });
 }
 
