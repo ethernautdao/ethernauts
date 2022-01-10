@@ -27,6 +27,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     error RecoverTokenError(address tokenAddress, address toAddress);
     error TokenBalanceError(uint256 tokenBalance, uint256 amount);
     error TotalSupplyError(uint256 total, uint256 max);
+    error NotAuthorized(address who);
 
     // Can be set only once on deploy
     uint256 public immutable maxTokens;
@@ -41,6 +42,8 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     uint256 public earlyMintPrice;
 
     address public couponSigner;
+
+    address public urlChanger;
 
     // Internal usage
     uint256 private _tokensGifted;
@@ -66,6 +69,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     event WithdrawTriggered(address beneficiary);
     event PermanentURITriggered(bool value);
     event BatchEnd(uint256 batchId);
+    event UrlChangerChanged(address urlChanger);
 
     constructor(
         uint256 definitiveMaxGiftable,
@@ -232,7 +236,8 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         emit EarlyMintPriceChanged(newEarlyMintPrice);
     }
 
-    function setBaseURI(string calldata newBaseTokenURI) external onlyOwner {
+    function setBaseURI(string calldata newBaseTokenURI) external {
+        if (msg.sender != owner() && msg.sender != urlChanger) revert NotAuthorized(msg.sender);
         if (permanentUrl) {
             revert PermanentUrlError({permanentURI: permanentUrl});
         }
@@ -266,6 +271,12 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     function setPermanentURI() external onlyOwner {
         permanentUrl = true;
         emit PermanentURITriggered(true);
+    }
+
+
+    function setUrlChanger(address newUrlChanger) external onlyOwner {
+        urlChanger = newUrlChanger;
+        emit UrlChangerChanged(newUrlChanger);
     }
 
     function withdraw(address payable beneficiary) external onlyOwner {
