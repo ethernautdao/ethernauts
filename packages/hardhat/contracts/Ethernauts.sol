@@ -273,7 +273,6 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         emit PermanentURITriggered(true);
     }
 
-
     function setUrlChanger(address newUrlChanger) external onlyOwner {
         urlChanger = newUrlChanger;
         emit UrlChangerChanged(newUrlChanger);
