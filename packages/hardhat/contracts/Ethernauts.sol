@@ -86,6 +86,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     // Public external ABI
     // --------------------
 
+    /// @notice Mints a single token if at least mintPrice is sent and there are tokens available to mint.
     function mint() external payable onlyOnState(SaleState.Open) {
         require(msg.value >= mintPrice, "Invalid msg.value");
         require(availableToMint() > 0, "No available supply");
@@ -97,6 +98,8 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         }
     }
 
+    /// @notice Allows the sender to mint while in early sale state.
+    /// @param signedCoupon Coupon given by couponSigner giving the sender early mint access.
     function mintEarly(bytes memory signedCoupon) external payable onlyOnState(SaleState.Early) {
         require(msg.value >= earlyMintPrice, "Invalid msg.value");
         require(availableToMint() > 0, "No available supply");
@@ -108,26 +111,41 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         _redeemedCoupons[msg.sender] = true;
     }
 
+    /// @notice The number of tokens gifted.
+    /// @return The number of tokens gifted.
     function tokensGifted() external view returns (uint256) {
         return _tokensGifted;
     }
 
+    /// @notice Total number of tokens available.
+    /// @return The current number of available tokens (max - total current supply).
     function availableSupply() public view returns (uint256) {
         return maxTokens - totalSupply();
     }
 
+    /// @notice Total number of tokens available for minting.
+    /// @return The current number of mintable tokens (available supply - gifted supply).
     function availableToMint() public view returns (uint256) {
         return availableSupply() - availableToGift();
     }
 
+    /// @notice Remaining giftable tokens.
+    /// @return The amount of giftable tokens remaining (total giftable - already gifted).
     function availableToGift() public view returns (uint256) {
         return maxGiftable - _tokensGifted;
     }
 
+    /// @notice Checks if a token with tokenId exists.
+    /// @param tokenId The Id being checked.
+    /// @return true if token exists
     function exists(uint256 tokenId) external view returns (bool) {
         return _exists(tokenId);
     }
 
+    /// @notice Checks if the supplied coupon is for the given user.
+    /// @param user Address of user.
+    /// @param coupon Coupon by couponSigner of the user's address.
+    /// @return Returns true if the couponSigner signed for supplied user.
     function isCouponSignedForUser(address user, bytes memory coupon) public view returns (bool) {
         bytes32 messageHash = keccak256(abi.encode(user));
         bytes32 prefixedHash = ECDSA.toEthSignedMessageHash(messageHash);
@@ -137,10 +155,16 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         return couponSigner == retrievedSigner;
     }
 
+    /// @notice Checks to see if the user has redeemed a coupon.
+    /// @param user Address of the user.
+    /// @return True is the user has redeemed a coupon. 
     function userRedeemedCoupon(address user) public view returns (bool) {
         return _redeemedCoupons[user];
     }
 
+    /// @notice Returns the uri for a given token.
+    /// @param tokenId Id of token
+    /// @return URI of `tokenId` token
     function tokenURI(uint256 tokenId) public view override returns (string memory) {
         string memory baseURI = _baseURI();
 
@@ -161,10 +185,15 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         return string(abi.encodePacked(baseURI, assetId.toString()));
     }
 
+    /// @notice Fetch the random number for `batchId`
+    /// @param batchId Id for the batch.
+    /// @return Random number for batchId
     function getRandomNumberForBatch(uint batchId) public view returns (uint) {
         return _randomNumbers[batchId];
     }
 
+    /// @notice Get the number of random numbers
+    /// @return Number of random numbers in `_randomNumbers`
     function getRandomNumberCount() public view returns (uint) {
         return _randomNumbers.length;
     }
