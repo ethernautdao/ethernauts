@@ -7,7 +7,7 @@ const jobs = {
   /**
    * Generate all the necessary jobs for uploading the assets
    */
-  [JOB_PROCESS_BATCH]: async function ({ batchId, batchSize }, { Ethernauts }) {
+  [JOB_PROCESS_BATCH]: async function ({ batchId, batchSize }, { Ethernauts, queue }) {
     const randomNumber = await Ethernauts.getRandomNumberForBatch(batchId);
     const offset = Number(randomNumber.mod(batchSize));
 
@@ -26,23 +26,17 @@ const jobs = {
       });
     }
 
-    console.log(
-      JSON.stringify(
-        {
-          name: JOB_UPLOAD_RESOURCE,
-          queueName: config.MINTS_QUEUE_NAME,
-          children,
-        },
-        null,
-        2
-      )
-    );
+    await queue.add({
+      name: JOB_UPDATE_BASE_URL,
+      queueName: config.MINTS_QUEUE_NAME,
+      children,
+    });
   },
 
   /**
    * Upgrade the latest folder uri from IPFS
    */
-  [JOB_UPDATE_BASE_URL]: async function (data) {
+  [JOB_UPDATE_BASE_URL]: async function () {
     // TODO: Call Ethernauts.setBaseURI()
   },
 
@@ -62,7 +56,7 @@ const jobs = {
       return;
     }
 
-    const result = await Promise.all([
+    const [metadata, asset] = await Promise.all([
       fleek.uploadFile({
         key: metadataKey,
         location: path.join(config.RESOURCES_METADATA_FOLDER, `${assetId}.json`),
@@ -73,10 +67,15 @@ const jobs = {
       }),
     ]);
 
-    console.log(`==== Resource Uploaded | tokenId: ${tokenId} ===`);
-    console.log(JSON.stringify(result[0]));
-    console.log(JSON.stringify(result[1]));
-    console.log('================================================');
+    console.log(
+      'Resource Uploaded: ',
+      JSON.stringify({
+        tokenId,
+        assetId,
+        metadata,
+        asset,
+      })
+    );
   },
 };
 
