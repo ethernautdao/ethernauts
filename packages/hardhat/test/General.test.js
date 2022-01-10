@@ -113,7 +113,10 @@ describe('General', () => {
         await assertRevert(Ethernauts.connect(user).gift(user.address), 'caller is not the owner');
         await assertRevert(Ethernauts.connect(user).setSaleState(2), 'caller is not the owner');
         await assertRevert(Ethernauts.connect(user).setPermanentURI(), 'caller is not the owner');
-        await assertRevert(Ethernauts.connect(user).setUrlChanger(user.address), 'caller is not the owner');
+        await assertRevert(
+          Ethernauts.connect(user).setUrlChanger(user.address),
+          'caller is not the owner'
+        );
       });
     });
     describe('when a url changer tries to call setBaseUri function', () => {
