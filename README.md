@@ -30,7 +30,7 @@ Run `docker compose up -d` to start the whole project. It includes the following
 - `dapp` (Next.js) (http://localhost:3000)
 - `redis` (https://localhost:6379)
 - `keeper-queue`: Node server that listens to mint & batch events and enqueues the necessary jobs to be processed.
-- `keeper-jobs`: Node server processes the enqueued jobs by `keeper-queue` and executes them with the desired concurrency.
+- `keeper-worker`: Node server processes the enqueued jobs by `keeper-queue` and executes them with the desired concurrency.
 
 Run `docker compose ps` to check the status of the running services and `docker compose down` to stop them.
 
