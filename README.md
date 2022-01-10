@@ -60,5 +60,5 @@ docker compose exec hardhat-node sh -c 'cd /src/packages/hardhat && npx hardhat 
 Finally, you can also set the base URL changer address, with:
 
 ```bash
-docker compose exec hardhat-node sh -c 'cd /src/packages/hardhat && npx hardhat --network docker exec --method setUrlChanger ==args ["0x000"]'
+docker compose exec hardhat-node sh -c 'cd /src/packages/hardhat && npx hardhat --network docker exec --method setUrlChanger --args ["0x000"]'
 ```
