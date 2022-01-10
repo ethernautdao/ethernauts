@@ -1,9 +1,14 @@
 const { Worker } = require('bullmq');
+const { getContractFromAbi } = require('@ethernauts/hardhat/src/utils/hardhat');
 const config = require('../src/config');
-const processMint = require('../src/process-mint');
+const processJobs = require('../src/process-jobs');
 
 async function main() {
-  const worker = new Worker(config.MINTS_QUEUE_NAME, processMint, {
+  const ctx = {};
+
+  ctx.Ethernauts = await getContractFromAbi('Ethernauts');
+
+  const worker = new Worker(config.MINTS_QUEUE_NAME, processJobs(ctx), {
     concurrency: config.MINTS_QUEUE_CONCURRENCY,
     connection: {
       host: config.REDIS_HOST,
@@ -18,7 +23,7 @@ async function main() {
 
   await worker.waitUntilReady();
 
-  console.log(' - keeper jobs started - ');
+  console.log(' - Keeper Jobs Started - ');
 }
 
 main().catch((err) => {

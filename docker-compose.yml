@@ -73,7 +73,7 @@ services:
       context: .
       dockerfile: docker/keeper.Dockerfile
     restart: always
-    command: npm run -w @ethernauts/keeper jobs
+    command: sh -c "npx --yes wait-on -l ./packages/hardhat/deployments/docker.json && npm run -w @ethernauts/keeper jobs -- --network docker"
     environment:
       NODE_ENV: development
       REDIS_HOST: redis
