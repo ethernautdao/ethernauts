@@ -15,7 +15,6 @@
   },
   "homepage": "https://github.com/ethernautdao/ethernauts#readme",
   "scripts": {
-    "test": "hardhat test",
     "queue": "hardhat run scripts/queue.js",
     "worker": "hardhat run scripts/worker.js"
   },
