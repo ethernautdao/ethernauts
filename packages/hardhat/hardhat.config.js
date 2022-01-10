@@ -6,8 +6,9 @@ require('@nomiclabs/hardhat-etherscan');
 require('dotenv').config();
 
 require('./tasks/deploy');
-require('./tasks/sale-state');
+require('./tasks/exec');
 require('./tasks/mint');
+require('./tasks/sale-state');
 
 module.exports = {
   solidity: {

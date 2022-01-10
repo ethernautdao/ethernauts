@@ -56,3 +56,9 @@ Then, you will be able to mint any amount of tokens using the `mint` task:
 ```bash
 docker compose exec hardhat-node sh -c 'cd /src/packages/hardhat && npx hardhat --network docker mint'
 ```
+
+Finally, you can also set the base URL changer address, with:
+
+```bash
+docker compose exec hardhat-node sh -c 'cd /src/packages/hardhat && npx hardhat --network docker exec --method setUrlChanger --args ["0x000"]'
+```

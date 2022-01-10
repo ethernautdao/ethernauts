@@ -36,8 +36,10 @@ const jobs = {
   /**
    * Upgrade the latest folder uri from IPFS
    */
-  [JOB_UPDATE_BASE_URL]: async function () {
-    // TODO: Call Ethernauts.setBaseURI()
+  [JOB_UPDATE_BASE_URL]: async function (_, { Ethernauts }) {
+    const baseUriHash = await fleek.getFolderHash(config.FLEEK_METADATA_FOLDER);
+    const tx = await Ethernauts.setBaseURI(baseUriHash);
+    await tx.wait();
   },
 
   /**
