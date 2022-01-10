@@ -68,7 +68,7 @@ services:
       - ipfs
       - redis
 
-  keeper-jobs:
+  keeper-worker:
     build:
       context: .
       dockerfile: docker/keeper.Dockerfile

@@ -1,9 +1,9 @@
 const { FlowProducer } = require('bullmq');
 const { getContractFromAbi } = require('@ethernauts/hardhat/src/utils/hardhat');
 const config = require('../src/config');
-const { JOB_BATCH_END } = require('../src/constants');
+const { JOB_PROCESS_BATCH } = require('../src/constants');
 
-const mintsFlow = new FlowProducer({
+const queue = new FlowProducer({
   connection: {
     host: config.REDIS_HOST,
     port: config.REDIS_PORT,
@@ -32,8 +32,8 @@ async function main() {
     if (tokenId == maxTokenIdInBatch) {
       console.log('BatchEnd:', JSON.stringify({ batchId, maxTokenIdInBatch }));
 
-      await mintsFlow.add({
-        name: JOB_BATCH_END,
+      await queue.add({
+        name: JOB_PROCESS_BATCH,
         queueName: config.MINTS_QUEUE_NAME,
         data: {
           batchId,

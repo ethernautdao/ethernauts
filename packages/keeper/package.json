@@ -17,7 +17,7 @@
   "scripts": {
     "test": "hardhat test",
     "queue": "hardhat run scripts/queue.js",
-    "jobs": "hardhat run scripts/jobs.js"
+    "worker": "hardhat run scripts/worker.js"
   },
   "dependencies": {
     "@fleekhq/fleek-storage-js": "1.0.20",
