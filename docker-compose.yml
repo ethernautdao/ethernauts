@@ -9,11 +9,9 @@ services:
     ports:
       - 8545:8545
     volumes:
-      - ./packages/hardhat/contracts:/src/packages/hardhat/contracts
-      - ./packages/hardhat/deployments:/src/packages/hardhat/deployments
-      - ./packages/hardhat/artifacts:/src/packages/hardhat/artifacts
-      - ./packages/hardhat/cache:/src/packages/hardhat/cache
-      - ./packages/hardhat/tasks:/src/packages/hardhat/tasks
+      - ./packages/hardhat:/src/packages/hardhat
+      - /src/node_modules
+      - /src/packages/hardhat/node_modules
     command: npm run start:hardhat:node -w @ethernauts/hardhat
 
   hardhat-deploy:
@@ -21,11 +19,9 @@ services:
       context: .
       dockerfile: docker/hardhat.Dockerfile
     volumes:
-      - ./packages/hardhat/artifacts:/src/packages/hardhat/artifacts
-      - ./packages/hardhat/cache:/src/packages/hardhat/cache
-      - ./packages/hardhat/contracts:/src/packages/hardhat/contracts
-      - ./packages/hardhat/deployments:/src/packages/hardhat/deployments
-      - ./packages/hardhat/tasks:/src/packages/hardhat/tasks
+      - ./packages/hardhat:/src/packages/hardhat
+      - /src/node_modules
+      - /src/packages/hardhat/node_modules
     command: sh -c "/wait && rm -f /src/packages/hardhat/deployments/docker.json && npm run -w @ethernauts/hardhat start:hardhat:compile && npm run -w @ethernauts/hardhat start:hardhat:deploy -- --network docker"
     environment:
       WAIT_HOSTS: hardhat-node:8545
@@ -58,10 +54,11 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: 6379
     volumes:
-      - ./packages/hardhat/deployments:/src/packages/hardhat/deployments
+      - ./packages/hardhat:/src/packages/hardhat
       - ./packages/keeper:/src/packages/keeper
       - /src/node_modules
       - /src/packages/keeper/node_modules
+      - /src/packages/hardhat/node_modules
     depends_on:
       - hardhat-node
       - hardhat-deploy
@@ -79,10 +76,11 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: 6379
     volumes:
-      - ./packages/hardhat/deployments:/src/packages/hardhat/deployments
+      - ./packages/hardhat:/src/packages/hardhat
       - ./packages/keeper:/src/packages/keeper
       - /src/node_modules
       - /src/packages/keeper/node_modules
+      - /src/packages/hardhat/node_modules
     depends_on:
       - keeper-queue
 
