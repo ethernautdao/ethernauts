@@ -211,6 +211,15 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         return _randomNumbers.length;
     }
 
+    function isTokenRevealed(uint256 tokenId) public view returns (bool) {
+        uint256 batchId = tokenId / batchSize;
+        if (batchId >= _randomNumbers.length) {
+            return false;
+        }
+
+        return true;
+    }
+
     // -----------------------
     // Protected external ABI
     // -----------------------
