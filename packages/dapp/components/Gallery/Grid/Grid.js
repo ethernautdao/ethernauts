@@ -21,19 +21,22 @@ const Grid = ({ items, kind }) => {
   const isMiddleCell = (tokenId) => {
     if (kind === ME) return false;
 
-    return chunks.some((item) => item[1].args.tokenId.toString() === tokenId);
+    return chunks.some((item) => {
+      return item[1]?.tokenId === tokenId;
+    });
   };
 
   return (
     <div className={styles.outerContainer}>
       <div className={cn(styles.grid, { [styles.all]: kind === ALL, [styles.me]: kind === ME })}>
-        {items?.map((item) => {
-          const isMiddle = isMiddleCell(item.args.tokenId.toString());
+        {items?.map(({ tokenId, isRevealed }) => {
+          const isMiddle = isMiddleCell(tokenId);
           return (
             <Cell
-              key={item.args.tokenId.toString()}
+              key={tokenId}
+              tokenId={tokenId}
+              isRevealed={isRevealed}
               kind={kind}
-              item={item}
               isMiddleCell={isMiddle}
             />
           );
