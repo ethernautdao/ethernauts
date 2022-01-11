@@ -6,8 +6,9 @@ require('@nomiclabs/hardhat-etherscan');
 require('dotenv').config();
 
 require('./tasks/deploy');
-require('./tasks/sale-state');
+require('./tasks/exec');
 require('./tasks/mint');
+require('./tasks/sale-state');
 
 module.exports = {
   solidity: {
@@ -27,6 +28,9 @@ module.exports = {
   networks: {
     local: {
       url: 'http://localhost:8545',
+      accounts: {
+        mnemonic: 'test test test test test test test test test test test junk',
+      },
     },
     docker: {
       url: 'http://hardhat-node:8545',
@@ -42,7 +46,7 @@ module.exports = {
   defaults: {
     maxGiftable: 100,
     maxTokens: 10000,
-    batchSize: 500,
+    batchSize: 50,
     mintPrice: ethers.utils.parseEther('0.2'),
     earlyMintPrice: ethers.utils.parseEther('0.015'),
     initialCouponSigner: '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266', // Default hardhat signer[0]

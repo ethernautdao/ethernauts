@@ -14,6 +14,9 @@ describe('Gift', () => {
   let tokensMinted = 0;
   let tokensGifted = 0;
 
+  let gifted = 100;
+  let maxToGift = 100;
+
   before('identify signers', async () => {
     users = await ethers.getSigners();
     [owner, user] = users;
@@ -102,7 +105,7 @@ describe('Gift', () => {
     it('reverts', async () => {
       await assertRevert(
         Ethernauts.connect(owner).gift(owner.address),
-        'No more Ethernauts can be gifted'
+        `TokensGiftError(${gifted}, ${maxToGift})`
       );
     });
   });

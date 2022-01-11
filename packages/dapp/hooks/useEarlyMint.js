@@ -6,7 +6,7 @@ import { DonationContext } from '../contexts/DonationProvider';
 
 import { abi, tokenAddress, ethereumNetwork } from '../config';
 
-import { zeroAccount } from '../constants';
+import { zeroAccount } from '../constants/common';
 
 const useMintEarly = () => {
   const [data, setData] = useState(null);

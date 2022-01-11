@@ -29,15 +29,15 @@ const Logs = () => {
   return (
     <section className={styles.container}>
       <div className={styles.text}>
-        <h3 className={styles.title}>{log.title}</h3>
-        <p className={styles.location}>{`Location: ${log.location}`}</p>
+        <h3 className={styles.title}>Location</h3>
+        <p className={styles.location}>{log.location}</p>
         <p className={styles.text}>{log.text}</p>
       </div>
       <div className={styles.footer}>
         <button className={styles.button} onClick={handlePreviousLog}>
           <LeftArrow />
         </button>
-        <span className={styles.entry}>{`Entry ${logNumber}`}</span>
+        <span className={styles.entry}>{`Ethernaut Logbook - Entry ${logNumber}`}</span>
         <button className={styles.button} onClick={handleNextLog}>
           <RightArrow />
         </button>

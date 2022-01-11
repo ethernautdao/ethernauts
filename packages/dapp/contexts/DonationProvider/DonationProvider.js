@@ -1,6 +1,6 @@
 import { createContext, useState } from 'react';
 
-import { INITIAL_DONATION } from '../../constants';
+import { INITIAL_DONATION } from '../../constants/common';
 
 const DonationContext = createContext();
 

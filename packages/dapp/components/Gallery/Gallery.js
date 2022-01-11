@@ -1,15 +1,16 @@
-import Image from 'next/image';
+import { useRouter } from 'next/router';
 import { useContext, useEffect } from 'react';
+
+import { GALLERY_ROUTES } from '../../constants/routes';
 
 import { WalletContext } from '../../contexts/WalletProvider';
 
 import useGallery from '../../hooks/useGallery';
 
-import { GoToGallery } from '../Buttons/GoToGallery';
+import { Grid, ALL, ME } from './Grid';
 
-import styles from './Gallery.module.scss';
-
-const Gallery = ({ showAllItems = false }) => {
+const Gallery = () => {
+  const { asPath } = useRouter();
   const { state } = useContext(WalletContext);
 
   const [{ data, isLoading, isError }, fetchGalleryItems] = useGallery();
@@ -18,63 +19,19 @@ const Gallery = ({ showAllItems = false }) => {
     if (state.web3Provider) fetchGalleryItems();
   }, [state.web3Provider, fetchGalleryItems]);
 
-  if (isError) return 'Something went wrong...';
-
   if (isLoading) return 'Loading...';
+
+  if (isError) return 'Something went wrong...';
 
   if (!state.web3Provider) return null;
 
-  return (
-    <div>
-      {!!data?.myGalleryItems.length && (
-        <>
-          <h3 className={styles.title}>Your NFTs</h3>
-          <div className={styles.imageOuterContainer}>
-            <div className={styles.myNFTsGrid}>
-              {data?.myGalleryItems.map((item) => {
-                return (
-                  <div key={item.args.tokenId.toString()} className={styles.imageInnerContainer}>
-                    <Image
-                      // TODO: Use the URL of the fleek ipfs gateway to display the NFT
-                      src="https://via.placeholder.com/470x220"
-                      className={styles.image}
-                      layout="fill"
-                      objectFit="cover"
-                    />
-                    <span>{item.args.tokenId.toString()}</span>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </>
-      )}
-      {showAllItems && !!data?.allGalleryItems.length && (
-        <div>
-          <h3 className={styles.title}>Gallery</h3>
-          <div className={styles.imageOuterContainer}>
-            <div className={styles.allNFTsGrid}>
-              {data?.allGalleryItems.map((item) => {
-                return (
-                  <div key={item.args.tokenId.toString()} className={styles.imageInnerContainer}>
-                    <Image
-                      // TODO: Use the URL of the fleek ipfs gateway to display the NFT
-                      src="https://via.placeholder.com/470x220"
-                      className={styles.image}
-                      layout="fill"
-                      objectFit="cover"
-                    />
-                    <span>{item.args.tokenId.toString()}</span>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      )}
-      {!showAllItems && <GoToGallery />}
-    </div>
-  );
+  const isAll = asPath === GALLERY_ROUTES.all.path;
+
+  if (isAll) {
+    return <Grid items={data?.allGalleryItems} kind={ALL} />;
+  } else {
+    return <Grid items={data?.myGalleryItems} kind={ME} />;
+  }
 };
 
 export default Gallery;

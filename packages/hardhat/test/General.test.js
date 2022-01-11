@@ -20,10 +20,11 @@ describe('General', () => {
       it('reverts', async () => {
         const params = Object.assign({}, hre.config.defaults);
         params.maxGiftable = 200;
+        const max = 100;
 
         await assertRevert(
           factory.deploy(...Object.values(params)),
-          'Max giftable supply too large'
+          `MaxGiftableError(${params.maxGiftable}, ${max})`
         );
       });
     });
@@ -32,8 +33,12 @@ describe('General', () => {
       it('reverts', async () => {
         const params = Object.assign({}, hre.config.defaults);
         params.maxTokens = 12000;
+        const max = 10000;
 
-        await assertRevert(factory.deploy(...Object.values(params)), 'Max token supply too large');
+        await assertRevert(
+          factory.deploy(...Object.values(params)),
+          `MaxTokensError(${params.maxTokens}, ${max})`
+        );
       });
     });
   });
@@ -69,7 +74,7 @@ describe('General', () => {
       assert.equal((await Ethernauts.mintPrice()).toString(), hre.config.defaults.mintPrice);
     });
 
-    it('shows that the expexted interfaces are supported', async () => {
+    it('shows that the expected interfaces are supported', async () => {
       assert.ok(await Ethernauts.supportsInterface('0x01ffc9a7')); // ERC165
       assert.ok(await Ethernauts.supportsInterface('0x80ac58cd')); // ERC721
       assert.ok(await Ethernauts.supportsInterface('0x5b5e139f')); // ERC721Metadata
@@ -95,7 +100,7 @@ describe('General', () => {
         );
         await assertRevert(
           Ethernauts.connect(user).setBaseURI('someURI'),
-          'caller is not the owner'
+          'NotAuthorized("' + user.address + '")'
         );
         await assertRevert(
           Ethernauts.connect(user).setMintPrice(ethers.utils.parseEther('0.01')),
@@ -107,6 +112,18 @@ describe('General', () => {
         );
         await assertRevert(Ethernauts.connect(user).gift(user.address), 'caller is not the owner');
         await assertRevert(Ethernauts.connect(user).setSaleState(2), 'caller is not the owner');
+        await assertRevert(Ethernauts.connect(user).setPermanentURI(), 'caller is not the owner');
+        await assertRevert(
+          Ethernauts.connect(user).setUrlChanger(user.address),
+          'caller is not the owner'
+        );
+      });
+    });
+    describe('when a url changer tries to call setBaseUri function', () => {
+      it('succeedes', async () => {
+        await Ethernauts.connect(owner).setUrlChanger(user.address);
+        await assert.ok(Ethernauts.connect(user).setBaseURI('someURI'));
+        assert.equal(await Ethernauts.urlChanger(), user.address);
       });
     });
   });

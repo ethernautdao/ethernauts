@@ -5,7 +5,7 @@ import { WalletContext } from '../../../contexts/WalletProvider';
 
 import styles from './ConnectWallet.module.scss';
 
-const ConnectWallet = ({ width }) => {
+const ConnectWallet = ({ fullWidth }) => {
   const { state, connect, disconnect } = useContext(WalletContext);
 
   const isConnected = state.web3Provider !== null;
@@ -14,10 +14,10 @@ const ConnectWallet = ({ width }) => {
     return (
       <button
         type="button"
-        className={cn(styles.button, { [styles[`w-${width}`]]: !!width })}
+        className={cn(styles.button, { [styles.fullWidth]: fullWidth })}
         onClick={disconnect}
       >
-        Disconnect wallet
+        <span className={styles.text}>Disconnect wallet</span>
       </button>
     );
   }
@@ -25,10 +25,10 @@ const ConnectWallet = ({ width }) => {
   return (
     <button
       type="button"
-      className={cn(styles.button, { [styles[`w-${width}`]]: !!width })}
+      className={cn(styles.button, { [styles.fullWidth]: fullWidth })}
       onClick={connect}
     >
-      Connect wallet
+      <span className={styles.text}>Connect wallet</span>
     </button>
   );
 };

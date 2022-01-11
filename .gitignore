@@ -1,8 +1,7 @@
 .DS_Store
-.vscode
-node_modules
-coverage*
-
-docker/data
 .idea
-
+.vscode/
+coverage*
+data/
+docker/data/
+node_modules/

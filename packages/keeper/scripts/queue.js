@@ -1,8 +1,9 @@
-const { Queue } = require('bullmq');
+const { FlowProducer } = require('bullmq');
 const { getContractFromAbi } = require('@ethernauts/hardhat/src/utils/hardhat');
 const config = require('../src/config');
+const { JOB_PROCESS_BATCH } = require('../src/constants');
 
-const mintsQueue = new Queue(config.MINTS_QUEUE_NAME, {
+const queue = new FlowProducer({
   connection: {
     host: config.REDIS_HOST,
     port: config.REDIS_PORT,
@@ -12,17 +13,34 @@ const mintsQueue = new Queue(config.MINTS_QUEUE_NAME, {
 async function main() {
   const Ethernauts = await getContractFromAbi('Ethernauts');
 
-  const batchSize = await Ethernauts.batchSize();
+  console.log(' - Keeper Queue Started -');
+  console.log(`   Address: ${Ethernauts.address}`);
 
-  console.log({ batchSize });
+  const batchSize = Number(await Ethernauts.batchSize());
 
-  console.log(`Listening for events on Ethernauts token at ${Ethernauts.address}`);
+  console.log(`   BatchSize: ${batchSize} `);
 
-  Ethernauts.on('Transfer', async (from, to, amount, evt) => {
+  Ethernauts.on('Transfer', async (from, to, tokenId) => {
     if (from !== '0x0000000000000000000000000000000000000000') return;
-    const tokenId = evt.args.tokenId.toString();
-    console.log(`Mint detected, tokenId: ${tokenId}`);
-    mintsQueue.add('mints', { tokenId, to, amount });
+
+    tokenId = Number(tokenId);
+    const batchId = Math.floor(tokenId / batchSize);
+    const maxTokenIdInBatch = batchSize * (batchId + 1) - 1;
+
+    console.log('Transfer:', JSON.stringify({ to, tokenId }));
+
+    if (tokenId == maxTokenIdInBatch) {
+      console.log('BatchEnd:', JSON.stringify({ batchId, maxTokenIdInBatch }));
+
+      await queue.add({
+        name: JOB_PROCESS_BATCH,
+        queueName: config.MINTS_QUEUE_NAME,
+        data: {
+          batchId,
+          batchSize,
+        },
+      });
+    }
   });
 }
 

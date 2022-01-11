@@ -4,7 +4,7 @@ import { Contract } from 'ethers';
 import { WalletContext } from '../contexts/WalletProvider';
 
 import { abi, tokenAddress } from '../config';
-import { saleState } from '../constants';
+import { saleState } from '../constants/sale-state';
 
 const useSaleState = () => {
   const [data, setData] = useState(null);

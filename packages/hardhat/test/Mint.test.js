@@ -2,6 +2,8 @@ const assert = require('assert');
 const assertRevert = require('./utils/assertRevert');
 const { ethers } = require('hardhat');
 
+const convertToWei = (payloadAmount) => ethers.utils.parseEther(payloadAmount.toString());
+
 describe('Mint', () => {
   let Ethernauts;
 
@@ -48,7 +50,7 @@ describe('Mint', () => {
         Ethernauts.connect(user).mint({
           value: ethers.utils.parseEther('15'),
         }),
-        'Not allowed in current state'
+        'StateMismatchError(0, 2)'
       );
     });
   });
@@ -64,7 +66,7 @@ describe('Mint', () => {
           Ethernauts.connect(user).mint({
             value: ethers.utils.parseEther('0.01'),
           }),
-          'Invalid msg.value'
+          `MintPriceError(${convertToWei(0.01)}, ${convertToWei(0.2)})`
         );
       });
     });
@@ -218,7 +220,7 @@ describe('Mint', () => {
           Ethernauts.connect(user).mint({
             value: ethers.utils.parseEther('0.2'),
           }),
-          'Not allowed in current state'
+          'StateMismatchError(3, 2)'
         );
       });
     });

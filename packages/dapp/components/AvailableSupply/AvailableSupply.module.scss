@@ -1,5 +1,10 @@
 .availableSupply {
-  color: #fff;
-  font-size: 24px;
-  letter-spacing: 1px;
+  top: 100px;
+  font-size: 1rem;
+  position: absolute;
+  color: var(--available-supply-text-color);
+
+  .number {
+    color: var(--available-supply-number-color);
+  }
 }

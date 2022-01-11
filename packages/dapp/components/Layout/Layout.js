@@ -1,12 +1,14 @@
-import { Header } from '../Header';
+import cn from 'classnames';
+
+import { Background } from '../Background';
 
 import styles from './Layout.module.scss';
 
 const Layout = ({ children }) => (
-  <main className={styles.main}>
-    <Header />
-    {children}
-  </main>
+  <>
+    <Background />
+    <main className={cn(styles.main)}>{children}</main>
+  </>
 );
 
 export default Layout;

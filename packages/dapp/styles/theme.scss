@@ -1,0 +1,51 @@
+:root {
+  --white: #fff;
+  --black: #000;
+
+  --default-background-color: #0f1012;
+
+  --button-disabled-color: #40434d;
+  --button-disabled-text-color: #c3ced9;
+
+  --button-primary-text-color: #14181a;
+  --button-primary-background-color: linear-gradient(
+    97.42deg,
+    #cdffe6 0%,
+    #8fdeff 94.24%
+  );
+  --button-outline-border-color: linear-gradient(to left, #cdffe6, #8fdeff);
+  --button-outline-background-color: linear-gradient(to left, #cdffe6, #8fdeff);
+
+  --button-error-background-color: linear-gradient(
+    97.42deg,
+    #e57373 0%,
+    #c62828 94.24%
+  );
+  --button-error-text-color: #fff;
+
+  --logs-text-color: #cdffe6;
+  --logs-text-subtitle: linear-gradient(to right, #cdffe6, #8fdeff);
+  --logs-text-narrative: #a9bcce;
+  --logs-text-footer: #79879b;
+
+  --card-background-color: linear-gradient(317.38deg, #18191c 0%, #000000 100%);
+
+  --donation-title-color: #adbdcc;
+  --donation-range-color: #adbdcc;
+  --donation-slider-rail-color: linear-gradient(to right, #ccfff0, #5bfff5);
+  --donation-bullet-color: #9cfef2;
+
+  --toast-background-color: #232429;
+  --toast-title-color: var(--white);
+  --toast-text-color: #adbdcc;
+  --toast-link-color: #cdffe6;
+  --toast-success-border-color: #cdffe6;
+  --toast-error-border-color: #ff6666;
+
+  --navigation-text-color: #9cabb0;
+  --navigation-active-text-color: var(--white);
+  --navigation-border-color: #cdffe6;
+
+  --available-supply-text-color: #676872;
+  --available-supply-number-color: #989cb2;
+}

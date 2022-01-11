@@ -1,0 +1,26 @@
+.button {
+  border: 0;
+  outline: none;
+  cursor: pointer;
+  padding: 10px 24px;
+  border-radius: 32px;
+  background: var(--button-primary-background-color);
+
+  &:disabled {
+    cursor: not-allowed;
+    background: var(--button-disabled-color);
+  }
+
+  .text {
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 21px;
+    color: var(--button-disabled-text-color);
+    letter-spacing: 0.5px;
+    text-align: center;
+  }
+}
+
+.fullWidth {
+  width: 100%;
+}

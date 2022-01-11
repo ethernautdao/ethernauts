@@ -3,56 +3,55 @@
   padding: 25px;
 
   .text {
-    color: white;
     height: 80%;
 
     .title {
       margin: 0;
+      font-size: 1rem;
       letter-spacing: 1px;
+      text-transform: uppercase;
+      background: var(--logs-text-color);
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
     .location {
+      margin: 0.5rem 0;
+      font-weight: bold;
+      font-size: 3rem;
       letter-spacing: 1px;
+      background: var(--logs-text-subtitle);
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
     .text {
+      color: var(--logs-text-narrative);
+      font-size: 1.05rem;
       letter-spacing: 1px;
-      line-height: 1.5;
+      line-height: 1.8rem;
     }
   }
 
   .footer {
     height: 20%;
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: end;
 
     .button {
-      height: 48px;
-      outline: none;
-      font-size: 16px;
-      line-height: 1em;
+      background: none;
+      outline: 0;
       border: 0;
-      border-color: #181a20;
-      border-radius: 5px;
-      border: 1px solid;
-      background-color: #fff;
-      color: #181a20;
-      font-weight: 500;
+      height: 40px;
       cursor: pointer;
-      letter-spacing: 1px;
-      text-align: center;
-
-      &:hover {
-        background-color: #181a20;
-        border-color: #fff !important;
-        color: #fff;
-      }
     }
 
     .entry {
+      font-size: 1rem;
       margin-bottom: 15px;
-      color: #fff;
+      text-transform: uppercase;
+      color: var(--logs-text-footer);
     }
   }
 }

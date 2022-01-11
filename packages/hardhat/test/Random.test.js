@@ -108,13 +108,6 @@ describe('Random', () => {
         }
       });
 
-      it('emitted a BatchEnd event', async () => {
-        const events = await Ethernauts.queryFilter('BatchEnd');
-        assert.equal(events.length, 1);
-        const batchId = events[events.length - 1].args[0];
-        assert.equal(Number(batchId), 0);
-      });
-
       describe('when the tokens for the next batch are minted', () => {
         before('mint some tokens', async () => {
           await mintTokens(batchSize);
@@ -137,13 +130,6 @@ describe('Random', () => {
           }
         });
 
-        it('emitted a BatchEnd event', async () => {
-          const events = await Ethernauts.queryFilter('BatchEnd');
-          assert.equal(events.length, 2);
-          const batchId = events[1].args[0];
-          assert.equal(Number(batchId), 1);
-        });
-
         describe('when the remaining batches are minted', () => {
           before('mint all tokens', async () => {
             await mintTokens(maxTokens - 2 * batchSize);
@@ -160,13 +146,6 @@ describe('Random', () => {
 
             const uriSet = new Set(uris);
             assert.equal(uriSet.size, maxTokens);
-          });
-
-          it('emitted all the BatchEnd events', async () => {
-            const events = await Ethernauts.queryFilter('BatchEnd');
-            assert.equal(events.length, 10);
-            const batchId = events[events.length - 1].args[0];
-            assert.equal(Number(batchId), 9);
           });
         });
       });

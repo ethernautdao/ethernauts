@@ -1,0 +1,25 @@
+@import "../../../styles/breakpoints.scss";
+
+.outerContainer {
+  display: flex;
+  justify-content: center;
+}
+
+.grid {
+  z-index: 1;
+  display: grid;
+  grid-gap: 16px;
+  margin-top: 12rem;
+}
+
+.me {
+  grid-template-columns: repeat(1, 1fr);
+}
+
+.all {
+  grid-template-columns: repeat(3, 1fr);
+
+  @include breakpoint(xs) {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
