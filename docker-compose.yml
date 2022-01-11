@@ -28,13 +28,6 @@ services:
     depends_on:
       - hardhat-node
 
-  ipfs:
-    image: ipfs/go-ipfs:v0.10.0
-    ports:
-      - 5001:5001
-    volumes:
-      - ./data/ipfs:/data/ipfs
-
   redis:
     image: redis:6.2-alpine
     command: redis-server --appendonly yes
