@@ -157,7 +157,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
 
     /// @notice Checks to see if the user has redeemed a coupon.
     /// @param user Address of the user.
-    /// @return True is the user has redeemed a coupon. 
+    /// @return True is the user has redeemed a coupon.
     function userRedeemedCoupon(address user) public view returns (bool) {
         return _redeemedCoupons[user];
     }
@@ -202,6 +202,9 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     // Protected external ABI
     // -----------------------
 
+    /// @notice Gifts a token to the `to` address.
+    /// @dev This can only be called by the contract owner.
+    /// @param to The address the token is being gifted to.
     function gift(address to) external onlyOwner {
         require(_tokensGifted < maxGiftable, "No more Ethernauts can be gifted");
 
@@ -210,22 +213,34 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         _tokensGifted += 1;
     }
 
+    /// @notice Sets the new mint price for a token.
+    /// @dev This can only be called by the contract owner.
+    /// @param newMintPrice The new price a token can be bought for.
     function setMintPrice(uint256 newMintPrice) external onlyOwner {
         mintPrice = newMintPrice;
         emit MintPriceChanged(newMintPrice);
     }
 
+    /// @notice Sets the new early mint price for a token.
+    /// @dev This can only be called by the contract owner.
+    /// @param newEarlyMintPrice The new early price a token can be bought for.
     function setEarlyMintPrice(uint256 newEarlyMintPrice) external onlyOwner {
         earlyMintPrice = newEarlyMintPrice;
         emit EarlyMintPriceChanged(newEarlyMintPrice);
     }
 
+    /// @notice Sets the base URI for all token URIs.
+    /// @dev This can only be called by the contract owner. Can only be called if NFTs arent done minting.
+    /// @param newBaseTokenURI The new base URI for tokens.
     function setBaseURI(string calldata newBaseTokenURI) external onlyOwner {
         require(!permanentUrl, "NFTs minting finished");
         baseTokenURI = newBaseTokenURI;
         emit BaseTokenURIChanged(newBaseTokenURI);
     }
 
+    /// @notice Set the sale state for tokens.
+    /// @dev This can only be called by the contract owner.
+    /// @param newSaleState The new sale state of the tokens.
     function setSaleState(SaleState newSaleState) external onlyOwner {
         require(currentSaleState != SaleState.PublicCompleted, "Sale is completed");
         require(newSaleState != currentSaleState && newSaleState != SaleState.PublicCompleted, "Invalid new state");
@@ -234,21 +249,34 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         emit SaleStateChanged(newSaleState);
     }
 
+    /// @notice Set the address that can issue coupons.
+    /// @dev This can only be called by the contract owner.
+    /// @param newCouponSigner New address that can issue coupons.
     function setCouponSigner(address newCouponSigner) external onlyOwner {
         couponSigner = newCouponSigner;
         emit CouponSignerChanged(newCouponSigner);
     }
 
+    /// @notice Freeze the URI so that it cant be updated anymore.
+    /// @dev This can only be called by the contract owner.
     function setPermanentURI() external onlyOwner {
         permanentUrl = true;
         emit PermanentURITriggered(true);
     }
 
+    /// @notice Withdraws all eth currently held by the contract.
+    /// @dev This can only be called by the contract owner. sendValue used to avoid 2300 gas issuance complications.
+    /// @param beneficiary The address that funds will be withdrawn to.
     function withdraw(address payable beneficiary) external onlyOwner {
         beneficiary.sendValue(address(this).balance);
         emit WithdrawTriggered(beneficiary);
     }
 
+    /// @notice Withdraw `value` tokens held by this contract.
+    /// @dev This can only be called by the contract owner.
+    /// @param token Contract address of erc20 token.
+    /// @param to Address tokens are being sent to.
+    /// @param value The amount of tokens being withdrawn.
     function recoverTokens(
         address token,
         address to,
