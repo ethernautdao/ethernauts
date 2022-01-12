@@ -2,19 +2,24 @@ import cn from 'classnames';
 import Image from 'next/image';
 import Zoom from 'react-medium-image-zoom';
 
-import DummyImage from './dummy-cell-image.png';
+import UnrevealedDummyImage from './unrevealed-token.png';
+import RevealedDummyImage from './revealed-token.png';
 
-import styles from './Cell.module.scss';
 import { ALL, ME } from '../Grid';
 
-const MAX_PRIORITY_ITEMS = 20;
+import styles from './Cell.module.scss';
 
-const Cell = ({ item, kind, isMiddleCell }) => {
-  const hasPriority = Number(item.args.tokenId.toString()) <= MAX_PRIORITY_ITEMS;
+const MAX_PRIORITY_ITEMS = 24;
+
+const Cell = ({ tokenId, isRevealed, kind, isMiddleCell }) => {
+  const hasPriority = tokenId <= MAX_PRIORITY_ITEMS;
+
+  // TODO: Use the URL of the fleek ipfs gateway to display the NFT
+  const imageSrc = isRevealed ? RevealedDummyImage : UnrevealedDummyImage;
 
   return (
     <div
-      key={`cell-${item.args.tokenId.toString()}`}
+      key={`cell-${tokenId}`}
       className={cn(styles.cellContainer, {
         [styles.middle]: isMiddleCell,
         [styles.all]: kind === ALL,
@@ -23,8 +28,7 @@ const Cell = ({ item, kind, isMiddleCell }) => {
     >
       <Zoom>
         <Image
-          // TODO: Use the URL of the fleek ipfs gateway to display the NFT
-          src={DummyImage}
+          src={imageSrc}
           className={styles.image}
           placeholder="blur"
           layout="fill"
@@ -33,7 +37,7 @@ const Cell = ({ item, kind, isMiddleCell }) => {
           priority={hasPriority}
         />
       </Zoom>
-      <span className={styles.tokenId}>#{item.args.tokenId.toString()}</span>
+      <span className={styles.tokenId}>#{tokenId}</span>
     </div>
   );
 };

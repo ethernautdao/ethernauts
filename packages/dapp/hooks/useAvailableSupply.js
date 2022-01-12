@@ -22,6 +22,9 @@ const useAvailableSupply = () => {
 
         const contract = new Contract(tokenAddress, abi, signer);
 
+        const maxTokens = await contract.maxTokens();
+        const supply = await contract.availableSupply();
+
         contract.on('Transfer', async (from) => {
           if (from !== zeroAccount) return;
 
@@ -29,14 +32,12 @@ const useAvailableSupply = () => {
 
           const supply = await contract.availableSupply();
 
-          setData(supply.toString());
+          setData(maxTokens.toNumber() - supply.toNumber());
 
           setIsLoading(false);
         });
 
-        const supply = await contract.availableSupply();
-
-        setData(supply.toString());
+        setData(maxTokens.toNumber() - supply.toNumber());
       }
     } catch (err) {
       console.error(err);

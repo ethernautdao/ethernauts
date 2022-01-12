@@ -119,6 +119,7 @@ describe('General', () => {
         );
       });
     });
+
     describe('when a url changer tries to call setBaseUri function', () => {
       it('succeedes', async () => {
         await Ethernauts.connect(owner).setUrlChanger(user.address);
