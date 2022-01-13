@@ -25,16 +25,14 @@
     "create:dummy:resources": "npm run create:dummy:assets && npm run create:ipfs:metadata"
   },
   "dependencies": {
-    "cids": "1.1.9",
-    "dotenv": "10.0.0",
-    "ipfs-only-hash": "4.0.0"
-  },
-  "devDependencies": {
     "@nomiclabs/hardhat-ethers": "2.0.2",
     "@nomiclabs/hardhat-etherscan": "2.1.8",
     "@openzeppelin/contracts": "4.4.0",
+    "cids": "1.1.9",
     "del": "6.0.0",
+    "dotenv": "10.0.0",
     "enquirer": "2.3.6",
+    "ipfs-only-hash": "4.0.0",
     "prompt-list": "3.2.0",
     "solidity-coverage": "0.7.17"
   }
