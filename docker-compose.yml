@@ -55,7 +55,6 @@ services:
     depends_on:
       - hardhat-node
       - hardhat-deploy
-      - ipfs
       - redis
 
   keeper-worker:
@@ -96,4 +95,3 @@ services:
     depends_on:
       - hardhat-node
       - hardhat-deploy
-      - ipfs

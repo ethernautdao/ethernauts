@@ -1,5 +1,0 @@
-.git
-.results
-node_modules
-*Dockerfile*
-.env*

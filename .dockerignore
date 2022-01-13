@@ -1,0 +1,11 @@
+**/.DS_Store
+**/.env*
+**/.git
+**/.results
+**/.vscode
+**/node_modules/
+packages/*/artifacts/
+packages/*/cache/
+packages/*/coverage.json
+packages/*/coverage/
+packages/hardhat/resources/
