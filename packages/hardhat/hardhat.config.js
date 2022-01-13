@@ -53,7 +53,10 @@ module.exports = {
     batchSize: 50,
     mintPrice: ethers.utils.parseEther('0.2'),
     earlyMintPrice: ethers.utils.parseEther('0.015'),
-    initialCouponSigner: process.env.DEPLOYER_KEY || '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266', // Default hardhat signer[0]
+
+    // Default hardhat signer[0]
+    // Will be changed at runtime if targeting a real network.
+    initialCouponSigner: '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266',
   },
   overrides: {
     gasPrice: ethers.utils.parseUnits('100', 'gwei'),
