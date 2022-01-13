@@ -9,6 +9,7 @@ const DEPLOYMENT_SCHEMA = {
 
 task('deploy', 'Deploys the Ethernauts NFT contract').setAction(async (taskArguments, hre) => {
   console.log(`Deploying Ethernauts in network: ${hre.network.name}`);
+  console.log(`Using signer: ${await _getSignerAddress()}`)
 
   const deploymentPath = `./deployments/${hre.network.name}.json`;
 
@@ -29,13 +30,28 @@ task('deploy', 'Deploys the Ethernauts NFT contract').setAction(async (taskArgum
   await fsp.writeFile(deploymentPath, JSON.stringify(data, null, 2));
 });
 
+async function getNetworkDefaults() {
+  if (['local', 'docker', 'hardhat'].includes(hre.network.name)) {
+    return hre.config.defaults;
+  }
+
+  return {
+    ...hre.config.defaults,
+    initialCouponSigner: await _getSignerAddress(),
+  }
+}
+
+async function _getSignerAddress() {
+  return (await hre.ethers.getSigners())[0].address;
+}
+
 async function _verify(contractAddress) {
   if (!process.env.ETHERSCAN_API) return;
 
   await hre.run('verify:verify', {
     address: contractAddress,
     apiKey: `${process.env.ETHERSCAN_API}`,
-    constructorArguments: Object.values(hre.config.defaults),
+    constructorArguments: Object.values(await getNetworkDefaults()),
   });
 
   console.log('Verified');
@@ -43,7 +59,7 @@ async function _verify(contractAddress) {
 
 async function _confirmParameters() {
   console.log('Constructor parameters:');
-  _logObject(hre.config.defaults);
+  _logObject(await getNetworkDefaults());
   console.log('');
 
   console.log('Overrides:');
@@ -52,9 +68,11 @@ async function _confirmParameters() {
 }
 
 async function _deployContract() {
+  getNetworkDefaults();
+
   const factory = await hre.ethers.getContractFactory('Ethernauts');
   const Ethernauts = await factory.deploy(
-    ...Object.values(hre.config.defaults),
+    ...Object.values(await getNetworkDefaults()),
     hre.config.overrides
   );
   console.log('Submitted transaction:', Ethernauts.deployTransaction);
