@@ -22,14 +22,11 @@
     "start:hardhat:deploy": "npx hardhat deploy",
     "create:dummy:assets": "node scripts/create-dummy-assets.js",
     "create:ipfs:metadata": "node scripts/create-ipfs-metadata.js",
-    "create:dummy:resources": "npm run create:dummy:assets && npm run create:ipfs:metadata",
-    "upload:ipfs:metadata": "./node_modules/.bin/jsipfs add -r resources/metadata"
+    "create:dummy:resources": "npm run create:dummy:assets && npm run create:ipfs:metadata"
   },
   "dependencies": {
     "cids": "1.1.9",
     "dotenv": "10.0.0",
-    "envalid": "7.2.1",
-    "ipfs-http-client": "52.0.3",
     "ipfs-only-hash": "4.0.0"
   },
   "devDependencies": {
