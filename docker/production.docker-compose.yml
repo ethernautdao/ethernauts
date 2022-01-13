@@ -11,7 +11,7 @@ services:
     build:
       context: https://github.com/ethernautdao/ethernauts.git#main
       dockerfile: docker/keeper.production.Dockerfile
-    command: npm run -w @ethernauts/keeper queue -- --network ${ETHERNAUTS_NETWORK}
+    command: npm run -w @ethernauts/keeper queue -- --no-compile --network ${ETHERNAUTS_NETWORK}
     environment:
       REDIS_HOST: redis
       REDIS_PORT: 6379
@@ -29,7 +29,7 @@ services:
     build:
       context: https://github.com/ethernautdao/ethernauts.git#main
       dockerfile: docker/keeper.production.Dockerfile
-    command: npm run -w @ethernauts/keeper worker -- --network ${ETHERNAUTS_NETWORK}
+    command: npm run -w @ethernauts/keeper worker -- --no-compile --network ${ETHERNAUTS_NETWORK}
     environment:
       REDIS_HOST: redis
       REDIS_PORT: 6379

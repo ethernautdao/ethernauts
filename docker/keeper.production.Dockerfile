@@ -34,4 +34,4 @@ COPY --chown=node:node --from=dependencies /src/node_modules /src/node_modules
 COPY --chown=node:node --from=dependencies /src/packages/hardhat/node_modules /src/packages/hardhat/node_modules
 COPY --chown=node:node --from=dependencies /src/packages/keeper/node_modules /src/packages/keeper/node_modules
 
-RUN cd /src/packages/hardhat && npx hardhat compile && cd /src
+RUN /bin/sh -c 'cd /src/packages/hardhat && npx hardhat compile'
