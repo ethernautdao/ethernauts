@@ -21,5 +21,9 @@ module.exports = {
     docker: {
       url: 'http://hardhat-node:8545',
     },
+    goerli: {
+      url: 'https://rpc.goerli.mudit.blog/',
+      accounts: process.env.DEPLOYER_KEY ? [`${process.env.DEPLOYER_KEY}`] : [],
+    },
   },
 };

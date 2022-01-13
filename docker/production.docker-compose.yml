@@ -3,12 +3,13 @@ version: "3.9"
 services:
   redis:
     image: redis:6.2-alpine
+    restart: always
     volumes:
       - ${ETHERNAUTS_REDIS_FOLDER}:/data
 
   keeper-queue:
     build:
-      context: https://github.com/ethernautdao/ethernauts.git
+      context: https://github.com/ethernautdao/ethernauts.git#main
       dockerfile: docker/keeper.production.Dockerfile
     command: npm run -w @ethernauts/keeper queue -- --network ${ETHERNAUTS_NETWORK}
     environment:
@@ -20,12 +21,13 @@ services:
       FLEEK_API_KEY: ${ETHERNAUTS_FLEEK_API_KEY}
       FLEEK_STORAGE_API_KEY: ${ETHERNAUTS_FLEEK_STORAGE_API_KEY}
       FLEEK_STORAGE_API_SECRET: ${ETHERNAUTS_FLEEK_STORAGE_API_SECRET}
+    restart: always
     depends_on:
       - redis
 
   keeper-worker:
     build:
-      context: https://github.com/ethernautdao/ethernauts.git
+      context: https://github.com/ethernautdao/ethernauts.git#main
       dockerfile: docker/keeper.production.Dockerfile
     command: npm run -w @ethernauts/keeper worker -- --network ${ETHERNAUTS_NETWORK}
     environment:
@@ -37,5 +39,6 @@ services:
       FLEEK_API_KEY: ${ETHERNAUTS_FLEEK_API_KEY}
       FLEEK_STORAGE_API_KEY: ${ETHERNAUTS_FLEEK_STORAGE_API_KEY}
       FLEEK_STORAGE_API_SECRET: ${ETHERNAUTS_FLEEK_STORAGE_API_SECRET}
+    restart: always
     depends_on:
       - redis
