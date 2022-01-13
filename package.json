@@ -13,8 +13,8 @@
     "url": "git+https://github.com/ethernautdao/ethernauts.git"
   },
   "engines": {
-    "node": "16.8.0",
-    "npm": "7.21.0"
+    "node": "16.13.2",
+    "npm": "8.1.2"
   },
   "keywords": [
     "Ethereum",
