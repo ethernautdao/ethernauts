@@ -9,14 +9,14 @@ module.exports = cleanEnv(process.env, {
   MINTS_QUEUE_NAME: str({ default: 'mints' }),
   MINTS_QUEUE_CONCURRENCY: num({ default: 5 }),
   RESOURCES_METADATA_FOLDER: str({
-    devDefault: path.join(__dirname, '..', '..', 'hardhat', 'resources', 'metadata'),
+    default: path.join(__dirname, '..', '..', 'hardhat', 'resources', 'metadata'),
   }),
   RESOURCES_ASSETS_FOLDER: str({
-    devDefault: path.join(__dirname, '..', '..', 'hardhat', 'resources', 'assets'),
+    default: path.join(__dirname, '..', '..', 'hardhat', 'resources', 'assets'),
   }),
-  FLEEK_API_KEY: str({ devDefault: '' }),
-  FLEEK_STORAGE_API_KEY: str({ devDefault: '' }),
-  FLEEK_STORAGE_API_SECRET: str({ devDefault: '' }),
+  FLEEK_API_KEY: str({ default: '' }),
+  FLEEK_STORAGE_API_KEY: str({ default: '' }),
+  FLEEK_STORAGE_API_SECRET: str({ default: '' }),
   FLEEK_METADATA_FOLDER: str({ default: 'metadata' }),
   FLEEK_ASSETS_FOLDER: str({ default: 'assets' }),
 });
