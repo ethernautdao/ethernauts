@@ -9,7 +9,7 @@ const DEPLOYMENT_SCHEMA = {
 
 task('deploy', 'Deploys the Ethernauts NFT contract').setAction(async (taskArguments, hre) => {
   console.log(`Deploying Ethernauts in network: ${hre.network.name}`);
-  console.log(`Using signer: ${await _getSignerAddress()}`)
+  console.log(`Using signer: ${await _getSignerAddress()}`);
 
   const deploymentPath = `./deployments/${hre.network.name}.json`;
 
@@ -38,7 +38,7 @@ async function getNetworkDefaults() {
   return {
     ...hre.config.defaults,
     initialCouponSigner: await _getSignerAddress(),
-  }
+  };
 }
 
 async function _getSignerAddress() {
