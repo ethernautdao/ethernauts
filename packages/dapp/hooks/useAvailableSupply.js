@@ -4,7 +4,7 @@ import { Contract } from 'ethers';
 import { WalletContext } from '../contexts/WalletProvider';
 
 import { ABI, TOKEN_ADDRESS } from '../config';
-import { zeroAccount } from '../constants';
+import { zeroAccount } from '../constants/common';
 
 const useAvailableSupply = () => {
   const [data, setData] = useState(null);

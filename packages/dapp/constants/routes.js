@@ -1,6 +1,6 @@
 export const HOME_PATH = '/';
-export const GALLERY_ALL_PATH = '/gallery';
-export const GALLERY_ME_PATH = '/gallery/me';
+export const GALLERY_ALL_PATH = '/gallery/';
+export const GALLERY_ME_PATH = '/gallery/me/';
 
 export const GALLERY_ROUTES = {
   all: {

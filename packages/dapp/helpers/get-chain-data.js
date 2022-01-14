@@ -1,8 +1,5 @@
-import {
-  INFURA_PROJECT_ID,
-  DEFAULT_NETWORKS_PER_ENVIRONMENT,
-  supportedChains,
-} from '../constants/networks';
+import { INFURA_PROJECT_ID } from '../config';
+import { supportedChains } from '../constants/networks';
 
 const getChainData = (chainId) => {
   if (!chainId) return null;

@@ -1,6 +1,5 @@
 import Head from 'next/head';
-import router from 'next/router';
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 
 import { Tabs } from '../../components/Tabs';
 import { Hero } from '../../components/Hero';

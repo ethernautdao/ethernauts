@@ -1,9 +1,8 @@
 import cn from 'classnames';
-import Image from 'next/image';
+import { useMemo } from 'react';
 import Zoom from 'react-medium-image-zoom';
 
-import UnrevealedDummyImage from './unrevealed-token.png';
-import RevealedDummyImage from './revealed-token.png';
+import { FLEEK_BUCKET_ID, isDev } from '../../../config';
 
 import { ALL, ME } from '../Grid';
 
@@ -14,8 +13,12 @@ const MAX_PRIORITY_ITEMS = 24;
 const Cell = ({ tokenId, isRevealed, kind, isMiddleCell }) => {
   const hasPriority = tokenId <= MAX_PRIORITY_ITEMS;
 
-  // TODO: Use the URL of the fleek ipfs gateway to display the NFT
-  const imageSrc = isRevealed ? RevealedDummyImage : UnrevealedDummyImage;
+  const imageSrc = useMemo(() => {
+    if (isRevealed && !isDev)
+      return `https://storageapi.fleek.co/${FLEEK_BUCKET_ID}/assets/${tokenId}.png`;
+    if (isRevealed && isDev) return '/assets/revealed-token.png';
+    if (!isRevealed) return '/assets/unrevealed-token.png';
+  }, [isRevealed, isDev, tokenId]);
 
   return (
     <div
@@ -27,13 +30,11 @@ const Cell = ({ tokenId, isRevealed, kind, isMiddleCell }) => {
       })}
     >
       <Zoom>
-        <Image
+        <img
           src={imageSrc}
+          {...(kind === ALL && { width: '455px', height: '180px' })}
+          {...(kind === ME && { width: '960px', height: '400px' })}
           className={styles.image}
-          placeholder="blur"
-          layout="fill"
-          objectFit="cover"
-          quality={100}
           priority={hasPriority}
         />
       </Zoom>
