@@ -14,7 +14,7 @@ module.exports = {
   solidity: {
     compilers: [
       {
-        version: '0.8.4',
+        version: '0.8.9',
         settings: {
           optimizer: {
             enabled: true,
@@ -42,7 +42,7 @@ module.exports = {
     ['optimistic-kovan']: {
       url: 'https://kovan.optimism.io',
       accounts: process.env.DEPLOYER_KEY ? [`${process.env.DEPLOYER_KEY}`] : [],
-    }
+    },
   },
   etherscan: {
     apiKey: `${process.env.ETHERSCAN_API}`,
