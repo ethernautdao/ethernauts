@@ -1,12 +1,43 @@
 version: "3.9"
 
 services:
-  keeper:
-    build:
-      context: https://github.com/ethernautdao/ethernauts.git
-      dockerfile: docker/keeper.Dockerfile
-
   redis:
     image: redis:6.2-alpine
+    restart: always
     volumes:
-      - /mnt/ethernauts_volume/redis-data:/data
+      - ${ETHERNAUTS_REDIS_FOLDER}:/data
+
+  keeper-queue:
+    build:
+      context: https://github.com/ethernautdao/ethernauts.git#main
+      dockerfile: docker/keeper.production.Dockerfile
+    command: npm run -w @ethernauts/keeper queue -- --no-compile --network ${ETHERNAUTS_NETWORK}
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      MINTS_QUEUE_NAME: mints-${ETHERNAUTS_NETWORK}
+    restart: always
+    depends_on:
+      - redis
+
+  keeper-worker:
+    build:
+      context: https://github.com/ethernautdao/ethernauts.git#main
+      dockerfile: docker/keeper.production.Dockerfile
+    command: npm run -w @ethernauts/keeper worker -- --no-compile --network ${ETHERNAUTS_NETWORK}
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      MINTS_QUEUE_NAME: mints-${ETHERNAUTS_NETWORK}
+      URL_CHANGER_KEY: ${ETHERNAUTS_URL_CHANGER_KEY}
+      FLEEK_API_KEY: ${ETHERNAUTS_FLEEK_API_KEY}
+      FLEEK_STORAGE_API_KEY: ${ETHERNAUTS_FLEEK_STORAGE_API_KEY}
+      FLEEK_STORAGE_API_SECRET: ${ETHERNAUTS_FLEEK_STORAGE_API_SECRET}
+      RESOURCES_METADATA_FOLDER: /src/resources/metadata
+      RESOURCES_ASSETS_FOLDER: /src/resources/assets
+    volumes:
+      - ${ETHERNAUTS_RESOURCES_METADATA_FOLDER}:/src/resources/metadata:ro
+      - ${ETHERNAUTS_RESOURCES_ASSETS_FOLDER}:/src/resources/assets:ro
+    restart: always
+    depends_on:
+      - redis
