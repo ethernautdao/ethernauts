@@ -25,5 +25,9 @@ module.exports = {
       url: 'https://rpc.goerli.mudit.blog/',
       accounts: process.env.DEPLOYER_KEY ? [`${process.env.DEPLOYER_KEY}`] : [],
     },
+    ['optimistic-kovan']: {
+      url: 'https://kovan.optimism.io',
+      accounts: process.env.URL_CHANGER_KEY ? [`${process.env.URL_CHANGER_KEY}`] : [],
+    },
   },
 };
