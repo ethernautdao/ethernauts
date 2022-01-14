@@ -4,7 +4,7 @@ import { Contract, utils } from 'ethers';
 import { WalletContext } from '../contexts/WalletProvider';
 import { DonationContext } from '../contexts/DonationProvider';
 
-import { abi, tokenAddress } from '../config';
+import { ABI, TOKEN_ADDRESS } from '../config';
 import { zeroAccount } from '../constants/common';
 
 const useMint = () => {
@@ -22,7 +22,7 @@ const useMint = () => {
       if (state.web3Provider) {
         const signer = state.web3Provider.getSigner();
 
-        const contract = new Contract(tokenAddress, abi, signer);
+        const contract = new Contract(TOKEN_ADDRESS, ABI, signer);
 
         await contract.mint({
           value: utils.parseEther(String(donation)),

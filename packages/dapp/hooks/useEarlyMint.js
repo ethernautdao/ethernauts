@@ -4,7 +4,7 @@ import { Contract, utils } from 'ethers';
 import { WalletContext } from '../contexts/WalletProvider';
 import { DonationContext } from '../contexts/DonationProvider';
 
-import { abi, tokenAddress, ethereumNetwork } from '../config';
+import { ABI, TOKEN_ADDRESS, ETHEREUM_NETWORK } from '../config';
 
 import { zeroAccount } from '../constants/common';
 
@@ -23,9 +23,9 @@ const useMintEarly = () => {
       if (state.web3Provider) {
         const signer = state.web3Provider.getSigner();
 
-        const contract = new Contract(tokenAddress, abi, signer);
+        const contract = new Contract(TOKEN_ADDRESS, ABI, signer);
 
-        const signedCoupons = (await import(`../data/signed-coupons.${ethereumNetwork}.json`))
+        const signedCoupons = (await import(`../data/signed-coupons.${ETHEREUM_NETWORK}.json`))
           .default;
 
         const signedCoupon = signedCoupons.find((signedCoupon) => {

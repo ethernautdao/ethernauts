@@ -1,4 +1,5 @@
 module.exports = {
+  trailingSlash: true,
   reactStrictMode: true,
   // Fix fast refresh for Windows users
   webpackDevMiddleware: (config) => {

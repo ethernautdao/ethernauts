@@ -3,7 +3,7 @@ import { Contract } from 'ethers';
 
 import { WalletContext } from '../contexts/WalletProvider';
 
-import { abi, tokenAddress } from '../config';
+import { ABI, TOKEN_ADDRESS } from '../config';
 import { saleState } from '../constants/sale-state';
 
 const useSaleState = () => {
@@ -20,7 +20,7 @@ const useSaleState = () => {
       if (state.web3Provider) {
         const signer = state.web3Provider.getSigner();
 
-        const contract = new Contract(tokenAddress, abi, signer);
+        const contract = new Contract(TOKEN_ADDRESS, ABI, signer);
 
         const currentSaleState = await contract.currentSaleState();
 
