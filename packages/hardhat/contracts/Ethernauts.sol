@@ -122,11 +122,11 @@ contract Ethernauts is ERC721Enumerable, Ownable {
             revert InsufficientToMint({available: availableToMint()});
         }
 
-        _mintNext(msg.sender);
-
-        if (availableToMint() == 0) {
+        if (availableToMint() - 1 == 0) {
             currentSaleState = SaleState.PublicCompleted;
         }
+
+        _mintNext(msg.sender);
     }
 
     /// @notice Allows the sender to mint while in early sale state.
@@ -148,9 +148,9 @@ contract Ethernauts is ERC721Enumerable, Ownable {
             revert InvalidUserCouponError({userCoupon: isCouponSignedForUser(msg.sender, signedCoupon)});
         }
 
-        _mintNext(msg.sender);
-
         _redeemedCoupons[msg.sender] = true;
+
+        _mintNext(msg.sender);
     }
 
     /// @notice The number of tokens gifted.
@@ -264,9 +264,9 @@ contract Ethernauts is ERC721Enumerable, Ownable {
             revert TokensGiftError({gifted: _tokensGifted, maxToGift: maxGiftable});
         }
 
-        _mintNext(to);
-
         _tokensGifted += 1;
+
+        _mintNext(to);
     }
 
     /// @notice Sets the new mint price for a token.
@@ -381,14 +381,14 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     function _mintNext(address to) private {
         uint256 tokenId = totalSupply();
 
-        _mint(to, tokenId);
-
         uint256 currentBatchId = tokenId / batchSize;
         uint256 maxTokenIdInBatch = batchSize * (currentBatchId + 1) - 1;
 
         if (tokenId == maxTokenIdInBatch) {
             _generateRandomNumber();
         }
+
+        _mint(to, tokenId);
     }
 
     function _mint(address to, uint256 tokenId) internal virtual override {
