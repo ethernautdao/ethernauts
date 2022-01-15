@@ -1,6 +1,7 @@
 const assert = require('assert');
 const assertRevert = require('./utils/assertRevert');
 const { ethers } = require('hardhat');
+const { signCouponForAddress } = require('./utils/sign-coupon');
 
 const convertToWei = (payloadAmount) => ethers.utils.parseEther(payloadAmount.toString());
 
@@ -17,13 +18,6 @@ describe('Early mint', () => {
   let tx, receipt;
 
   let coupon;
-
-  async function signCouponForAddress(address, signer = owner) {
-    const payload = `0x000000000000000000000000${address.replace('0x', '')}`;
-    const payloadHash = ethers.utils.keccak256(payload);
-    const payloadHashBytes = ethers.utils.arrayify(payloadHash);
-    return await signer.signMessage(payloadHashBytes);
-  }
 
   before('identify signers', async () => {
     users = await ethers.getSigners();
@@ -104,7 +98,7 @@ describe('Early mint', () => {
           });
 
           before('sign coupon', async () => {
-            coupon = await signCouponForAddress(user.address);
+            coupon = await signCouponForAddress(user.address, owner);
           });
 
           it('shows that the coupon is valid', async () => {
@@ -213,9 +207,12 @@ describe('Early mint', () => {
 
         it('reverts', async () => {
           await assertRevert(
-            Ethernauts.connect(someUser).mintEarly(await signCouponForAddress(someUser.address), {
-              value: hre.config.defaults.earlyMintPrice,
-            }),
+            Ethernauts.connect(someUser).mintEarly(
+              await signCouponForAddress(someUser.address, owner),
+              {
+                value: hre.config.defaults.earlyMintPrice,
+              }
+            ),
             'RedeemedCouponError(true)'
           );
         });
@@ -226,9 +223,12 @@ describe('Early mint', () => {
           const someUser = users[8];
 
           await assertRevert(
-            Ethernauts.connect(someUser).mintEarly(await signCouponForAddress(user.address), {
-              value: hre.config.defaults.earlyMintPrice,
-            }),
+            Ethernauts.connect(someUser).mintEarly(
+              await signCouponForAddress(user.address, owner),
+              {
+                value: hre.config.defaults.earlyMintPrice,
+              }
+            ),
             'InvalidUserCouponError(false)'
           );
         });
