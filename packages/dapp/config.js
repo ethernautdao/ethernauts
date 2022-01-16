@@ -1,7 +1,8 @@
-const isDev = process.env.NODE_ENV === 'development';
+const isDev = process.env.NEXT_PUBLIC_APP_ENV === 'development';
 
 let TOKEN_ADDRESS = process.env.NEXT_PUBLIC_TOKEN_ADDRESS;
 const ETHEREUM_NETWORK = process.env.NEXT_PUBLIC_ETHEREUM_NETWORK;
+
 const INFURA_PROJECT_ID = process.env.NEXT_PUBLIC_INFURA_PROJECT_ID;
 const FLEEK_BUCKET_ID = process.env.NEXT_PUBLIC_FLEEK_BUCKET_ID;
 
