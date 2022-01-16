@@ -18,26 +18,24 @@ describe('General', () => {
   describe('when deploying the contract with invalid parameters', () => {
     describe('when deploying with too many giftable tokens', () => {
       it('reverts', async () => {
-        const params = Object.assign({}, hre.config.defaults);
-        params.maxGiftable = 200;
-        const max = 100;
+        const params = { ...hre.config.defaults };
+        params.definitiveMaxGiftable = 200;
 
         await assertRevert(
           factory.deploy(...Object.values(params)),
-          `MaxGiftableError(${params.maxGiftable}, ${max})`
+          `MaxGiftableError(${params.definitiveMaxGiftable}, 100)`
         );
       });
     });
 
     describe('when deploying with too many tokens', () => {
       it('reverts', async () => {
-        const params = Object.assign({}, hre.config.defaults);
-        params.maxTokens = 12000;
-        const max = 10000;
+        const params = { ...hre.config.defaults };
+        params.definitiveMaxTokens = 12000;
 
         await assertRevert(
           factory.deploy(...Object.values(params)),
-          `MaxTokensError(${params.maxTokens}, ${max})`
+          `MaxTokensError(${params.definitiveMaxTokens}, 10000)`
         );
       });
     });
@@ -66,12 +64,18 @@ describe('General', () => {
     });
 
     it('shows the correct max supplies', async () => {
-      assert.equal((await Ethernauts.maxGiftable()).toNumber(), hre.config.defaults.maxGiftable);
-      assert.equal((await Ethernauts.maxTokens()).toNumber(), hre.config.defaults.maxTokens);
+      assert.equal(
+        (await Ethernauts.maxGiftable()).toNumber(),
+        hre.config.defaults.definitiveMaxGiftable
+      );
+      assert.equal(
+        (await Ethernauts.maxTokens()).toNumber(),
+        hre.config.defaults.definitiveMaxTokens
+      );
     });
 
     it('shows the correct mint price', async () => {
-      assert.equal((await Ethernauts.mintPrice()).toString(), hre.config.defaults.mintPrice);
+      assert.equal((await Ethernauts.mintPrice()).toString(), hre.config.defaults.initialMintPrice);
     });
 
     it('shows that the expected interfaces are supported', async () => {

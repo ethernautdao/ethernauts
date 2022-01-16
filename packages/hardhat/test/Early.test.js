@@ -36,9 +36,7 @@ describe('Early mint', () => {
 
   before('deploy contract', async () => {
     const factory = await ethers.getContractFactory('Ethernauts');
-
-    const params = Object.assign({}, hre.config.defaults);
-    Ethernauts = await factory.deploy(...Object.values(params));
+    Ethernauts = await factory.deploy(...Object.values(hre.config.defaults));
   });
 
   describe('when attempting to mint when the early sale is not open', () => {
@@ -86,7 +84,7 @@ describe('Early mint', () => {
       it('reverts', async () => {
         await assertRevert(
           Ethernauts.connect(user).mintEarly(coupon, {
-            value: hre.config.defaults.earlyMintPrice,
+            value: hre.config.defaults.initialEarlyMintPrice,
           }),
           'InvalidUserCouponError(false)'
         );
@@ -134,7 +132,7 @@ describe('Early mint', () => {
 
           before('early mint', async () => {
             tx = await Ethernauts.connect(user).mintEarly(coupon, {
-              value: hre.config.defaults.earlyMintPrice,
+              value: hre.config.defaults.initialEarlyMintPrice,
             });
 
             receipt = await tx.wait();
@@ -214,7 +212,7 @@ describe('Early mint', () => {
         it('reverts', async () => {
           await assertRevert(
             Ethernauts.connect(someUser).mintEarly(await signCouponForAddress(someUser.address), {
-              value: hre.config.defaults.earlyMintPrice,
+              value: hre.config.defaults.initialEarlyMintPrice,
             }),
             'RedeemedCouponError(true)'
           );
@@ -227,7 +225,7 @@ describe('Early mint', () => {
 
           await assertRevert(
             Ethernauts.connect(someUser).mintEarly(await signCouponForAddress(user.address), {
-              value: hre.config.defaults.earlyMintPrice,
+              value: hre.config.defaults.initialEarlyMintPrice,
             }),
             'InvalidUserCouponError(false)'
           );

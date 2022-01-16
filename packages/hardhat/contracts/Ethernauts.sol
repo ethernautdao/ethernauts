@@ -76,7 +76,8 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         uint256 definitiveBatchSize,
         uint256 initialMintPrice,
         uint256 initialEarlyMintPrice,
-        address initialCouponSigner
+        address initialCouponSigner,
+        address initialUrlChanger
     ) ERC721("Ethernauts", "NAUTS") {
         if (definitiveMaxGiftable > 100) {
             revert MaxGiftableError({gifted: definitiveMaxGiftable, maxGift: 100});
@@ -93,6 +94,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         mintPrice = initialMintPrice;
         earlyMintPrice = initialEarlyMintPrice;
         couponSigner = initialCouponSigner;
+        urlChanger = initialUrlChanger;
 
         currentSaleState = SaleState.Paused;
     }

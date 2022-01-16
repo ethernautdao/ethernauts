@@ -1,102 +1,134 @@
-const fs = require('fs');
-const fsp = require('fs/promises');
+const { existsSync } = require('fs');
+const fs = require('fs/promises');
 const path = require('path');
 const { task } = require('hardhat/config');
+const { TASK_COMPILE } = require('hardhat/builtin-tasks/task-names');
+const { prompt } = require('enquirer');
 
 const DEPLOYMENT_SCHEMA = {
   token: '',
 };
 
-task('deploy', 'Deploys the Ethernauts NFT contract').setAction(async (taskArguments, hre) => {
-  console.log(`Deploying Ethernauts in network: ${hre.network.name}`);
-  console.log(`Using signer: ${await _getSignerAddress()}`);
+task('deploy', 'Deploys the Ethernauts NFT contract')
+  .addFlag('noConfirm', 'Ask for confirmation before deployment')
+  .addFlag('noVerify', 'Verify contract using Etherscan API')
+  .addFlag('clear', 'Clear existing deployment before executing')
+  .addOptionalParam(
+    'urlChanger',
+    'Private key of the address that will be allowed to call Ethernauts.setBaseUri (meant to be used by the keeper)'
+  )
+  .setAction(async ({ noConfirm, noVerify, clear, urlChanger }, hre) => {
+    await hre.run(TASK_COMPILE, { force: true, quiet: true });
 
-  const deploymentPath = `./deployments/${hre.network.name}.json`;
+    const signer = await _getSignerAddress();
+    console.log();
+    console.log('-- Deploying Ethernauts Contract --');
+    console.log(`Network: ${hre.network.name}`);
+    console.log(`Signer: ${signer}`);
 
-  const data = _loadOrCreateDeploymentFile(deploymentPath);
+    const deploymentPath = `./deployments/${hre.network.name}.json`;
+    const data = await _loadOrCreateDeploymentFile(deploymentPath);
 
-  if (hre.network.name !== 'local' && data.token !== '') {
-    throw new Error(`Token already exists at ${data.token}`);
-  }
+    if (data.token && !clear) {
+      throw new Error(`Token already exists at ${data.token}`);
+    }
 
-  await _confirmParameters();
+    const constructorParams = {
+      ...hre.config.defaults,
+      initialCouponSigner: signer,
+      initialUrlChanger: urlChanger || hre.config.defaults.initialUrlChanger,
+    };
 
-  const Ethernauts = await _deployContract();
-  console.log(`Ethernauts token deployed at ${Ethernauts.address}`);
+    if (!noConfirm) {
+      await _confirmParameters(constructorParams);
+    }
 
-  data.token = Ethernauts.address;
-  await _verify(Ethernauts.address);
-  await fsp.mkdir(path.dirname(deploymentPath), { recursive: true });
-  await fsp.writeFile(deploymentPath, JSON.stringify(data, null, 2));
-});
+    const constructorArgs = await _parseConstructorArguments(constructorParams);
+    const Ethernauts = await _deployContract(constructorArgs);
+    console.log(`Deployed at: ${Ethernauts.address}`);
 
-async function getNetworkDefaults() {
-  if (['local', 'docker', 'hardhat'].includes(hre.network.name)) {
-    return hre.config.defaults;
-  }
+    data.token = Ethernauts.address;
+    await fs.writeFile(deploymentPath, JSON.stringify(data, null, 2));
 
-  return {
-    ...hre.config.defaults,
-    initialCouponSigner: await _getSignerAddress(),
-  };
+    if (!noVerify) {
+      await _verifyContract(Ethernauts.address, constructorArgs);
+    }
+  });
+
+async function _parseConstructorArguments(params = {}) {
+  const factory = await hre.ethers.getContractFactory('Ethernauts');
+
+  // Get the names of all the required params on the constructor from the ABI
+  const paramNames = JSON.parse(factory.interface.format(hre.ethers.utils.FormatTypes.json))
+    .find(({ type }) => type === 'constructor')
+    .inputs.map(({ name }) => name);
+
+  // Create an array with the constructor params in correct oreder
+  return paramNames.reduce((constructorArgs, paramName) => {
+    if (!params[paramName]) {
+      throw new Error(`Missing constructor parameter "${paramName}"`);
+    }
+
+    constructorArgs.push(params[paramName]);
+
+    return constructorArgs;
+  }, []);
 }
 
 async function _getSignerAddress() {
   return (await hre.ethers.getSigners())[0].address;
 }
 
-async function _verify(contractAddress) {
-  if (!process.env.ETHERSCAN_API) return;
+async function _verifyContract(contractAddress, constructorArguments) {
+  if (!process.env.ETHERSCAN_API) {
+    throw new Error('Missing ETHERSCAN_API configuration');
+  }
 
   await hre.run('verify:verify', {
     address: contractAddress,
     apiKey: `${process.env.ETHERSCAN_API}`,
-    constructorArguments: Object.values(await getNetworkDefaults()),
+    constructorArguments,
   });
 
-  console.log('Verified');
+  console.log('Verified!');
 }
 
-async function _confirmParameters() {
-  console.log('Constructor parameters:');
-  _logObject(await getNetworkDefaults());
-  console.log('');
-
-  console.log('Overrides:');
-  _logObject(hre.config.overrides);
-  console.log('');
+async function _confirmParameters(constructorParams) {
+  console.log('Constructor arguments:', constructorParams);
+  await prompt({
+    type: 'confirm',
+    name: 'question',
+    message: 'Continue?',
+  });
+  console.log();
 }
 
-async function _deployContract() {
-  getNetworkDefaults();
-
+async function _deployContract(constructorArguments) {
   const factory = await hre.ethers.getContractFactory('Ethernauts');
-  const Ethernauts = await factory.deploy(
-    ...Object.values(await getNetworkDefaults()),
-    hre.config.overrides
-  );
-  console.log('Submitted transaction:', Ethernauts.deployTransaction);
+  const Ethernauts = await factory.deploy(...constructorArguments, hre.config.overrides);
+
+  console.log('Submitted transaction:', Ethernauts.deployTransaction.hash);
 
   const receipt = await Ethernauts.deployTransaction.wait();
-  console.log('Deployment receipt:', receipt);
+
+  console.log('Deployment receipt:', {
+    blockHash: receipt.blockHash,
+    transactionHash: receipt.transactionHash,
+    blockNumber: receipt.blockNumber,
+    confirmations: receipt.confirmations,
+    gasUsed: hre.ethers.utils.formatEther(receipt.gasUsed),
+    cumulativeGasUsed: hre.ethers.utils.formatEther(receipt.cumulativeGasUsed),
+    effectiveGasPrice: hre.ethers.utils.formatEther(receipt.effectiveGasPrice),
+  });
 
   return Ethernauts;
 }
 
-function _logObject(obj) {
-  const newObj = {};
-
-  Object.keys(obj).map((key) => {
-    newObj[key] = obj[key].toString();
-  });
-
-  console.log(newObj);
-}
-
-function _loadOrCreateDeploymentFile(filepath) {
-  if (fs.existsSync(filepath)) {
-    return JSON.parse(fs.readFileSync(filepath));
+async function _loadOrCreateDeploymentFile(filepath) {
+  if (existsSync(filepath)) {
+    return JSON.parse(await fs.readFile(filepath));
   } else {
+    await fs.mkdir(path.dirname(filepath), { recursive: true });
     return DEPLOYMENT_SCHEMA;
   }
 }
