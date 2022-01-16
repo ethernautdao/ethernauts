@@ -13,7 +13,12 @@ const WalletInfo = () => {
 
   const { address, chainId } = state;
 
-  const chainData = getChainData(chainId);
+  let chainData = null;
+  try {
+    chainData = getChainData(chainId);
+  } catch (err) {
+    chainData = { name: err.message };
+  }
 
   if (!state.address) return null;
 
