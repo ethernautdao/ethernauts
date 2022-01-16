@@ -14,7 +14,7 @@ const useSwitchNetwork = () => {
 
     if (!web3Provider.provider || !web3Provider.provider.request) return;
 
-    const defaultChainId = DEFAULT_NETWORKS_PER_ENVIRONMENT[process.env.NODE_ENV];
+    const defaultChainId = DEFAULT_NETWORKS_PER_ENVIRONMENT[process.env.NEXT_PUBLIC_APP_ENV];
 
     if (chainId === defaultChainId) return;
 
