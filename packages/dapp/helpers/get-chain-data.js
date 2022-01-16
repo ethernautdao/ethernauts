@@ -1,5 +1,4 @@
-import { INFURA_PROJECT_ID } from '../config';
-import { supportedChains } from '../constants/networks';
+import { INFURA_PROJECT_ID, supportedChains } from '../constants/networks';
 
 const getChainData = (chainId) => {
   if (!chainId) return null;

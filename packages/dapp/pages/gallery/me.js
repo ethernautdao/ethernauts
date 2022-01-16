@@ -1,5 +1,4 @@
 import Head from 'next/head';
-import { useContext } from 'react';
 
 import { Tabs } from '../../components/Tabs';
 import { Hero } from '../../components/Hero';
@@ -8,13 +7,9 @@ import { Gallery } from '../../components/Gallery';
 
 import { GALLERY_ROUTES } from '../../constants/routes';
 
-import { WalletContext } from '../../contexts/WalletProvider';
-
 import styles from '../index.module.scss';
 
 const GalleryPage = () => {
-  const { state } = useContext(WalletContext);
-
   return (
     <div>
       <Head>
