@@ -1,13 +1,16 @@
 import cn from 'classnames';
 
 import useSwitchNetwork from '../../hooks/useSwitchNetwork';
+import useIsWindowFocused from '../../hooks/useIsWindowFocused';
 
 import { Background } from '../Background';
 
 import styles from './Layout.module.scss';
 
 const Layout = ({ children }) => {
-  useSwitchNetwork();
+  const windowIsActive = useIsWindowFocused();
+
+  useSwitchNetwork(windowIsActive);
 
   return (
     <>

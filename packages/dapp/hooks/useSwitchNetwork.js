@@ -4,12 +4,14 @@ import { useContext, useEffect } from 'react';
 import { WalletContext } from '../contexts/WalletProvider';
 import { OPTIMISM_NETWORKS, DEFAULT_NETWORKS_PER_ENVIRONMENT } from '../constants/networks';
 
-const useSwitchNetwork = () => {
+const useSwitchNetwork = (windowIsActive) => {
   const { state } = useContext(WalletContext);
 
   const { web3Provider, address, chainId } = state;
 
   useEffect(async () => {
+    if (!windowIsActive) return;
+
     if (!web3Provider || !chainId || !address) return;
 
     if (!web3Provider.provider || !web3Provider.provider.request) return;
@@ -33,7 +35,7 @@ const useSwitchNetwork = () => {
         });
       }
     }
-  }, [web3Provider, chainId, address]);
+  }, [web3Provider, chainId, address, windowIsActive]);
 };
 
 export default useSwitchNetwork;
