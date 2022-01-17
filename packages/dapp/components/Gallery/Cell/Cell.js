@@ -23,6 +23,7 @@ const Cell = ({ tokenId, isRevealed, kind, isMiddleCell }) => {
   const imageSrc = useMemo(() => {
     if (isRevealed && !isDev)
       return `https://storageapi.fleek.co/${FLEEK_BUCKET_ID}/assets/${tokenId}.png`;
+
     if (isRevealed && isDev) return '/assets/revealed-token.png';
 
     if (!isRevealed) return '/assets/unrevealed-token.png';
