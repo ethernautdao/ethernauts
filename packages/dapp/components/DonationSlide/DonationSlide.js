@@ -1,5 +1,5 @@
-import { useContext, useEffect } from 'react';
 import Slider from 'rc-slider';
+import { useContext, useEffect } from 'react';
 
 import useSaleState from '../../hooks/useSaleState';
 

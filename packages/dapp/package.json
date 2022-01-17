@@ -8,7 +8,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "export": "next export",
     "lint": "next lint",
+    "pre:deploy:staging": "env-cmd -f .env.staging npm run build && npm run export",
+    "pre:deploy:production": "env-cmd -f .env.production npm run build && npm run export",
+    "deploy:staging": "npm run pre:deploy:staging && netlify deploy --open",
+    "deploy:production": "npm run pre:deploy:production && netlify deploy --prod --open",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -24,6 +29,7 @@
   "dependencies": {
     "@fullpage/react-fullpage": "0.1.19",
     "classnames": "2.3.1",
+    "env-cmd": "10.1.0",
     "ethers": "5.4.7",
     "lodash.chunk": "4.2.0",
     "lodash.debounce": "4.0.8",
@@ -38,6 +44,7 @@
   },
   "devDependencies": {
     "eslint": "7.32.0",
-    "eslint-config-next": "11.1.2"
+    "eslint-config-next": "11.1.2",
+    "netlify-cli": "8.8.2"
   }
 }

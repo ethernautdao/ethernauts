@@ -1,7 +1,4 @@
 import Link from 'next/link';
-import Image from 'next/image';
-
-import Logo from '../../public/assets/ethernaut-logo.svg';
 
 import { MAIN_ROUTES } from '../../constants/routes';
 
@@ -17,7 +14,7 @@ const Header = () => {
       <header className={styles.header}>
         <Link href="/" passHref>
           <a>
-            <Image src={Logo} />
+            <img src={'/assets/ethernaut-logo.svg'} />
           </a>
         </Link>
         <div className={styles.end}>

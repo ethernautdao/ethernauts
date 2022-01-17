@@ -62,7 +62,7 @@ export const supportedChains = [
   },
   {
     name: 'Optimistic Ethereum ',
-    short_name: 'optimism',
+    short_name: 'optimism-mainnet',
     chain: 'ETH',
     network: 'optimism',
     chain_id: [10, '0xa'],

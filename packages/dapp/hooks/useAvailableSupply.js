@@ -3,8 +3,8 @@ import { Contract } from 'ethers';
 
 import { WalletContext } from '../contexts/WalletProvider';
 
-import { abi, tokenAddress } from '../config';
-import { zeroAccount } from '../constants';
+import { ABI, TOKEN_ADDRESS } from '../config';
+import { zeroAccount } from '../constants/common';
 
 const useAvailableSupply = () => {
   const [data, setData] = useState(null);
@@ -20,7 +20,7 @@ const useAvailableSupply = () => {
       if (state.web3Provider) {
         const signer = state.web3Provider.getSigner();
 
-        const contract = new Contract(tokenAddress, abi, signer);
+        const contract = new Contract(TOKEN_ADDRESS, ABI, signer);
 
         const maxTokens = await contract.maxTokens();
         const supply = await contract.availableSupply();
