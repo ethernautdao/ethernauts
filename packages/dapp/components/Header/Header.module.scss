@@ -1,10 +1,6 @@
 @import "../../styles/breakpoints.scss";
 
 .header {
-  @include breakpoint(xs) {
-    display: none;
-  }
-
   display: flex;
   align-items: center;
   padding: 20px;

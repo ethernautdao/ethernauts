@@ -14,7 +14,10 @@ const ConnectWallet = ({ fullWidth }) => {
     return (
       <button
         type="button"
-        className={cn(styles.button, { [styles.fullWidth]: fullWidth })}
+        className={cn(styles.button, {
+          [styles.fullWidth]: fullWidth,
+          [styles.headerButton]: !fullWidth,
+        })}
         onClick={disconnect}
       >
         <span className={styles.text}>Disconnect wallet</span>
@@ -25,7 +28,10 @@ const ConnectWallet = ({ fullWidth }) => {
   return (
     <button
       type="button"
-      className={cn(styles.button, { [styles.fullWidth]: fullWidth })}
+      className={cn(styles.button, {
+        [styles.fullWidth]: fullWidth,
+        [styles.headerButton]: !fullWidth,
+      })}
       onClick={connect}
     >
       <span className={styles.text}>Connect wallet</span>
