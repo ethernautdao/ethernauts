@@ -208,7 +208,7 @@ describe('Early mint', () => {
             Ethernauts.connect(someUser).mintEarly(
               await signCouponForAddress(someUser.address, owner),
               {
-                value: hre.config.defaults.earlyMintPrice,
+                value: hre.config.defaults.initialEarlyMintPrice,
               }
             ),
             'RedeemedCouponError(true)'
@@ -224,7 +224,7 @@ describe('Early mint', () => {
             Ethernauts.connect(someUser).mintEarly(
               await signCouponForAddress(user.address, owner),
               {
-                value: hre.config.defaults.earlyMintPrice,
+                value: hre.config.defaults.initialEarlyMintPrice,
               }
             ),
             'InvalidUserCouponError(false)'
