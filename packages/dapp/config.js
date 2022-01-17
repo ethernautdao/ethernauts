@@ -1,5 +1,7 @@
 const isDev = process.env.NEXT_PUBLIC_APP_ENV === 'development';
 
+console.info('NEXT_PUBLIC_APP_ENV: ', process.env.NEXT_PUBLIC_APP_ENV);
+
 let TOKEN_ADDRESS = process.env.NEXT_PUBLIC_TOKEN_ADDRESS;
 const ETHEREUM_NETWORK = process.env.NEXT_PUBLIC_ETHEREUM_NETWORK;
 
