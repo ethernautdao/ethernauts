@@ -48,6 +48,8 @@ contract Ethernauts is ERC721Enumerable, Ownable, ReentrancyGuard {
     uint256[] private _randomNumbers;
     bool public permanentUrl;
 
+    string public provenanceHash;
+
     // Three different sale stages:
     enum SaleState {
         Paused, // No one can mint, except the owner via gifting (default)
@@ -73,7 +75,8 @@ contract Ethernauts is ERC721Enumerable, Ownable, ReentrancyGuard {
         uint256 initialMintPrice,
         uint256 initialEarlyMintPrice,
         address initialCouponSigner,
-        address initialUrlChanger
+        address initialUrlChanger,
+        string memory definitiveProvenanceHash
     ) ERC721("Ethernauts", "NAUTS") {
         if (definitiveMaxGiftable > 100) {
             revert MaxGiftableError({gifted: definitiveMaxGiftable, maxGift: 100});
@@ -91,6 +94,7 @@ contract Ethernauts is ERC721Enumerable, Ownable, ReentrancyGuard {
         earlyMintPrice = initialEarlyMintPrice;
         couponSigner = initialCouponSigner;
         urlChanger = initialUrlChanger;
+        provenanceHash = definitiveProvenanceHash;
 
         currentSaleState = SaleState.Paused;
     }
