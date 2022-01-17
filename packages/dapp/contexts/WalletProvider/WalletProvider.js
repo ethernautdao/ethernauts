@@ -1,6 +1,6 @@
 import { createContext, useReducer, useCallback, useEffect } from 'react';
 import Web3Modal from 'web3modal';
-import { providers } from 'ethers';
+import { providers, utils, BigNumber } from 'ethers';
 
 // import WalletLink from 'walletlink';
 // import WalletConnectProvider from '@walletconnect/web3-provider';
@@ -93,19 +93,17 @@ const WalletProvider = ({ children }) => {
     if (provider && provider.on) {
       const handleAccountsChanged = (accounts) => {
         // eslint-disable-next-line no-console
-        console.log('accountsChanged', accounts);
         dispatch({
           type: 'SET_ADDRESS',
           address: accounts[0],
         });
       };
 
-      const handleChainChanged = (accounts) => {
+      const handleChainChanged = (chainId) => {
         // eslint-disable-next-line no-console
-        console.log('accountsChanged', accounts);
         dispatch({
-          type: 'SET_ADDRESS',
-          address: accounts[0],
+          type: 'SET_CHAIN_ID',
+          chainId,
         });
       };
 

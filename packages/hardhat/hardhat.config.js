@@ -48,15 +48,16 @@ module.exports = {
     apiKey: `${process.env.ETHERSCAN_API}`,
   },
   defaults: {
-    maxGiftable: 100,
-    maxTokens: 10000,
-    batchSize: 50,
-    mintPrice: ethers.utils.parseEther('0.2'),
-    earlyMintPrice: ethers.utils.parseEther('0.015'),
+    definitiveMaxGiftable: 100,
+    definitiveMaxTokens: 10000,
+    definitiveBatchSize: 50,
+    initialMintPrice: ethers.utils.parseEther('0.2'),
+    initialEarlyMintPrice: ethers.utils.parseEther('0.015'),
 
     // Default hardhat signer[0]
     // Will be changed at runtime if targeting a real network.
     initialCouponSigner: '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266',
+    initialUrlChanger: '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266',
   },
   overrides: {
     gasPrice: ethers.utils.parseUnits('100', 'gwei'),

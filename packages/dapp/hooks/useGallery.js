@@ -3,7 +3,7 @@ import { useCallback, useContext, useState } from 'react';
 
 import { WalletContext } from '../contexts/WalletProvider';
 
-import { abi, tokenAddress } from '../config';
+import { ABI, TOKEN_ADDRESS } from '../config';
 
 import { zeroAccount } from '../constants/common';
 
@@ -24,9 +24,9 @@ const useGallery = () => {
       if (state.web3Provider) {
         const signer = state.web3Provider.getSigner();
 
-        const contract = new Contract(tokenAddress, abi, signer);
+        const contract = new Contract(TOKEN_ADDRESS, ABI, signer);
 
-        const iface = new utils.Interface(abi);
+        const iface = new utils.Interface(ABI);
 
         // TODO: fromBlock should be the block where the contract is deployed.
         const filter = {

@@ -16,9 +16,9 @@ describe('State Changes', () => {
   before('deploy contract', async () => {
     const factory = await ethers.getContractFactory('Ethernauts');
 
-    const params = Object.assign({}, hre.config.defaults);
-    params.maxTokens = 100;
-    params.maxGiftable = 10;
+    const params = { ...hre.config.defaults };
+    params.definitiveMaxGiftable = 10;
+    params.definitiveMaxTokens = 100;
 
     Ethernauts = await factory.deploy(...Object.values(params));
   });

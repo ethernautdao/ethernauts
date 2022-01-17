@@ -1,6 +1,9 @@
-import { useMemo } from 'react';
 import cn from 'classnames';
+import { useMemo } from 'react';
 import chunk from 'lodash.chunk';
+import useBreakpoint from 'use-breakpoint';
+
+import { BREAKPOINTS } from '../../../constants/common';
 
 import { Cell } from '../Cell';
 
@@ -11,10 +14,11 @@ const ALL_DESKTOP_COLUMNS = 3;
 const ALL_MOBILE_COLUMNS = 1;
 
 const Grid = ({ items, kind }) => {
-  // TODO: Check screen size and set isDesktop with the correct value
-  const isDesktop = true;
+  const { breakpoint } = useBreakpoint(BREAKPOINTS, 'desktop');
 
-  const columns = isDesktop ? ALL_DESKTOP_COLUMNS : ALL_MOBILE_COLUMNS;
+  const isMobile = breakpoint === 'mobile';
+
+  const columns = isMobile ? ALL_MOBILE_COLUMNS : ALL_DESKTOP_COLUMNS;
 
   const chunks = useMemo(() => chunk(items, columns), [items, columns]);
 
@@ -28,7 +32,13 @@ const Grid = ({ items, kind }) => {
 
   return (
     <div className={styles.outerContainer}>
-      <div className={cn(styles.grid, { [styles.all]: kind === ALL, [styles.me]: kind === ME })}>
+      <div
+        className={cn(styles.grid, {
+          [styles.all]: kind === ALL,
+          [styles.me]: kind === ME,
+          [styles.mobileGrid]: isMobile,
+        })}
+      >
         {items?.map(({ tokenId, isRevealed }) => {
           const isMiddle = isMiddleCell(tokenId);
           return (

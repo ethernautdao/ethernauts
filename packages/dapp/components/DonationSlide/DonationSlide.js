@@ -1,7 +1,11 @@
-import { useContext, useEffect } from 'react';
+import cn from 'classnames';
 import Slider from 'rc-slider';
+import useBreakpoint from 'use-breakpoint';
+import { useContext, useEffect } from 'react';
 
 import useSaleState from '../../hooks/useSaleState';
+
+import { BREAKPOINTS } from '../../constants/common';
 
 import { WalletContext } from '../../contexts/WalletProvider';
 import { DonationContext } from '../../contexts/DonationProvider';
@@ -13,7 +17,11 @@ import styles from './DonationSlide.module.scss';
 const SelectDonation = () => {
   const { state } = useContext(WalletContext);
   const { donation, setDonation } = useContext(DonationContext);
+
   const [{ data }, fetchSaleState] = useSaleState();
+  const { breakpoint } = useBreakpoint(BREAKPOINTS, 'desktop');
+
+  const isMobile = breakpoint === 'mobile';
 
   useEffect(() => {
     if (state.web3Provider) fetchSaleState();
@@ -33,10 +41,12 @@ const SelectDonation = () => {
         step={0.1}
       />
       <div className={styles.range}>
-        <span>0.2 ETH</span>
-        <span>14 ETH</span>
+        <span>{`${MIN_DONATION} ETH`}</span>
+        <span>{`${MAX_DONATION} ETH`}</span>
       </div>
-      <span className={styles.donationDescription}>
+      <span
+        className={cn(styles.donationDescription, { [styles.mobileDonationDescription]: isMobile })}
+      >
         {`You are donating`}
         <input
           type="number"
