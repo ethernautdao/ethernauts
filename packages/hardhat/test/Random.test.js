@@ -53,10 +53,10 @@ describe('Random', () => {
   before('deploy contract', async () => {
     const factory = await ethers.getContractFactory('Ethernauts');
 
-    const params = Object.assign({}, hre.config.defaults);
-    params.maxTokens = maxTokens;
-    params.batchSize = batchSize;
-    params.maxGiftable = 0;
+    const params = { ...hre.config.defaults };
+    params.definitiveMaxGiftable = 0;
+    params.definitiveMaxTokens = maxTokens;
+    params.definitiveBatchSize = batchSize;
 
     Ethernauts = await factory.deploy(...Object.values(params));
   });

@@ -22,7 +22,7 @@ services:
       - ./packages/hardhat:/src/packages/hardhat
       - /src/node_modules
       - /src/packages/hardhat/node_modules
-    command: sh -c "/wait && rm -f /src/packages/hardhat/deployments/docker.json && npm run -w @ethernauts/hardhat start:hardhat:compile && npm run -w @ethernauts/hardhat start:hardhat:deploy -- --network docker"
+    command: sh -c "/wait && rm -f /src/packages/hardhat/deployments/docker.json && npm run -w @ethernauts/hardhat start:hardhat:compile && npm run -w @ethernauts/hardhat start:hardhat:deploy -- --no-confirm --no-verify --clear --network docker"
     environment:
       WAIT_HOSTS: hardhat-node:8545
     depends_on:
