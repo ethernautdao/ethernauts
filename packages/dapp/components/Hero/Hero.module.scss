@@ -4,3 +4,9 @@
   margin-top: 4rem;
   z-index: 1;
 }
+
+.mobile {
+  > img {
+    width: 350px;
+  }
+}

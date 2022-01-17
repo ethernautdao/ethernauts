@@ -40,6 +40,7 @@
     "react-hot-toast": "2.1.1",
     "react-medium-image-zoom": "4.3.5",
     "sass": "1.42.1",
+    "use-breakpoint": "3.0.1",
     "web3modal": "1.9.4"
   },
   "devDependencies": {

@@ -1,8 +1,11 @@
+import cn from 'classnames';
 import { useRouter } from 'next/router';
+import useBreakpoint from 'use-breakpoint';
+
+import { BREAKPOINTS } from '../../constants/common';
+import { MAIN_ROUTES, GALLERY_ROUTES } from '../../constants/routes';
 
 import styles from './Hero.module.scss';
-
-import { MAIN_ROUTES, GALLERY_ROUTES } from '../../constants/routes';
 
 const heroKind = {
   [MAIN_ROUTES.home.path]: <img src={'/assets/ethernaut-home-title.svg'} />,
@@ -12,7 +15,11 @@ const heroKind = {
 
 const Hero = () => {
   const { asPath } = useRouter();
-  return <h1 className={styles.title}>{heroKind[asPath]}</h1>;
+  const { breakpoint } = useBreakpoint(BREAKPOINTS, 'desktop');
+
+  const isMobile = breakpoint === 'mobile';
+
+  return <h1 className={cn(styles.title, { [styles.mobile]: isMobile })}>{heroKind[asPath]}</h1>;
 };
 
 export default Hero;
