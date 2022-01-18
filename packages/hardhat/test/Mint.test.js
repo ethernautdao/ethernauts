@@ -236,12 +236,9 @@ describe('Mint', () => {
 
         it('reverts', async () => {
           await assertRevert(
-            Ethernauts.connect(user).mintEarly(
-              await signCouponForAddress(user.address, owner),
-              {
-                value: ethers.utils.parseEther('0.2'),
-              }
-            ),
+            Ethernauts.connect(user).mintEarly(await signCouponForAddress(user.address, owner), {
+              value: ethers.utils.parseEther('0.2'),
+            }),
             'NoTokensAvailable'
           );
         });

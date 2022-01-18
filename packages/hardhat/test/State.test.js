@@ -6,11 +6,11 @@ describe('State Changes', () => {
   let Ethernauts;
 
   let users;
-  let owner, user;
+  let owner;
 
   before('identify signers', async () => {
     users = await ethers.getSigners();
-    [owner, user] = users;
+    [owner] = users;
   });
 
   before('deploy contract', async () => {
