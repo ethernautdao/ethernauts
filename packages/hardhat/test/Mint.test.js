@@ -190,8 +190,8 @@ describe('Mint', () => {
       });
     });
 
-    describe('when trying to mint more than the maximum amount of Ethernauts', () => {
-      before('mint max -1', async () => {
+    describe('when minting all publicly available NFTs (the non-giftable ones)', function () {
+      before('mint all', async () => {
         const num =
           (await Ethernauts.maxTokens()).toNumber() -
           (await Ethernauts.maxGiftable()).toNumber() -
@@ -215,49 +215,33 @@ describe('Mint', () => {
         assert.equal(await Ethernauts.currentSaleState(), 3);
       });
 
-      it('reverts', async () => {
-        await assertRevert(
-          Ethernauts.connect(user).mint({
-            value: ethers.utils.parseEther('0.2'),
-          }),
-          'StateMismatchError(3, 2)'
-        );
-      });
-    });
-
-    describe('when trying to mint giftable after public sale has ended', () => {
-      before('mint all public nft available', async () => {
-        const num =
-          (await Ethernauts.maxTokens()).toNumber() -
-          (await Ethernauts.maxGiftable()).toNumber() -
-          (await Ethernauts.totalSupply()).toNumber();
-
-        let promises = [];
-        for (let i = 0; i < num; i++) {
-          promises.push(
-            (
-              await Ethernauts.connect(user).mint({
-                value: ethers.utils.parseEther('0.2'),
-              })
-            ).wait()
-          );
-        }
-
-        await Promise.all(promises);
-
-        assert.equal(await Ethernauts.currentSaleState(), 3);
-      });
-
-      it('mint all giftable', async () => {
-        const giftables = (await Ethernauts.maxGiftable()).toNumber();
-
-        for (let i = 0; i < giftables; i++) {
-          (await Ethernauts.connect(owner).gift(user.address)).wait();
-        }
-
-        assert.equal(await Ethernauts.tokensGifted(), giftables);
+      it('shows that no more tokens are available to mint', async function () {
         assert.equal(await Ethernauts.availableToMint(), 0);
-        assert.equal(await Ethernauts.currentSaleState(), 3);
+      });
+
+      describe('when trying to mint more than the maximum amount of Ethernauts', () => {
+        it('reverts', async () => {
+          await assertRevert(
+            Ethernauts.connect(user).mint({
+              value: ethers.utils.parseEther('0.2'),
+            }),
+            'StateMismatchError(3, 2)'
+          );
+        });
+      });
+
+      describe('when trying to mint giftable after public sale has ended', () => {
+        it('mint all giftable', async () => {
+          const num = (await Ethernauts.availableToGift()).toNumber();
+
+          for (let i = 0; i < num; i++) {
+            (await Ethernauts.connect(owner).gift(user.address)).wait();
+          }
+        });
+
+        it('shows that no more tokens are available to gift', async function () {
+          assert.equal(await Ethernauts.availableToGift(), 0);
+        });
       });
     });
   });

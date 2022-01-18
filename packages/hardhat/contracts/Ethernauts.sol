@@ -27,7 +27,6 @@ contract Ethernauts is ERC721Enumerable, Ownable, ReentrancyGuard {
     error SaleStateError(SaleState newState, SaleState current);
     error RecoverTokenError(address tokenAddress, address toAddress);
     error TokenBalanceError(uint256 tokenBalance, uint256 amount);
-    error TotalSupplyError(uint256 total, uint256 max);
     error NotAuthorized(address who);
 
     // Can be set only once on deploy
@@ -120,11 +119,10 @@ contract Ethernauts is ERC721Enumerable, Ownable, ReentrancyGuard {
             revert MintPriceError({sent: msg.value, required: mintPrice});
         }
 
-        if (availableToMint() == 0) {
+        uint tokensAvailable = availableToMint();
+        if (tokensAvailable == 0) {
             revert InsufficientToMint({available: availableToMint()});
-        }
-
-        if (availableToMint() - 1 == 0) {
+        } else if (tokensAvailable == 1) {
             currentSaleState = SaleState.PublicCompleted;
         }
 
@@ -276,6 +274,7 @@ contract Ethernauts is ERC721Enumerable, Ownable, ReentrancyGuard {
     /// @param newMintPrice The new price a token can be bought for.
     function setMintPrice(uint256 newMintPrice) external onlyOwner {
         mintPrice = newMintPrice;
+
         emit MintPriceChanged(newMintPrice);
     }
 
@@ -404,10 +403,6 @@ contract Ethernauts is ERC721Enumerable, Ownable, ReentrancyGuard {
     }
 
     function _safeMint(address to, uint256 tokenId) internal virtual override {
-        if (totalSupply() >= maxTokens) {
-            revert TotalSupplyError({total: totalSupply(), max: maxTokens});
-        }
-
         super._safeMint(to, tokenId);
     }
 
