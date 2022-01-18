@@ -1,6 +1,7 @@
 const assert = require('assert');
 const assertRevert = require('./utils/assertRevert');
 const { ethers } = require('hardhat');
+const { signCouponForAddress } = require('./utils/sign-coupon');
 
 describe('Mint', () => {
   let Ethernauts;
@@ -209,10 +210,6 @@ describe('Mint', () => {
         await Promise.all(promises);
       });
 
-      it('public sale status is now completed', async () => {
-        assert.equal(await Ethernauts.currentSaleState(), 3);
-      });
-
       it('shows that no more tokens are available to mint', async function () {
         assert.equal(await Ethernauts.availableToMint(), 0);
       });
@@ -223,7 +220,26 @@ describe('Mint', () => {
             Ethernauts.connect(user).mint({
               value: ethers.utils.parseEther('0.2'),
             }),
-            'CannotCallOnCurrentState'
+            'NoTokensAvailable'
+          );
+        });
+      });
+
+      describe('when trying to early mint more than the maximum amount of Ethernauts', function () {
+        before('switch state', async function () {
+          await (await Ethernauts.connect(owner).setSaleState(1)).wait();
+        });
+
+        after('switch state', async function () {
+          await (await Ethernauts.connect(owner).setSaleState(2)).wait();
+        });
+
+        it('reverts', async () => {
+          await assertRevert(
+            Ethernauts.connect(user).mintEarly(await signCouponForAddress(user.address, owner), {
+              value: ethers.utils.parseEther('0.2'),
+            }),
+            'NoTokensAvailable'
           );
         });
       });
