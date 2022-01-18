@@ -5,20 +5,24 @@ import {Ethernauts as EthernautsBase} from "@ethernauts/hardhat/contracts/Ethern
 
 contract Ethernauts is EthernautsBase {
     constructor(
-        uint definitiveMaxGiftable,
-        uint definitiveMaxTokens,
-        uint definitiveBatchSize,
-        uint initialMintPrice,
-        uint initialEarlyMintPrice,
-        address initialCouponSigner
+        uint256 definitiveMaxGiftable,
+        uint256 definitiveMaxTokens,
+        uint256 definitiveBatchSize,
+        bytes32 definitiveProvenanceHash,
+        uint256 initialMintPrice,
+        uint256 initialEarlyMintPrice,
+        address initialCouponSigner,
+        address initialUrlChanger
     )
         EthernautsBase(
             definitiveMaxGiftable,
             definitiveMaxTokens,
             definitiveBatchSize,
+            definitiveProvenanceHash,
             initialMintPrice,
             initialEarlyMintPrice,
-            initialCouponSigner
+            initialCouponSigner,
+            initialUrlChanger
         )
     {} // solhint-disable-line no-empty-blocks
 }

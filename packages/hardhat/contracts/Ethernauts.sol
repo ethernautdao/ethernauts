@@ -34,6 +34,7 @@ contract Ethernauts is ERC721Enumerable, Ownable, ReentrancyGuard {
     uint256 public immutable maxTokens;
     uint256 public immutable maxGiftable;
     uint256 public immutable batchSize;
+    bytes32 public immutable provenanceHash;
 
     // Can be changed by owner until minting stopped
     string public baseTokenURI;
@@ -47,8 +48,6 @@ contract Ethernauts is ERC721Enumerable, Ownable, ReentrancyGuard {
     mapping(address => bool) private _redeemedCoupons; // user address => if its single coupon has been redeemed
     uint256[] private _randomNumbers;
     bool public permanentUrl;
-
-    string public provenanceHash;
 
     // Three different sale stages:
     enum SaleState {
@@ -72,11 +71,11 @@ contract Ethernauts is ERC721Enumerable, Ownable, ReentrancyGuard {
         uint256 definitiveMaxGiftable,
         uint256 definitiveMaxTokens,
         uint256 definitiveBatchSize,
+        bytes32 definitiveProvenanceHash,
         uint256 initialMintPrice,
         uint256 initialEarlyMintPrice,
         address initialCouponSigner,
-        address initialUrlChanger,
-        string memory definitiveProvenanceHash
+        address initialUrlChanger
     ) ERC721("Ethernauts", "NAUTS") {
         if (definitiveMaxGiftable > 100) {
             revert MaxGiftableError({gifted: definitiveMaxGiftable, maxGift: 100});
@@ -89,12 +88,12 @@ contract Ethernauts is ERC721Enumerable, Ownable, ReentrancyGuard {
         maxGiftable = definitiveMaxGiftable;
         maxTokens = definitiveMaxTokens;
         batchSize = definitiveBatchSize;
+        provenanceHash = definitiveProvenanceHash;
 
         mintPrice = initialMintPrice;
         earlyMintPrice = initialEarlyMintPrice;
         couponSigner = initialCouponSigner;
         urlChanger = initialUrlChanger;
-        provenanceHash = definitiveProvenanceHash;
 
         currentSaleState = SaleState.Paused;
     }

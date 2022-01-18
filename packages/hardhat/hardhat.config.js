@@ -51,6 +51,8 @@ module.exports = {
     definitiveMaxGiftable: 100,
     definitiveMaxTokens: 10000,
     definitiveBatchSize: 50,
+    definitiveProvenanceHash: '0xabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabca',
+
     initialMintPrice: ethers.utils.parseEther('0.2'),
     initialEarlyMintPrice: ethers.utils.parseEther('0.015'),
 
@@ -58,8 +60,6 @@ module.exports = {
     // Will be changed at runtime if targeting a real network.
     initialCouponSigner: '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266',
     initialUrlChanger: '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266',
-
-    definitiveProvenanceHash: '',
   },
   overrides: {
     gasPrice: ethers.utils.parseUnits('100', 'gwei'),
