@@ -224,7 +224,7 @@ contract Ethernauts is ERC721Enumerable, Ownable, ReentrancyGuard {
     /// @notice Fetch the random number for `batchId`
     /// @param batchId Id for the batch.
     /// @return Random number for batchId
-    function getRandomNumberForBatch(uint batchId) public view returns (uint) {
+    function getRandomNumberForBatch(uint256 batchId) public view returns (uint) {
         return _randomNumbers[batchId];
     }
 
