@@ -42,12 +42,12 @@ describe('State Changes', () => {
   });
 
   it('owner cannot switch to sale complete', async () => {
-    await assertRevert(Ethernauts.connect(owner).setSaleState(3), 'SaleStateError(3, 3)');
+    await assertRevert(Ethernauts.connect(owner).setSaleState(3), 'CannotSetStateToCompleted');
     assert.equal(await Ethernauts.currentSaleState(), 0);
   });
 
   it('state cannot be overriden with the same value', async () => {
-    await assertRevert(Ethernauts.connect(owner).setSaleState(0), 'SaleStateError(0, 0)');
+    await assertRevert(Ethernauts.connect(owner).setSaleState(0), 'NoChange');
     assert.equal(await Ethernauts.currentSaleState(), 0);
   });
 
@@ -71,6 +71,6 @@ describe('State Changes', () => {
     await Promise.all(promises);
     assert.equal(await Ethernauts.currentSaleState(), 3);
 
-    await assertRevert(Ethernauts.connect(owner).setSaleState(2), 'CurrentStateError(3, 3)');
+    await assertRevert(Ethernauts.connect(owner).setSaleState(2), 'CannotSetStateFromCompleted');
   });
 });

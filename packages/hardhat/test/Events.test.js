@@ -101,7 +101,7 @@ describe('Test events emitted', () => {
         await (await Ethernauts.connect(owner).setPermanentURI()).wait();
         await assertRevert(
           Ethernauts.connect(owner).setBaseURI('http://pinedead.io/'),
-          'PermanentUrlError(true)'
+          'BaseUriIsFrozen'
         );
       });
     });

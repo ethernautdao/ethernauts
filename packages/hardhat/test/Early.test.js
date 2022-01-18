@@ -3,8 +3,6 @@ const assertRevert = require('./utils/assertRevert');
 const { ethers } = require('hardhat');
 const { signCouponForAddress } = require('./utils/sign-coupon');
 
-const convertToWei = (payloadAmount) => ethers.utils.parseEther(payloadAmount.toString());
-
 describe('Early mint', () => {
   let Ethernauts;
 
@@ -45,7 +43,7 @@ describe('Early mint', () => {
         Ethernauts.connect(user).mintEarly(coupon, {
           value: ethers.utils.parseEther('15'),
         }),
-        'StateMismatchError(0, 1)'
+        'CannotCallOnCurrentState'
       );
     });
   });
@@ -61,7 +59,7 @@ describe('Early mint', () => {
           Ethernauts.connect(user).mintEarly(coupon, {
             value: ethers.utils.parseEther('0.01'),
           }),
-          `EarlyMintPriceError(${convertToWei('0.01')}, ${convertToWei('0.015')})`
+          'NotEnoughETH'
         );
       });
     });
@@ -80,7 +78,7 @@ describe('Early mint', () => {
           Ethernauts.connect(user).mintEarly(coupon, {
             value: hre.config.defaults.initialEarlyMintPrice,
           }),
-          'InvalidUserCouponError(false)'
+          'CouponSignedForAnotherUser'
         );
       });
     });
@@ -211,7 +209,7 @@ describe('Early mint', () => {
                 value: hre.config.defaults.initialEarlyMintPrice,
               }
             ),
-            'RedeemedCouponError(true)'
+            'CouponAlreadyRedeemed'
           );
         });
       });
@@ -227,7 +225,7 @@ describe('Early mint', () => {
                 value: hre.config.defaults.initialEarlyMintPrice,
               }
             ),
-            'InvalidUserCouponError(false)'
+            'CouponSignedForAnotherUser'
           );
         });
       });
