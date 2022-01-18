@@ -21,10 +21,7 @@ describe('General', () => {
         const params = { ...hre.config.defaults };
         params.definitiveMaxGiftable = 200;
 
-        await assertRevert(
-          factory.deploy(...Object.values(params)),
-          `MaxGiftableError(${params.definitiveMaxGiftable}, 100)`
-        );
+        await assertRevert(factory.deploy(...Object.values(params)), 'MaxGiftableTokensTooLarge');
       });
     });
 
@@ -33,10 +30,7 @@ describe('General', () => {
         const params = { ...hre.config.defaults };
         params.definitiveMaxTokens = 12000;
 
-        await assertRevert(
-          factory.deploy(...Object.values(params)),
-          `MaxTokensError(${params.definitiveMaxTokens}, 10000)`
-        );
+        await assertRevert(factory.deploy(...Object.values(params)), 'MaxTokensTooLarge');
       });
     });
   });
@@ -102,10 +96,7 @@ describe('General', () => {
           Ethernauts.connect(user).withdraw(user.address),
           'caller is not the owner'
         );
-        await assertRevert(
-          Ethernauts.connect(user).setBaseURI('someURI'),
-          'NotAuthorized("' + user.address + '")'
-        );
+        await assertRevert(Ethernauts.connect(user).setBaseURI('someURI'), 'NotAuthorized');
         await assertRevert(
           Ethernauts.connect(user).setMintPrice(ethers.utils.parseEther('0.01')),
           'caller is not the owner'
