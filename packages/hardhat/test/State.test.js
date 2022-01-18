@@ -41,36 +41,8 @@ describe('State Changes', () => {
     assert.equal(await Ethernauts.currentSaleState(), 0);
   });
 
-  it('owner cannot switch to sale complete', async () => {
-    await assertRevert(Ethernauts.connect(owner).setSaleState(3), 'CannotSetStateToCompleted');
-    assert.equal(await Ethernauts.currentSaleState(), 0);
-  });
-
   it('state cannot be overriden with the same value', async () => {
     await assertRevert(Ethernauts.connect(owner).setSaleState(0), 'NoChange');
     assert.equal(await Ethernauts.currentSaleState(), 0);
-  });
-
-  it('state cannot be changed after public sale is completed', async () => {
-    await (await Ethernauts.connect(owner).setSaleState(2)).wait();
-    const num =
-      (await Ethernauts.maxTokens()).toNumber() -
-      (await Ethernauts.maxGiftable()).toNumber() -
-      (await Ethernauts.totalSupply()).toNumber();
-
-    let promises = [];
-    for (let i = 0; i < num; i++) {
-      promises.push(
-        (
-          await Ethernauts.connect(user).mint({
-            value: ethers.utils.parseEther('0.2'),
-          })
-        ).wait()
-      );
-    }
-    await Promise.all(promises);
-    assert.equal(await Ethernauts.currentSaleState(), 3);
-
-    await assertRevert(Ethernauts.connect(owner).setSaleState(2), 'CannotSetStateFromCompleted');
   });
 });

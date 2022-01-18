@@ -22,8 +22,6 @@ contract Ethernauts is ERC721Enumerable, Ownable, ReentrancyGuard {
     error CouponSignedForAnotherUser();
     error NoGiftTokensAvailable();
     error BaseUriIsFrozen();
-    error CannotSetStateToCompleted();
-    error CannotSetStateFromCompleted();
     error NoChange();
     error InvalidRecoveryAddress();
     error InsufficientTokenBalance();
@@ -35,7 +33,7 @@ contract Ethernauts is ERC721Enumerable, Ownable, ReentrancyGuard {
     uint256 public immutable batchSize;
     bytes32 public immutable provenanceHash;
 
-    // Can be changed by owner until minting stopped
+    // Can be changed by owner
     string public baseTokenURI;
     uint256 public mintPrice;
     uint256 public earlyMintPrice;
@@ -52,8 +50,7 @@ contract Ethernauts is ERC721Enumerable, Ownable, ReentrancyGuard {
     enum SaleState {
         Paused, // No one can mint, except the owner via gifting (default)
         Early, // Only community can mint, at a discount using signed messages
-        Open, // Anyone can mint
-        PublicCompleted // Public sale completed
+        Open // Anyone can mint
     }
 
     SaleState public currentSaleState;
@@ -119,11 +116,8 @@ contract Ethernauts is ERC721Enumerable, Ownable, ReentrancyGuard {
             revert NotEnoughETH();
         }
 
-        uint tokensAvailable = availableToMint();
-        if (tokensAvailable == 0) {
+        if (availableToMint() == 0) {
             revert NoTokensAvailable();
-        } else if (tokensAvailable == 1) {
-            currentSaleState = SaleState.PublicCompleted;
         }
 
         _mintNext(msg.sender);
@@ -308,16 +302,8 @@ contract Ethernauts is ERC721Enumerable, Ownable, ReentrancyGuard {
     /// @dev This can only be called by the contract owner.
     /// @param newSaleState The new sale state of the tokens.
     function setSaleState(SaleState newSaleState) external onlyOwner {
-        if (currentSaleState == SaleState.PublicCompleted) {
-            revert CannotSetStateFromCompleted();
-        }
-
         if (newSaleState == currentSaleState) {
             revert NoChange();
-        }
-
-        if (newSaleState == SaleState.PublicCompleted) {
-            revert CannotSetStateToCompleted();
         }
 
         currentSaleState = newSaleState;
