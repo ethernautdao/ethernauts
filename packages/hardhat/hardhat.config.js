@@ -51,6 +51,8 @@ module.exports = {
     definitiveMaxGiftable: 100,
     definitiveMaxTokens: 10000,
     definitiveBatchSize: 50,
+    definitiveProvenanceHash: '0xabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabca',
+
     initialMintPrice: ethers.utils.parseEther('0.2'),
     initialEarlyMintPrice: ethers.utils.parseEther('0.015'),
 

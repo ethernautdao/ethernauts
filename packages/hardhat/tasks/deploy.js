@@ -65,8 +65,10 @@ async function _parseConstructorArguments(params = {}) {
 
   // Create an array with the constructor params in correct order
   return paramNames.reduce((constructorArgs, paramName) => {
-    if (!params[paramName]) {
-      throw new Error(`Missing constructor parameter "${paramName}"`);
+    if (!['string', 'number'].includes(typeof params[paramName])) {
+      throw new Error(
+        `Missing or incorrect constructor parameter "${paramName}": ${params[paramName]}`
+      );
     }
 
     constructorArgs.push(params[paramName]);

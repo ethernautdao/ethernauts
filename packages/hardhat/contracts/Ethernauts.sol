@@ -34,6 +34,7 @@ contract Ethernauts is ERC721Enumerable, Ownable, ReentrancyGuard {
     uint256 public immutable maxTokens;
     uint256 public immutable maxGiftable;
     uint256 public immutable batchSize;
+    bytes32 public immutable provenanceHash;
 
     // Can be changed by owner until minting stopped
     string public baseTokenURI;
@@ -70,6 +71,7 @@ contract Ethernauts is ERC721Enumerable, Ownable, ReentrancyGuard {
         uint256 definitiveMaxGiftable,
         uint256 definitiveMaxTokens,
         uint256 definitiveBatchSize,
+        bytes32 definitiveProvenanceHash,
         uint256 initialMintPrice,
         uint256 initialEarlyMintPrice,
         address initialCouponSigner,
@@ -86,6 +88,7 @@ contract Ethernauts is ERC721Enumerable, Ownable, ReentrancyGuard {
         maxGiftable = definitiveMaxGiftable;
         maxTokens = definitiveMaxTokens;
         batchSize = definitiveBatchSize;
+        provenanceHash = definitiveProvenanceHash;
 
         mintPrice = initialMintPrice;
         earlyMintPrice = initialEarlyMintPrice;
