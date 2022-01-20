@@ -91,13 +91,18 @@ async function _verifyContract(contractAddress, constructorArguments) {
     throw new Error('Missing ETHERSCAN_API configuration');
   }
 
-  await hre.run('verify:verify', {
-    address: contractAddress,
-    apiKey: `${process.env.ETHERSCAN_API}`,
-    constructorArguments,
-  });
+  try {
+    await hre.run('verify:verify', {
+      address: contractAddress,
+      apiKey: `${process.env.ETHERSCAN_API}`,
+      constructorArguments,
+    });
 
-  console.log('Verified!');
+    console.log('Verified!');
+  } catch (err) {
+    console.log('Verification Error:');
+    console.error(err);
+  }
 }
 
 async function _confirmParameters(constructorParams) {
