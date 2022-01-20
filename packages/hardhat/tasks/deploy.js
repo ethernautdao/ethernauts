@@ -65,7 +65,10 @@ async function _parseConstructorArguments(params = {}) {
 
   // Create an array with the constructor params in correct order
   return paramNames.reduce((constructorArgs, paramName) => {
-    if (!['string', 'number'].includes(typeof params[paramName])) {
+    if (
+      !['string', 'number'].includes(typeof params[paramName]) &&
+      !hre.ethers.BigNumber.isBigNumber(params[paramName])
+    ) {
       throw new Error(
         `Missing or incorrect constructor parameter "${paramName}": ${params[paramName]}`
       );
@@ -82,6 +85,8 @@ async function _getSignerAddress() {
 }
 
 async function _verifyContract(contractAddress, constructorArguments) {
+  if (['hardhat', 'local'].includes(hre.network.name)) return;
+
   if (!process.env.ETHERSCAN_API) {
     throw new Error('Missing ETHERSCAN_API configuration');
   }
