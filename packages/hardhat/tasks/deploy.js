@@ -123,14 +123,22 @@ async function _deployContract(constructorArguments) {
 
   const receipt = await Ethernauts.deployTransaction.wait();
 
+  const safeFormatEther = (val) => {
+    try {
+      return hre.ethers.utils.formatEther(val);
+    } catch (_) {
+      return val;
+    }
+  };
+
   console.log('Deployment receipt:', {
     blockHash: receipt.blockHash,
     transactionHash: receipt.transactionHash,
     blockNumber: receipt.blockNumber,
     confirmations: receipt.confirmations,
-    gasUsed: hre.ethers.utils.formatEther(receipt.gasUsed),
-    cumulativeGasUsed: hre.ethers.utils.formatEther(receipt.cumulativeGasUsed),
-    effectiveGasPrice: hre.ethers.utils.formatEther(receipt.effectiveGasPrice),
+    gasUsed: safeFormatEther(receipt.gasUsed),
+    cumulativeGasUsed: safeFormatEther(receipt.cumulativeGasUsed),
+    effectiveGasPrice: safeFormatEther(receipt.effectiveGasPrice),
   });
 
   return Ethernauts;

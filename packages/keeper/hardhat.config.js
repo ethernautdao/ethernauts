@@ -26,8 +26,8 @@ module.exports = {
       accounts: process.env.DEPLOYER_KEY ? [`${process.env.DEPLOYER_KEY}`] : [],
     },
     ['optimistic-kovan']: {
-      url: 'https://kovan.optimism.io',
-      accounts: process.env.URL_CHANGER_KEY ? [`${process.env.URL_CHANGER_KEY}`] : [],
+      url: process.env.NETWORK_ENDPOINT || 'https://kovan.optimism.io',
+      accounts: process.env.DEPLOYER_KEY ? [`${process.env.DEPLOYER_KEY}`] : [],
     },
   },
 };
