@@ -15,8 +15,10 @@
   },
   "homepage": "https://github.com/ethernautdao/ethernauts#readme",
   "scripts": {
+    "events": "hardhat run scripts/events.js",
     "queue": "hardhat run scripts/queue.js",
-    "worker": "hardhat run scripts/worker.js"
+    "worker": "hardhat run scripts/worker.js",
+    "errors-report": "node src/errors-report.js"
   },
   "dependencies": {
     "@fleekhq/fleek-storage-js": "1.0.20",
@@ -26,6 +28,7 @@
     "envalid": "7.2.2",
     "hardhat": "2.8.1",
     "lodash.memoize": "4.1.2",
-    "needle": "3.0.0"
+    "needle": "3.0.0",
+    "node-discord-logger": "1.2.1"
   }
 }

@@ -1,3 +1,4 @@
 .env
+crash*.log
 artifacts
 cache
