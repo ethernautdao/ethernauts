@@ -15,10 +15,10 @@
   },
   "homepage": "https://github.com/ethernautdao/ethernauts#readme",
   "scripts": {
-    "events": "hardhat run scripts/events.js",
+    "errors-report": "node src/errors-report.js",
+    "events": "node scripts/events.js",
     "queue": "hardhat run scripts/queue.js",
-    "worker": "hardhat run scripts/worker.js",
-    "errors-report": "node src/errors-report.js"
+    "worker": "hardhat run scripts/worker.js"
   },
   "dependencies": {
     "@fleekhq/fleek-storage-js": "1.0.20",

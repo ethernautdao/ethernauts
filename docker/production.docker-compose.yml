@@ -39,3 +39,17 @@ services:
     restart: always
     depends_on:
       - redis
+
+  keeper-events:
+    build:
+      context: https://github.com/ethernautdao/ethernauts.git#${BRANCH:-main}
+      dockerfile: docker/keeper.production.Dockerfile
+    command: npm run -w @ethernauts/keeper errors-report && npm run -w @ethernauts/keeper events
+    env_file:
+      - .env
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    restart: always
+    depends_on:
+      - redis
