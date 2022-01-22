@@ -5,41 +5,37 @@ services:
     image: redis:6.2-alpine
     restart: always
     volumes:
-      - ${ETHERNAUTS_REDIS_FOLDER}:/data
+      - ${REDIS_FOLDER}:/data
 
   keeper-queue:
     build:
-      context: https://github.com/ethernautdao/ethernauts.git#main
+      context: https://github.com/ethernautdao/ethernauts.git#${BRANCH:-main}
       dockerfile: docker/keeper.production.Dockerfile
-    command: npm run -w @ethernauts/keeper queue -- --no-compile --network ${ETHERNAUTS_NETWORK}
+    command: npm run -w @ethernauts/keeper queue -- --no-compile --network ${NETWORK}
+    env_file:
+      - .env
     environment:
       REDIS_HOST: redis
       REDIS_PORT: 6379
-      MINTS_QUEUE_NAME: mints-${ETHERNAUTS_NETWORK}
-      NETWORK_ENDPOINT: ${ETHERNAUTS_NETWORK_ENDPOINT}
     restart: always
     depends_on:
       - redis
 
   keeper-worker:
     build:
-      context: https://github.com/ethernautdao/ethernauts.git#main
+      context: https://github.com/ethernautdao/ethernauts.git#${BRANCH:-main}
       dockerfile: docker/keeper.production.Dockerfile
-    command: npm run -w @ethernauts/keeper worker -- --no-compile --network ${ETHERNAUTS_NETWORK}
+    command: npm run -w @ethernauts/keeper worker -- --no-compile --network ${NETWORK}
+    env_file:
+      - .env
     environment:
       REDIS_HOST: redis
       REDIS_PORT: 6379
-      MINTS_QUEUE_NAME: mints-${ETHERNAUTS_NETWORK}
-      URL_CHANGER_KEY: ${ETHERNAUTS_URL_CHANGER_KEY}
-      FLEEK_API_KEY: ${ETHERNAUTS_FLEEK_API_KEY}
-      FLEEK_STORAGE_API_KEY: ${ETHERNAUTS_FLEEK_STORAGE_API_KEY}
-      FLEEK_STORAGE_API_SECRET: ${ETHERNAUTS_FLEEK_STORAGE_API_SECRET}
-      NETWORK_ENDPOINT: ${ETHERNAUTS_NETWORK_ENDPOINT}
       RESOURCES_METADATA_FOLDER: /src/resources/metadata
       RESOURCES_ASSETS_FOLDER: /src/resources/assets
     volumes:
-      - ${ETHERNAUTS_RESOURCES_METADATA_FOLDER}:/src/resources/metadata:ro
-      - ${ETHERNAUTS_RESOURCES_ASSETS_FOLDER}:/src/resources/assets:ro
+      - ${RESOURCES_METADATA_FOLDER}:/src/resources/metadata:ro
+      - ${RESOURCES_ASSETS_FOLDER}:/src/resources/assets:ro
     restart: always
     depends_on:
       - redis
