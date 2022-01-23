@@ -1,4 +1,5 @@
 const path = require('path');
+const { inspect } = require('util');
 const fleek = require('./fleek');
 const config = require('./config');
 const { JOB_PROCESS_BATCH, JOB_UPDATE_BASE_URL, JOB_UPLOAD_RESOURCE } = require('./constants');
@@ -31,6 +32,8 @@ const jobs = {
       queueName: config.MINTS_QUEUE_NAME,
       children,
     });
+
+    return { batchId, minTokenIdInBatch, maxTokenIdInBatch };
   },
 
   /**
@@ -40,6 +43,7 @@ const jobs = {
     const baseUriHash = await fleek.getFolderHash(config.FLEEK_METADATA_FOLDER);
     const tx = await Ethernauts.setBaseURI(baseUriHash);
     await tx.wait();
+    return { baseUriHash };
   },
 
   /**
@@ -69,15 +73,12 @@ const jobs = {
       }),
     ]);
 
-    console.log(
-      'Resource Uploaded: ',
-      JSON.stringify({
-        tokenId,
-        assetId,
-        metadata,
-        asset,
-      })
-    );
+    return {
+      tokenId,
+      assetId,
+      metadata,
+      asset,
+    };
   },
 };
 
@@ -87,6 +88,10 @@ module.exports = function processJobs(ctx) {
       throw new Error(`Invalid job: ${JSON.stringify(job)}`);
     }
 
-    return await jobs[job.name](job.data, ctx);
+    const result = await jobs[job.name](job.data, ctx);
+
+    console.log('Job Completed: ', inspect(result));
+
+    return result;
   };
 };

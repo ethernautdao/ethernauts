@@ -1,3 +1,5 @@
+require('../src/errors-catch');
+
 const { FlowProducer } = require('bullmq');
 const { getContractFromAbi } = require('@ethernauts/hardhat/src/utils/hardhat');
 const config = require('../src/config');
@@ -44,7 +46,4 @@ async function main() {
   });
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+main();

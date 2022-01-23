@@ -11,7 +11,7 @@ services:
     build:
       context: https://github.com/ethernautdao/ethernauts.git#${BRANCH:-main}
       dockerfile: docker/keeper.production.Dockerfile
-    command: npm run -w @ethernauts/keeper queue -- --no-compile --network ${NETWORK}
+    command: npm run -w @ethernauts/keeper errors-report && npm run -w @ethernauts/keeper queue -- --no-compile --network ${NETWORK}
     env_file:
       - .env
     environment:
@@ -25,7 +25,7 @@ services:
     build:
       context: https://github.com/ethernautdao/ethernauts.git#${BRANCH:-main}
       dockerfile: docker/keeper.production.Dockerfile
-    command: npm run -w @ethernauts/keeper worker -- --no-compile --network ${NETWORK}
+    command: npm run -w @ethernauts/keeper errors-report && npm run -w @ethernauts/keeper worker -- --no-compile --network ${NETWORK}
     env_file:
       - .env
     environment:
@@ -36,6 +36,20 @@ services:
     volumes:
       - ${RESOURCES_METADATA_FOLDER}:/src/resources/metadata:ro
       - ${RESOURCES_ASSETS_FOLDER}:/src/resources/assets:ro
+    restart: always
+    depends_on:
+      - redis
+
+  keeper-events:
+    build:
+      context: https://github.com/ethernautdao/ethernauts.git#${BRANCH:-main}
+      dockerfile: docker/keeper.production.Dockerfile
+    command: npm run -w @ethernauts/keeper errors-report && npm run -w @ethernauts/keeper events
+    env_file:
+      - .env
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
     restart: always
     depends_on:
       - redis
