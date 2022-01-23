@@ -11,7 +11,7 @@ services:
     build:
       context: https://github.com/ethernautdao/ethernauts.git#${BRANCH:-main}
       dockerfile: docker/keeper.production.Dockerfile
-    command: npm run -w @ethernauts/keeper errors-report && npm run -w @ethernauts/keeper queue -- --no-compile --network ${NETWORK}
+    command: sh -c 'npm run -w @ethernauts/keeper errors-report && npm run -w @ethernauts/keeper queue -- --no-compile --network ${NETWORK}'
     env_file:
       - .env
     environment:
@@ -25,7 +25,7 @@ services:
     build:
       context: https://github.com/ethernautdao/ethernauts.git#${BRANCH:-main}
       dockerfile: docker/keeper.production.Dockerfile
-    command: npm run -w @ethernauts/keeper errors-report && npm run -w @ethernauts/keeper worker -- --no-compile --network ${NETWORK}
+    command: sh -c 'npm run -w @ethernauts/keeper errors-report && npm run -w @ethernauts/keeper worker -- --no-compile --network ${NETWORK}'
     env_file:
       - .env
     environment:
@@ -44,7 +44,7 @@ services:
     build:
       context: https://github.com/ethernautdao/ethernauts.git#${BRANCH:-main}
       dockerfile: docker/keeper.production.Dockerfile
-    command: npm run -w @ethernauts/keeper errors-report && npm run -w @ethernauts/keeper events
+    command: sh -c 'npm run -w @ethernauts/keeper errors-report && npm run -w @ethernauts/keeper events'
     env_file:
       - .env
     environment:
