@@ -18,7 +18,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     error NotEnoughETH();
     error NoTokensAvailable();
     error CouponAlreadyRedeemed();
-    error CouponSignedForAnotherUser();
+    error InvalidCoupon();
     error NoGiftTokensAvailable();
     error BaseUriIsFrozen();
     error DoesNotChangeSaleState();
@@ -139,7 +139,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         }
 
         if (!isCouponSignedForUser(msg.sender, signedCoupon)) {
-            revert CouponSignedForAnotherUser();
+            revert InvalidCoupon();
         }
 
         _redeemedCoupons[msg.sender] = true;

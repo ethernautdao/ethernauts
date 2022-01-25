@@ -78,7 +78,7 @@ describe('Early mint', () => {
           Ethernauts.connect(user).mintEarly(coupon, {
             value: hre.config.defaults.initialEarlyMintPrice,
           }),
-          'CouponSignedForAnotherUser'
+          'InvalidCoupon'
         );
       });
     });
@@ -225,7 +225,7 @@ describe('Early mint', () => {
                 value: hre.config.defaults.initialEarlyMintPrice,
               }
             ),
-            'CouponSignedForAnotherUser'
+            'InvalidCoupon'
           );
         });
       });
