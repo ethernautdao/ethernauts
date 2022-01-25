@@ -8,12 +8,12 @@ const jobs = {
   /**
    * Generate all the necessary jobs for uploading the assets
    */
-  [JOB_PROCESS_BATCH]: async function ({ batchId, batchSize }, { Ethernauts, queue }) {
-    const randomNumber = await Ethernauts.getRandomNumberForBatch(batchId);
+  [JOB_PROCESS_BATCH]: async function ({ batchNumber, batchSize }, { Ethernauts, queue }) {
+    const randomNumber = await Ethernauts.getRandomNumberForBatch(batchNumber);
     const offset = Number(randomNumber.mod(batchSize));
 
-    const minTokenIdInBatch = batchSize * batchId;
-    const maxTokenIdInBatch = batchSize * (batchId + 1) - 1;
+    const minTokenIdInBatch = batchSize * batchNumber;
+    const maxTokenIdInBatch = batchSize * (batchNumber + 1) - 1;
 
     const children = [];
     for (let tokenId = minTokenIdInBatch; tokenId <= maxTokenIdInBatch; tokenId++) {
@@ -33,7 +33,7 @@ const jobs = {
       children,
     });
 
-    return { batchId, minTokenIdInBatch, maxTokenIdInBatch };
+    return { batchNumber, minTokenIdInBatch, maxTokenIdInBatch };
   },
 
   /**

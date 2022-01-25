@@ -60,7 +60,7 @@ describe('Recovery', () => {
     it('reverts', async () => {
       await assertRevert(
         Ethernauts.connect(owner).recoverTokens(Token.address, owner.address, totalSupply),
-        'InsufficientTokenBalance'
+        'InsufficientERC20TokenBalance'
       );
     });
   });

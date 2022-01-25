@@ -42,7 +42,7 @@ describe('State Changes', () => {
   });
 
   it('state cannot be overriden with the same value', async () => {
-    await assertRevert(Ethernauts.connect(owner).setSaleState(0), 'NoChange');
+    await assertRevert(Ethernauts.connect(owner).setSaleState(0), 'DoesNotChangeSaleState');
     assert.equal(await Ethernauts.currentSaleState(), 0);
   });
 });

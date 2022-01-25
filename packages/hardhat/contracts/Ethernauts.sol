@@ -21,9 +21,9 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     error CouponSignedForAnotherUser();
     error NoGiftTokensAvailable();
     error BaseUriIsFrozen();
-    error NoChange();
+    error DoesNotChangeSaleState();
     error InvalidRecoveryAddress();
-    error InsufficientTokenBalance();
+    error InsufficientERC20TokenBalance();
     error NotAuthorized();
 
     event SaleStateChanged(SaleState state);
@@ -213,14 +213,14 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     }
 
     function getAssetIdForTokenId(uint256 tokenId) public view returns (uint256 assetId, bool assetAvailable) {
-        uint256 batchId = getBatchForToken(tokenId);
-        if (batchId >= _randomNumbers.length) {
+        uint256 batchNumber = getBatchForToken(tokenId);
+        if (batchNumber >= _randomNumbers.length) {
             return (assetId = 0, assetAvailable = false);
         }
 
-        uint256 randomNumber = _randomNumbers[batchId];
+        uint256 randomNumber = _randomNumbers[batchNumber];
         uint256 offset = randomNumber % batchSize;
-        uint256 maxTokenIdInBatch = getMaxTokenIdInBatch(batchId);
+        uint256 maxTokenIdInBatch = getMaxTokenIdInBatch(batchNumber);
 
         assetId = tokenId + offset;
         if (assetId > maxTokenIdInBatch) {
@@ -230,19 +230,19 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         return (assetId, assetAvailable = true);
     }
 
-    function getMaxTokenIdInBatch(uint256 batchId) public view returns (uint256) {
-        return batchSize * (batchId + 1) - 1;
+    function getMaxTokenIdInBatch(uint256 batchNumber) public view returns (uint256) {
+        return batchSize * (batchNumber + 1) - 1;
     }
 
     function getBatchForToken(uint256 tokenId) public view returns (uint256) {
         return tokenId / batchSize;
     }
 
-    /// @notice Fetch the random number for `batchId`
-    /// @param batchId Id for the batch.
-    /// @return Random number for batchId
-    function getRandomNumberForBatch(uint256 batchId) public view returns (uint256) {
-        return _randomNumbers[batchId];
+    /// @notice Fetch the random number for `batchNumber`
+    /// @param batchNumber for the batch.
+    /// @return Random number for batchNumber
+    function getRandomNumberForBatch(uint256 batchNumber) public view returns (uint256) {
+        return _randomNumbers[batchNumber];
     }
 
     /// @notice Get the number of random numbers
@@ -255,8 +255,8 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     /// @param tokenId Id for the token.
     /// @return Returns true is the ethernaut arrived
     function isTokenRevealed(uint256 tokenId) public view returns (bool) {
-        uint256 batchId = getBatchForToken(tokenId);
-        if (batchId >= _randomNumbers.length) {
+        uint256 batchNumber = getBatchForToken(tokenId);
+        if (batchNumber >= _randomNumbers.length) {
             return false;
         }
 
@@ -320,7 +320,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     /// @param newSaleState The new sale state of the tokens.
     function setSaleState(SaleState newSaleState) external onlyOwner {
         if (newSaleState == currentSaleState) {
-            revert NoChange();
+            revert DoesNotChangeSaleState();
         }
 
         currentSaleState = newSaleState;
@@ -378,7 +378,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         }
 
         if (IERC20(token).balanceOf(address(this)) < value) {
-            revert InsufficientTokenBalance();
+            revert InsufficientERC20TokenBalance();
         }
 
         IERC20(token).transfer(to, value);

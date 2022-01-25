@@ -21,9 +21,9 @@ describe('Random', () => {
   }
 
   function calculateAssetId(tokenId, randomNumber) {
-    const batchId = Math.floor(tokenId / batchSize);
+    const batchNumber = Math.floor(tokenId / batchSize);
     const offset = randomNumber.mod(ethers.BigNumber.from(batchSize)).toNumber();
-    const maxTokenIdInBatch = batchSize * (batchId + 1) - 1;
+    const maxTokenIdInBatch = batchSize * (batchNumber + 1) - 1;
 
     let assetId = tokenId + offset;
     if (assetId > maxTokenIdInBatch) {
