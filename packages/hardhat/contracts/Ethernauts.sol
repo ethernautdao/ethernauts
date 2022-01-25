@@ -26,6 +26,15 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     error InsufficientTokenBalance();
     error NotAuthorized();
 
+    event SaleStateChanged(SaleState state);
+    event BaseTokenURIChanged(string baseTokenURI);
+    event EarlyMintPriceChanged(uint256 earlyMintPrice);
+    event MintPriceChanged(uint256 mintPrice);
+    event CouponSignerChanged(address couponSigner);
+    event ETHWithdrawn(address beneficiary);
+    event PermanentURISet(bool value);
+    event UrlChangerChanged(address urlChanger);
+
     // Can be set only once on deploy
     uint256 public immutable maxTokens;
     uint256 public immutable maxGiftable;
@@ -43,7 +52,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     uint256 private _tokensGifted;
     mapping(address => bool) private _redeemedCoupons; // user address => if its single coupon has been redeemed
     uint256[] private _randomNumbers;
-    bool public permanentUrl;
+    bool public permanentURI;
 
     // Three different sale stages:
     enum SaleState {
@@ -53,14 +62,6 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     }
 
     SaleState public currentSaleState;
-    event SaleStateChanged(SaleState state);
-    event BaseTokenURIChanged(string baseTokenURI);
-    event EarlyMintPriceChanged(uint256 earlyMintPrice);
-    event MintPriceChanged(uint256 mintPrice);
-    event CouponSignerChanged(address couponSigner);
-    event WithdrawTriggered(address beneficiary);
-    event PermanentURITriggered(bool value);
-    event UrlChangerChanged(address urlChanger);
 
     constructor(
         uint256 definitiveMaxGiftable,
@@ -281,14 +282,14 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     }
 
     /// @notice Sets the base URI for all token URIs.
-    /// @dev This can only be called by the contract owner. Can only be called if NFTs arent done minting.
+    /// @dev This can only be called by the contract owner. Can only be called if if the permanentURI hasn't been set yet.
     /// @param newBaseTokenURI The new base URI for tokens.
     function setBaseURI(string calldata newBaseTokenURI) external {
         if (msg.sender != owner() && msg.sender != urlChanger) {
             revert NotAuthorized();
         }
 
-        if (permanentUrl) {
+        if (permanentURI) {
             revert BaseUriIsFrozen();
         }
 
@@ -322,9 +323,9 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     /// @notice Freeze the URI so that it cant be updated anymore.
     /// @dev This can only be called by the contract owner.
     function setPermanentURI() external onlyOwner {
-        permanentUrl = true;
+        permanentURI = true;
 
-        emit PermanentURITriggered(true);
+        emit PermanentURISet(true);
     }
 
     /// @notice Sets address of `urlChanger`
@@ -342,7 +343,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     function withdraw(address payable beneficiary) external onlyOwner {
         beneficiary.sendValue(address(this).balance);
 
-        emit WithdrawTriggered(beneficiary);
+        emit ETHWithdrawn(beneficiary);
     }
 
     /// @notice Withdraw `value` tokens held by this contract.
