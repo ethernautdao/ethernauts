@@ -2,7 +2,7 @@ const assert = require('assert');
 const { ethers } = require('hardhat');
 const assertRevert = require('./utils/assertRevert');
 
-describe.only('Random', () => {
+describe('Random', () => {
   let Ethernauts;
 
   let owner, user;
