@@ -13,7 +13,6 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     using Strings for uint256;
 
     error MaxGiftableTokensTooLarge();
-    error MaxTokensTooLarge();
     error CannotCallOnCurrentState();
     error NotEnoughETH();
     error NoTokensAvailable();
@@ -35,9 +34,11 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     event PermanentURISet(bool value);
     event UrlChangerChanged(address urlChanger);
 
+    // Hardcoded
+    uint256 public constant maxTokens = 10000;
+
     // Can be set only once on deploy
-    uint256 public immutable maxTokens;
-    uint256 public immutable maxGiftable;
+    uint256 public immutable maxGiftableTokens;
     uint256 public immutable batchSize;
     bytes32 public immutable provenanceHash;
 
@@ -64,8 +65,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     SaleState public currentSaleState;
 
     constructor(
-        uint256 definitiveMaxGiftable,
-        uint256 definitiveMaxTokens,
+        uint256 definitiveMaxGiftableTokens,
         uint256 definitiveBatchSize,
         bytes32 definitiveProvenanceHash,
         uint256 initialMintPrice,
@@ -73,16 +73,11 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         address initialCouponSigner,
         address initialUrlChanger
     ) ERC721("Ethernauts", "NAUTS") {
-        if (definitiveMaxGiftable > 100) {
+        if (definitiveMaxGiftableTokens > 100) {
             revert MaxGiftableTokensTooLarge();
         }
 
-        if (definitiveMaxTokens > 10000) {
-            revert MaxTokensTooLarge();
-        }
-
-        maxGiftable = definitiveMaxGiftable;
-        maxTokens = definitiveMaxTokens;
+        maxGiftableTokens = definitiveMaxGiftableTokens;
         batchSize = definitiveBatchSize;
         provenanceHash = definitiveProvenanceHash;
 
@@ -168,7 +163,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     /// @notice Remaining giftable tokens.
     /// @return The amount of giftable tokens remaining (total giftable - already gifted).
     function availableToGift() public view returns (uint256) {
-        return maxGiftable - _tokensGifted;
+        return maxGiftableTokens - _tokensGifted;
     }
 
     /// @notice Checks if a token with tokenId exists.
@@ -204,33 +199,50 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     function tokenURI(uint256 tokenId) public view override returns (string memory) {
         string memory baseURI = _baseURI();
 
-        uint256 batchId = tokenId / batchSize;
-        if (batchId >= _randomNumbers.length) {
+        (uint256 assetId, bool assetAvailable) = getAssetIdForTokenId(tokenId);
+        if (!assetAvailable) {
             return string(abi.encodePacked(baseURI, "travelling_to_destination"));
-        }
-
-        uint256 randomNumber = _randomNumbers[batchId];
-        uint256 offset = randomNumber % batchSize;
-        uint256 maxTokenIdInBatch = batchSize * (batchId + 1) - 1;
-
-        uint256 assetId = tokenId + offset;
-        if (assetId > maxTokenIdInBatch) {
-            assetId -= batchSize;
         }
 
         return string(abi.encodePacked(baseURI, assetId.toString()));
     }
 
+    function getAssetIdForTokenId(uint256 tokenId) public view returns (uint256 assetId, bool assetAvailable) {
+        uint256 batchId = getBatchForToken(tokenId);
+        if (batchId >= _randomNumbers.length) {
+            return (assetId = 0, assetAvailable = false);
+        }
+
+        uint256 randomNumber = _randomNumbers[batchId];
+        uint256 offset = randomNumber % batchSize;
+        uint256 maxTokenIdInBatch = getMaxTokenIdInBatch(batchId);
+
+        assetId = tokenId + offset;
+        if (assetId > maxTokenIdInBatch) {
+            assetId -= batchSize;
+        }
+
+        return (assetId, assetAvailable = true);
+    }
+
+    function getMaxTokenIdInBatch(uint256 batchId) public view returns (uint256) {
+        return batchSize * (batchId + 1) - 1;
+    }
+
+    function getBatchForToken(uint256 tokenId) public view returns (uint256) {
+        return tokenId / batchSize;
+    }
+
     /// @notice Fetch the random number for `batchId`
     /// @param batchId Id for the batch.
     /// @return Random number for batchId
-    function getRandomNumberForBatch(uint256 batchId) public view returns (uint) {
+    function getRandomNumberForBatch(uint256 batchId) public view returns (uint256) {
         return _randomNumbers[batchId];
     }
 
     /// @notice Get the number of random numbers
     /// @return Number of random numbers in `_randomNumbers`
-    function getRandomNumberCount() public view returns (uint) {
+    function getRandomNumberCount() public view returns (uint256) {
         return _randomNumbers.length;
     }
 
@@ -238,7 +250,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     /// @param tokenId Id for the token.
     /// @return Returns true is the ethernaut arrived
     function isTokenRevealed(uint256 tokenId) public view returns (bool) {
-        uint256 batchId = tokenId / batchSize;
+        uint256 batchId = getBatchForToken(tokenId);
         if (batchId >= _randomNumbers.length) {
             return false;
         }
@@ -254,7 +266,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     /// @dev This can only be called by the contract owner.
     /// @param to The address the token is being gifted to.
     function gift(address to) external onlyOwner {
-        if (_tokensGifted >= maxGiftable) {
+        if (_tokensGifted >= maxGiftableTokens) {
             revert NoGiftTokensAvailable();
         }
 
@@ -391,13 +403,13 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         _mint(to, tokenId);
     }
 
-    function _generateRandomNumberIfNeeded(uint lastTokenId) private {
-        uint256 currentBatchId = lastTokenId / batchSize;
+    function _generateRandomNumberIfNeeded(uint256 lastTokenId) private {
+        uint256 currentBatchId = getBatchForToken(lastTokenId);
         if (_randomNumbers.length > currentBatchId) {
             return;
         }
 
-        uint256 maxTokenIdInBatch = batchSize * (currentBatchId + 1) - 1;
+        uint256 maxTokenIdInBatch = getMaxTokenIdInBatch(currentBatchId);
         if (maxTokenIdInBatch > lastTokenId) {
             return;
         }

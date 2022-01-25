@@ -26,8 +26,7 @@ describe('Mint', () => {
     const factory = await ethers.getContractFactory('Ethernauts');
 
     const params = { ...hre.config.defaults };
-    params.definitiveMaxGiftable = 10;
-    params.definitiveMaxTokens = 100;
+    params.definitiveMaxGiftableTokens = 10;
 
     Ethernauts = await factory.deploy(...Object.values(params));
   });
@@ -193,7 +192,7 @@ describe('Mint', () => {
       before('mint all', async () => {
         const num =
           (await Ethernauts.maxTokens()).toNumber() -
-          (await Ethernauts.maxGiftable()).toNumber() -
+          (await Ethernauts.maxGiftableTokens()).toNumber() -
           (await Ethernauts.totalSupply()).toNumber();
 
         let promises = [];
@@ -212,6 +211,10 @@ describe('Mint', () => {
 
       it('shows that no more tokens are available to mint', async function () {
         assert.equal(await Ethernauts.availableToMint(), 0);
+      });
+
+      it('shows that the totaly supply is 10000', async function () {
+        assert.equal(await Ethernauts.totalSupply(), 10000);
       });
 
       describe('when trying to mint more than the maximum amount of Ethernauts', () => {

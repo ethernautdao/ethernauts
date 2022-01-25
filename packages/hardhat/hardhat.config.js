@@ -48,8 +48,7 @@ module.exports = {
     apiKey: `${process.env.ETHERSCAN_API}`,
   },
   defaults: {
-    definitiveMaxGiftable: 100,
-    definitiveMaxTokens: 10000,
+    definitiveMaxGiftableTokens: 100,
     definitiveBatchSize: 50,
     definitiveProvenanceHash: '0xabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabca',
 
@@ -65,4 +64,7 @@ module.exports = {
     gasPrice: ethers.utils.parseUnits('100', 'gwei'),
     gasLimit: 8000000,
   },
+  mocha: {
+    timeout: 120000,
+  }
 };

@@ -34,13 +34,19 @@ describe('Random', () => {
   }
 
   async function validateTokenUri(tokenId, randomNumber) {
-    const fromContract = await Ethernauts.tokenURI(tokenId);
-    const expected = `${baseURI}${calculateAssetId(tokenId, randomNumber)}`;
+    const { assetId } = await Ethernauts.getAssetIdForTokenId(tokenId);
+    const calculatedAssetId = calculateAssetId(tokenId, randomNumber);
+    assert.equal(assetId, calculatedAssetId);
 
+    const fromContract = await Ethernauts.tokenURI(tokenId);
+    const expected = `${baseURI}${calculatedAssetId}`;
     assert.equal(fromContract, expected);
   }
 
   async function validateTempTokenUri(tokenId) {
+    const { assetAvailable } = await Ethernauts.getAssetIdForTokenId(tokenId);
+    assert.equal(assetAvailable, false);
+
     const fromContract = await Ethernauts.tokenURI(tokenId);
     const expected = `${baseURI}travelling_to_destination`;
 
@@ -55,8 +61,7 @@ describe('Random', () => {
     const factory = await ethers.getContractFactory('Ethernauts');
 
     const params = { ...hre.config.defaults };
-    params.definitiveMaxGiftable = 0;
-    params.definitiveMaxTokens = maxTokens;
+    params.definitiveMaxGiftableTokens = 0;
     params.definitiveBatchSize = batchSize;
 
     Ethernauts = await factory.deploy(...Object.values(params));
@@ -76,6 +81,22 @@ describe('Random', () => {
         Ethernauts.connect(user).generateRandomNumber(),
         'caller is not the owner'
       );
+    });
+  });
+
+  describe('when querying batch numbers', function () {
+    it('responds with the expected values', async function () {
+      assert.equal((await Ethernauts.getBatchForToken(0)).toNumber(), 0);
+      assert.equal((await Ethernauts.getBatchForToken(2 * batchSize)).toNumber(), 2);
+      assert.equal((await Ethernauts.getBatchForToken(42 * batchSize)).toNumber(), 42);
+    });
+  });
+
+  describe('when querying max token ids in batches', function () {
+    it('responds with the expected values', async function () {
+      assert.equal((await Ethernauts.getMaxTokenIdInBatch(0)).toNumber(), batchSize - 1);
+      assert.equal((await Ethernauts.getMaxTokenIdInBatch(1)).toNumber(), 2 * batchSize - 1);
+      assert.equal((await Ethernauts.getMaxTokenIdInBatch(42)).toNumber(), 43 * batchSize - 1);
     });
   });
 
