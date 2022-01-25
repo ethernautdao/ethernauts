@@ -388,10 +388,6 @@ contract Ethernauts is ERC721Enumerable, Ownable, ReentrancyGuard {
         _safeMint(to, tokenId);
     }
 
-    function _safeMint(address to, uint256 tokenId) internal virtual override {
-        super._safeMint(to, tokenId);
-    }
-
     function _generateRandomNumber() private {
         uint256 randomNumber = uint256(
             keccak256(abi.encodePacked(msg.sender, block.difficulty, block.timestamp, _randomNumbers.length))
