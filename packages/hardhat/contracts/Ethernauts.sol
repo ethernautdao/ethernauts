@@ -367,6 +367,14 @@ contract Ethernauts is ERC721Enumerable, Ownable, ReentrancyGuard {
         IERC20(token).transfer(to, value);
     }
 
+    /// @notice Manually generate a random number for a token batch in the case that
+    /// minting is delayed or stagnates. Calling this should be avoided if possible
+    /// because it increases trust on the owner.
+    /// @dev This can only be called by the contract owner.
+    function generateRandomNumber() external onlyOwner {
+        _generateRandomNumber();
+    }
+
     // -------------------
     // Private functions
     // -------------------
@@ -378,14 +386,25 @@ contract Ethernauts is ERC721Enumerable, Ownable, ReentrancyGuard {
     function _mintNext(address to) private {
         uint256 tokenId = totalSupply();
 
-        uint256 currentBatchId = tokenId / batchSize;
-        uint256 maxTokenIdInBatch = batchSize * (currentBatchId + 1) - 1;
-
-        if (tokenId == maxTokenIdInBatch) {
-            _generateRandomNumber();
-        }
+        _generateRandomNumberIfNeeded();
 
         _safeMint(to, tokenId);
+    }
+
+    function _generateRandomNumberIfNeeded() private {
+        uint256 lastTokenId = totalSupply();
+
+        uint256 currentBatchId = lastTokenId / batchSize;
+        if (_randomNumbers.length > currentBatchId) {
+            return;
+        }
+
+        uint256 maxTokenIdInBatch = batchSize * (currentBatchId + 1) - 1;
+        if (maxTokenIdInBatch > lastTokenId) {
+            return;
+        }
+
+        _generateRandomNumber();
     }
 
     function _generateRandomNumber() private {
