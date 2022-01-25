@@ -13,6 +13,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     using Strings for uint256;
 
     error MaxGiftableTokensTooLarge();
+    error MaxTokensTooLarge();
     error CannotCallOnCurrentState();
     error NotEnoughETH();
     error NoTokensAvailable();
@@ -34,10 +35,8 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     event PermanentURISet(bool value);
     event UrlChangerChanged(address urlChanger);
 
-    // Hardcoded
-    uint256 public constant maxTokens = 10000;
-
     // Can be set only once on deploy
+    uint256 public immutable maxTokens;
     uint256 public immutable maxGiftableTokens;
     uint256 public immutable batchSize;
     bytes32 public immutable provenanceHash;
@@ -65,6 +64,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     SaleState public currentSaleState;
 
     constructor(
+        uint256 definitiveMaxTokens,
         uint256 definitiveMaxGiftableTokens,
         uint256 definitiveBatchSize,
         bytes32 definitiveProvenanceHash,
@@ -73,10 +73,15 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         address initialCouponSigner,
         address initialUrlChanger
     ) ERC721("Ethernauts", "NAUTS") {
+        if (definitiveMaxTokens > 10000) {
+            revert MaxTokensTooLarge();
+        }
+
         if (definitiveMaxGiftableTokens > 100) {
             revert MaxGiftableTokensTooLarge();
         }
 
+        maxTokens = definitiveMaxTokens;
         maxGiftableTokens = definitiveMaxGiftableTokens;
         batchSize = definitiveBatchSize;
         provenanceHash = definitiveProvenanceHash;

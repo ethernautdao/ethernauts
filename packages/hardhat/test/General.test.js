@@ -24,6 +24,15 @@ describe('General', () => {
         await assertRevert(factory.deploy(...Object.values(params)), 'MaxGiftableTokensTooLarge');
       });
     });
+
+    describe('when deploying with too many tokens', () => {
+      it('reverts', async () => {
+        const params = { ...hre.config.defaults };
+        params.definitiveMaxTokens = 12000;
+
+        await assertRevert(factory.deploy(...Object.values(params)), 'MaxTokensTooLarge');
+      });
+    });
   });
 
   describe('when deploying the contract with valid paratemeters', () => {
