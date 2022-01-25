@@ -7,9 +7,8 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-contract Ethernauts is ERC721Enumerable, Ownable, ReentrancyGuard {
+contract Ethernauts is ERC721Enumerable, Ownable {
     using Address for address payable;
     using Strings for uint256;
 
@@ -111,7 +110,7 @@ contract Ethernauts is ERC721Enumerable, Ownable, ReentrancyGuard {
     // --------------------
 
     /// @notice Mints a single token if at least mintPrice is sent and there are tokens available to mint.
-    function mint() external payable nonReentrant onlyOnState(SaleState.Open) {
+    function mint() external payable onlyOnState(SaleState.Open) {
         if (msg.value < mintPrice) {
             revert NotEnoughETH();
         }
@@ -125,7 +124,7 @@ contract Ethernauts is ERC721Enumerable, Ownable, ReentrancyGuard {
 
     /// @notice Allows the sender to mint while in early sale state.
     /// @param signedCoupon Coupon given by couponSigner giving the sender early mint access.
-    function mintEarly(bytes memory signedCoupon) external payable nonReentrant onlyOnState(SaleState.Early) {
+    function mintEarly(bytes memory signedCoupon) external payable onlyOnState(SaleState.Early) {
         if (msg.value < earlyMintPrice) {
             revert NotEnoughETH();
         }
@@ -385,7 +384,7 @@ contract Ethernauts is ERC721Enumerable, Ownable, ReentrancyGuard {
             _generateRandomNumber();
         }
 
-        _safeMint(to, tokenId);
+        _mint(to, tokenId);
     }
 
     function _generateRandomNumber() private {
