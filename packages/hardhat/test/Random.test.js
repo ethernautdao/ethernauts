@@ -62,6 +62,7 @@ describe('Random', () => {
 
     const params = { ...hre.config.defaults };
     params.definitiveMaxGiftableTokens = 0;
+    params.definitiveMaxTokens = maxTokens;
     params.definitiveBatchSize = batchSize;
 
     Ethernauts = await factory.deploy(...Object.values(params));

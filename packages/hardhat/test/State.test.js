@@ -18,6 +18,7 @@ describe('State Changes', () => {
 
     const params = { ...hre.config.defaults };
     params.definitiveMaxGiftableTokens = 10;
+    params.definitiveMaxTokens = 100;
 
     Ethernauts = await factory.deploy(...Object.values(params));
   });

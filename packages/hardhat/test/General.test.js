@@ -55,7 +55,7 @@ describe('General', () => {
       );
       assert.equal(
         (await Ethernauts.maxTokens()).toNumber(),
-        10000
+        hre.config.defaults.definitiveMaxTokens
       );
     });
 

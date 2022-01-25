@@ -213,10 +213,6 @@ describe('Mint', () => {
         assert.equal(await Ethernauts.availableToMint(), 0);
       });
 
-      it('shows that the totaly supply is 10000', async function () {
-        assert.equal(await Ethernauts.totalSupply(), 10000);
-      });
-
       describe('when trying to mint more than the maximum amount of Ethernauts', () => {
         it('reverts', async () => {
           await assertRevert(

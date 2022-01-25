@@ -64,7 +64,4 @@ module.exports = {
     gasPrice: ethers.utils.parseUnits('100', 'gwei'),
     gasLimit: 8000000,
   },
-  mocha: {
-    timeout: 120000,
-  }
 };
