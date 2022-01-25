@@ -1,10 +1,11 @@
 const assert = require('assert');
 const { ethers } = require('hardhat');
+const assertRevert = require('./utils/assertRevert');
 
 describe('Random', () => {
   let Ethernauts;
 
-  let owner;
+  let owner, user;
 
   const maxTokens = 100;
   const batchSize = 10;
@@ -47,7 +48,7 @@ describe('Random', () => {
   }
 
   before('identify signers', async () => {
-    [owner] = await ethers.getSigners();
+    [owner, user] = await ethers.getSigners();
   });
 
   before('deploy contract', async () => {
@@ -67,6 +68,15 @@ describe('Random', () => {
 
   before('open the sale', async () => {
     await (await Ethernauts.connect(owner).setSaleState(2)).wait();
+  });
+
+  describe('when a non-owner account attempts to generate a random number', function () {
+    it('reverts', async function () {
+      await assertRevert(
+        Ethernauts.connect(user).generateRandomNumber(),
+        'caller is not the owner'
+      );
+    });
   });
 
   describe('as the first tokens are minted', () => {
@@ -108,6 +118,20 @@ describe('Random', () => {
         }
       });
 
+      it('shows the expected number of random numbers', async function () {
+        assert.equal((await Ethernauts.getRandomNumberCount()).toNumber(), 1);
+      });
+
+      describe('when the owner manually generates the next random number', function () {
+        before('manually generate random number', async function () {
+          await Ethernauts.generateRandomNumber();
+        });
+
+        it('shows that the random number was generated', async function () {
+          assert.equal((await Ethernauts.getRandomNumberCount()).toNumber(), 2);
+        });
+      });
+
       describe('when the tokens for the next batch are minted', () => {
         before('mint some tokens', async () => {
           await mintTokens(batchSize);
@@ -130,22 +154,70 @@ describe('Random', () => {
           }
         });
 
-        describe('when the remaining batches are minted', () => {
-          before('mint all tokens', async () => {
-            await mintTokens(maxTokens - 2 * batchSize);
+        describe('when the tokens for the next batch are partially minted', function () {
+          before('mint some tokens', async function () {
+            await mintTokens(batchSize / 2);
           });
 
-          it('shows that all assetIds are used and are unique', async () => {
-            const uris = [];
-
-            for (let i = 0; i < maxTokens; i++) {
-              const tokenURI = await Ethernauts.tokenURI(i);
-              uris.push(tokenURI);
+          it('shows the temporary URI for the newly minted tokens', async () => {
+            for (let i = 2 * batchSize; i < 2.5 * batchSize; i++) {
+              await validateTempTokenUri(i);
             }
-            assert.equal(uris.length, maxTokens);
+          });
 
-            const uriSet = new Set(uris);
-            assert.equal(uriSet.size, maxTokens);
+          describe('when the owner manually generates a random number', function () {
+            before('manually generate random number', async function () {
+              await Ethernauts.generateRandomNumber();
+            });
+
+            it('shows that the random number was generated', async function () {
+              assert.equal((await Ethernauts.getRandomNumberCount()).toNumber(), 3);
+            });
+
+            it('shows the definitive URI for the newly minted tokens', async () => {
+              const randomNumber = await Ethernauts.getRandomNumberForBatch(2);
+
+              for (let i = 2 * batchSize; i < 2.5 * batchSize; i++) {
+                await validateTokenUri(i, randomNumber);
+              }
+            });
+
+            describe('when the batch is completed', function () {
+              before('mint the rest of the tokens', async function () {
+                await mintTokens(batchSize / 2);
+              });
+
+              it('shows that random number count did not increase', async function () {
+                assert.equal((await Ethernauts.getRandomNumberCount()).toNumber(), 3);
+              });
+
+              it('shows the definitive URI for the newly minted tokens', async () => {
+                const randomNumber = await Ethernauts.getRandomNumberForBatch(2);
+
+                for (let i = 2 * batchSize; i < 3 * batchSize; i++) {
+                  await validateTokenUri(i, randomNumber);
+                }
+              });
+
+              describe('when the remaining batches are minted', () => {
+                before('mint all tokens', async () => {
+                  await mintTokens(maxTokens - 3 * batchSize);
+                });
+
+                it('shows that all assetIds are used and are unique', async () => {
+                  const uris = [];
+
+                  for (let i = 0; i < maxTokens; i++) {
+                    const tokenURI = await Ethernauts.tokenURI(i);
+                    uris.push(tokenURI);
+                  }
+                  assert.equal(uris.length, maxTokens);
+
+                  const uriSet = new Set(uris);
+                  assert.equal(uriSet.size, maxTokens);
+                });
+              });
+            });
           });
         });
       });
