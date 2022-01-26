@@ -23,7 +23,7 @@ const WalletInfo = () => {
   if (!state.address) return null;
 
   return (
-    <>
+    <div className={styles.container}>
       <div className={styles.walletInfo}>
         <div className={styles.balance}>12.345 ETH</div>
         <div className={styles.address}>
@@ -31,7 +31,12 @@ const WalletInfo = () => {
           <div>{ellipseAddress(address)}</div>
         </div>
       </div>
-    </>
+      {/* Show this only when clicking / hovering the 'walletInfo' component */}
+      <a className={styles.disconnect}>
+        <img src={'/assets/ic-disconnect.svg'} />
+        <span>Disconnect</span>
+      </a>
+    </div>
   );
 };
 

@@ -1,22 +1,28 @@
 @import "../../styles/breakpoints.scss";
 
+.container {
+  display: flex;
+  flex-direction: column;
+  background: #283237;
+  padding: 0.3rem 0.3rem 0.3rem 12px;
+  border-radius: 12px;
+  color: #F7FAF8;
+  font-size: 1rem;
+  line-height: 18px;
+  cursor: pointer;
+}
+
 .walletInfo {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #283237;
-  padding: 4px 4px 4px 10px;
-  border-radius: 12px;
-  color: #F7FAF8;
-  font-size: 16px;
-  line-height: 18px;
 }
 
 .address {
   background: #0D1315;
-  border-radius: 8px;
-  padding: 4px 8px;
-  margin-left: 8px;
+  border-radius: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  margin-left: 0.5rem;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -24,4 +30,32 @@
   @include breakpoint(xs) {
     margin-right: 0;
   }
+}
+
+.disconnect {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.3rem 0.5rem;
+  margin-top: 0.5rem;
+  margin-left: auto;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: #CAD5D7;
+  font-size: 0.875rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.disconnect span {
+  margin-left: 0.25rem;
+  line-height: 14px;
+}
+
+.disconnect:hover {
+  background: #0D1315;
+}
+
+.disconnect img svg {
+  stroke:turquoise;
 }
