@@ -34,7 +34,7 @@ const WalletInfo = () => {
       {/* Show this only when clicking / hovering the 'walletInfo' component */}
       <a className={styles.disconnect}>
         <img src={'/assets/ic-disconnect.svg'} />
-        <span>Disconnect</span>
+        <span>Disconnect wallet</span>
       </a>
     </div>
   );

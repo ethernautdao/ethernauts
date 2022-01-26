@@ -4,7 +4,8 @@
   display: flex;
   flex-direction: column;
   background: #283237;
-  padding: 0.3rem 0.3rem 0.3rem 12px;
+  padding: 0.4rem;
+  padding-left: 0.8rem;
   border-radius: 12px;
   color: #F7FAF8;
   font-size: 1rem;
@@ -36,7 +37,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.3rem 0.5rem;
+  padding: 0.25rem 0.5rem;
   margin-top: 0.5rem;
   margin-left: auto;
   border-radius: 0.5rem;
@@ -48,14 +49,10 @@
 }
 
 .disconnect span {
-  margin-left: 0.25rem;
+  margin-left: 0.5rem;
   line-height: 14px;
 }
 
 .disconnect:hover {
   background: #0D1315;
-}
-
-.disconnect img svg {
-  stroke:turquoise;
 }
