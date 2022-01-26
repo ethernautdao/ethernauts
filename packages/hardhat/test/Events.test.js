@@ -21,8 +21,7 @@ describe('Test events emitted', () => {
     const factory = await ethers.getContractFactory('Ethernauts');
 
     const params = { ...hre.config.defaults };
-    params.definitiveMaxGiftable = 10;
-    params.definitiveMaxTokens = 100;
+    params.definitiveMaxGiftableTokens = 10;
 
     Ethernauts = await factory.deploy(...Object.values(params));
   });
@@ -83,17 +82,17 @@ describe('Test events emitted', () => {
   });
 
   describe('When Withdraw is triggered', () => {
-    it('shows WithdrawTriggered event is emitted', async () => {
+    it('shows ETHWithdrawn event is emitted', async () => {
       receipt = await (await Ethernauts.connect(owner).withdraw(user.address)).wait();
-      const event = receipt.events.find((e) => e.event === 'WithdrawTriggered');
+      const event = receipt.events.find((e) => e.event === 'ETHWithdrawn');
       assert.equal(event.args.beneficiary, user.address);
     });
   });
 
   describe('When PermanentURL is locked', () => {
-    it('shows PermanentURITriggered event is emitted', async () => {
+    it('shows PermanentURISet event is emitted', async () => {
       receipt = await (await Ethernauts.connect(owner).setPermanentURI()).wait();
-      const event = receipt.events.find((e) => e.event === 'PermanentURITriggered');
+      const event = receipt.events.find((e) => e.event === 'PermanentURISet');
       assert.equal(event.args.value, true);
     });
     context('and owner attempts to set baseURI', () => {

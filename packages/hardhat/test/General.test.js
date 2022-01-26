@@ -19,7 +19,7 @@ describe('General', () => {
     describe('when deploying with too many giftable tokens', () => {
       it('reverts', async () => {
         const params = { ...hre.config.defaults };
-        params.definitiveMaxGiftable = 200;
+        params.definitiveMaxGiftableTokens = 200;
 
         await assertRevert(factory.deploy(...Object.values(params)), 'MaxGiftableTokensTooLarge');
       });
@@ -59,8 +59,8 @@ describe('General', () => {
 
     it('shows the correct max supplies', async () => {
       assert.equal(
-        (await Ethernauts.maxGiftable()).toNumber(),
-        hre.config.defaults.definitiveMaxGiftable
+        (await Ethernauts.maxGiftableTokens()).toNumber(),
+        hre.config.defaults.definitiveMaxGiftableTokens
       );
       assert.equal(
         (await Ethernauts.maxTokens()).toNumber(),

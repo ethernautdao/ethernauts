@@ -26,19 +26,19 @@ async function main() {
     if (from !== '0x0000000000000000000000000000000000000000') return;
 
     tokenId = Number(tokenId);
-    const batchId = Math.floor(tokenId / batchSize);
-    const maxTokenIdInBatch = batchSize * (batchId + 1) - 1;
+    const batchNumber = Math.floor(tokenId / batchSize);
+    const maxTokenIdInBatch = batchSize * (batchNumber + 1) - 1;
 
     console.log('Transfer:', JSON.stringify({ to, tokenId }));
 
     if (tokenId == maxTokenIdInBatch) {
-      console.log('BatchEnd:', JSON.stringify({ batchId, maxTokenIdInBatch }));
+      console.log('BatchEnd:', JSON.stringify({ batchNumber, maxTokenIdInBatch }));
 
       await queue.add({
         name: JOB_PROCESS_BATCH,
         queueName: config.MINTS_QUEUE_NAME,
         data: {
-          batchId,
+          batchNumber,
           batchSize,
         },
       });

@@ -48,8 +48,8 @@ module.exports = {
     apiKey: `${process.env.ETHERSCAN_API}`,
   },
   defaults: {
-    definitiveMaxGiftable: 100,
     definitiveMaxTokens: 10000,
+    definitiveMaxGiftableTokens: 100,
     definitiveBatchSize: 50,
     definitiveProvenanceHash: '0xabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabca',
 
