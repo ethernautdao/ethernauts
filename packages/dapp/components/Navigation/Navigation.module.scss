@@ -1,11 +1,12 @@
 .nav {
   text-align: center;
+  padding: 0.5rem 0;
 
   .link {
     color: var(--navigation-text-color);
     font-size: 1.2rem;
     font-weight: bold;
-    margin: 0 15px;
+    margin: 0 1rem;
     padding-bottom: 0.5rem;
   }
 
