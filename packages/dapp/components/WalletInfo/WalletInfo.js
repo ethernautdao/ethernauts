@@ -24,10 +24,12 @@ const WalletInfo = () => {
 
   return (
     <>
-      <Dot />
-      <div className={styles.container}>
-        <div className={styles.network}>Network: {chainData?.name}</div>
-        <div className={styles.address}>Address: {ellipseAddress(address)}</div>
+      <div className={styles.walletInfo}>
+        <div className={styles.balance}>12.345 ETH</div>
+        <div className={styles.container}>
+          <Dot />
+          <div className={styles.address}>{ellipseAddress(address)}</div>
+        </div>
       </div>
     </>
   );

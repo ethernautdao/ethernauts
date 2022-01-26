@@ -1,8 +1,14 @@
 @import "../../styles/breakpoints.scss";
 
+.walletInfo {
+  display: flex;
+}
+
 .container {
-  margin-right: 30px;
-  height: 30px;
+  padding: 4px 8px;
+  background: #0D1315;
+  border-radius: 8px;
+  display: flex;
 
   @include breakpoint(xs) {
     margin-right: 0;
@@ -20,7 +26,8 @@
 
 .address {
   color: #fff;
-  font-size: 12px;
+  font-size: 1rem;
+  line-height: 18px;
 
   @include breakpoint(xs) {
     display: none;
