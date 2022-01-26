@@ -12,14 +12,17 @@ const constants = require('../src/constants');
 const fileExists = require('../src/utils/file-exists');
 
 async function main() {
-  if (await fileExists(path.join(constants.ASSETS_FOLDER, '0.png'))) {
+  if (await fileExists(path.join(constants.RESOURCES_ASSETS_FOLDER, '0.png'))) {
     const confirm = new Confirm('Do you want to recreate the assets and metadata?');
     const yes = await confirm.run();
     if (!yes) return;
-    await del([constants.ASSETS_FOLDER, constants.METADATA_FOLDER]);
+    await del([constants.RESOURCES_ASSETS_FOLDER, constants.RESOURCES_METADATA_FOLDER]);
   }
 
-  await Promise.all([makeDir(constants.ASSETS_FOLDER), makeDir(constants.METADATA_FOLDER)]);
+  await Promise.all([
+    makeDir(constants.RESOURCES_ASSETS_FOLDER),
+    makeDir(constants.RESOURCES_METADATA_FOLDER),
+  ]);
 
   const _r = random.exponential(10.1);
   const getRarity = () => {
@@ -50,8 +53,8 @@ async function main() {
 
     rarities.push(metadata.rarity);
 
-    const assetPath = path.join(constants.ASSETS_FOLDER, `${x}.png`);
-    const metadataPath = path.join(constants.METADATA_FOLDER, `${x}.json`);
+    const assetPath = path.join(constants.RESOURCES_ASSETS_FOLDER, `${x}.png`);
+    const metadataPath = path.join(constants.RESOURCES_METADATA_FOLDER, `${x}.json`);
 
     promises.push(
       fs.promises.writeFile(assetPath, png.getBuffer()),
