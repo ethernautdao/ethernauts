@@ -1,6 +1,11 @@
 ### Document
 https://pastebin.com/DWAEpn9L
 
+### PRs addressing observations
+* https://github.com/ethernautdao/ethernauts/pull/208
+* https://github.com/ethernautdao/ethernauts/pull/209
+* https://github.com/ethernautdao/ethernauts/pull/211
+
 ### Content
 EthernautDAO NFT audit 24-01-2022
  
