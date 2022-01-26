@@ -26,9 +26,9 @@ const WalletInfo = () => {
     <>
       <div className={styles.walletInfo}>
         <div className={styles.balance}>12.345 ETH</div>
-        <div className={styles.container}>
+        <div className={styles.address}>
           <Dot />
-          <div className={styles.address}>{ellipseAddress(address)}</div>
+          <div>{ellipseAddress(address)}</div>
         </div>
       </div>
     </>

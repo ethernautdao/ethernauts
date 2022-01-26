@@ -2,34 +2,26 @@
 
 .walletInfo {
   display: flex;
-}
-
-.container {
-  padding: 4px 8px;
-  background: #0D1315;
-  border-radius: 8px;
-  display: flex;
-
-  @include breakpoint(xs) {
-    margin-right: 0;
-  }
-}
-
-.network {
-  color: #fff;
-  font-size: 12px;
-
-  @include breakpoint(xs) {
-    display: none;
-  }
+  justify-content: center;
+  align-items: center;
+  background: #283237;
+  padding: 4px 4px 4px 10px;
+  border-radius: 12px;
+  color: #F7FAF8;
+  font-size: 16px;
+  line-height: 18px;
 }
 
 .address {
-  color: #fff;
-  font-size: 1rem;
-  line-height: 18px;
+  background: #0D1315;
+  border-radius: 8px;
+  padding: 4px 8px;
+  margin-left: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
   @include breakpoint(xs) {
-    display: none;
+    margin-right: 0;
   }
 }
