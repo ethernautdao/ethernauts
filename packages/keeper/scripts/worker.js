@@ -3,6 +3,7 @@ require('../src/errors-catch');
 const { FlowProducer, Worker } = require('bullmq');
 const { getContractFromAbi } = require('@ethernauts/hardhat/src/utils/hardhat');
 const config = require('../src/config');
+const notify = require('../src/notify');
 const processJobs = require('../src/process-jobs');
 
 async function main() {
@@ -27,7 +28,12 @@ async function main() {
 
   worker
     .on('completed', (job) => console.log('completed: ', JSON.stringify(job)))
-    .on('error', (err) => console.error(err))
+    .on('error', (error) => {
+      notify.error({
+        message: 'Worker Job Error',
+        error,
+      });
+    })
     .on('failed', (job) => console.log('failed: ', JSON.stringify(job)));
 
   await worker.waitUntilReady();
