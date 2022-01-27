@@ -5,14 +5,14 @@
   "main": "index.js",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "env-cmd -f .env.staging next dev",
     "build": "next build",
     "start": "next start",
     "export": "next export",
     "lint": "next lint",
     "pre:deploy:staging": "env-cmd -f .env.staging npm run build && npm run export",
     "pre:deploy:production": "env-cmd -f .env.production npm run build && npm run export",
-    "deploy:staging": "npm run pre:deploy:staging && netlify deploy --open",
+    "deploy:staging": "npm run pre:deploy:staging && netlify deploy --prod --open",
     "deploy:production": "npm run pre:deploy:production && netlify deploy --prod --open",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

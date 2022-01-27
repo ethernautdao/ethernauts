@@ -20,7 +20,6 @@ const signCouponForAddress = async (address, signer) => {
 };
 
 async function main() {
-  // TODO: Get the signer from a .env file's private key.
   const [couponSigner] = await ethers.getSigners();
 
   const signedCouponsPath = path.join(

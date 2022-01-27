@@ -30,13 +30,13 @@ export const DEFAULT_NETWORKS_PER_ENVIRONMENT = {
 export const supportedChains = [
   {
     name: 'Localhost Network',
-    short_name: 'local',
+    shortName: 'local',
     chain: 'ETH',
     network: 'local',
-    chain_id: [31337, '0x7a69'],
-    network_id: 31337,
-    rpc_url: 'http://127.0.0.1:8545',
-    native_currency: {
+    chainId: 31337,
+    networkId: 31337,
+    rpcUrl: 'http://127.0.0.1:8545',
+    nativeCurrency: {
       symbol: 'ETH',
       name: 'Ethereum',
       decimals: '18',
@@ -46,13 +46,13 @@ export const supportedChains = [
   },
   {
     name: 'Optimistic Kovan',
-    short_name: 'optimism-kovan',
+    shortName: 'optimism-kovan',
     chain: 'ETH',
     network: 'kovan',
-    chain_id: [69, '0x45'],
-    network_id: 69,
-    rpc_url: 'https://optimism-kovan.infura.io/v3/%PROJECT_ID%',
-    native_currency: {
+    chainId: 69,
+    networkId: 69,
+    rpcUrl: 'https://optimism-kovan.infura.io/v3/%PROJECT_ID%',
+    nativeCurrency: {
       symbol: 'ETH',
       name: 'Ethereum',
       decimals: '18',
@@ -62,13 +62,13 @@ export const supportedChains = [
   },
   {
     name: 'Optimistic Ethereum ',
-    short_name: 'optimism-mainnet',
+    shortName: 'optimism-mainnet',
     chain: 'ETH',
     network: 'optimism',
-    chain_id: [10, '0xa'],
-    network_id: 10,
-    rpc_url: 'https://optimism-mainnet.infura.io/v3/%PROJECT_ID%',
-    native_currency: {
+    chainId: 10,
+    networkId: 10,
+    rpcUrl: 'https://optimism-mainnet.infura.io/v3/%PROJECT_ID%',
+    nativeCurrency: {
       symbol: 'ETH',
       name: 'Ethereum',
       decimals: '18',

@@ -7,5 +7,4 @@ export const saleState = {
   0: PAUSED,
   1: EARLY,
   2: OPEN,
-  3: COMPLETED,
 };

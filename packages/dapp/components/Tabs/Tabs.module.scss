@@ -2,6 +2,7 @@
   z-index: 1;
   margin: 3rem 0;
   text-align: center;
+  cursor: pointer;
 
   .link {
     color: var(--navigation-text-color);
@@ -14,5 +15,9 @@
   .active {
     color: var(--navigation-active-text-color);
     border-bottom: 2px solid var(--navigation-border-color);
+  }
+
+  .disabled {
+    cursor: not-allowed;
   }
 }

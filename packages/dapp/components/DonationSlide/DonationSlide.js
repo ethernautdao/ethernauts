@@ -10,16 +10,16 @@ import { BREAKPOINTS } from '../../constants/common';
 import { WalletContext } from '../../contexts/WalletProvider';
 import { DonationContext } from '../../contexts/DonationProvider';
 
-import { INITIAL_DONATION, MIN_DONATION, MAX_DONATION, EARLY } from '../../constants/common';
+import { INITIAL_DONATION, MIN_DONATION, MAX_DONATION } from '../../constants/common';
+import { EARLY } from '../../constants/sale-state';
 
 import styles from './DonationSlide.module.scss';
 
 const SelectDonation = () => {
   const { state } = useContext(WalletContext);
-  const { donation, setDonation } = useContext(DonationContext);
-
   const [{ data }, fetchSaleState] = useSaleState();
   const { breakpoint } = useBreakpoint(BREAKPOINTS, 'desktop');
+  const { donation, setDonation } = useContext(DonationContext);
 
   const isMobile = breakpoint === 'mobile';
 

@@ -7,15 +7,17 @@
   z-index: 1;
   display: grid;
   grid-gap: 16px;
-  margin-top: 10rem;
 }
 
 .me {
   grid-template-columns: repeat(1, 1fr);
+  margin: 5rem 0;
 }
 
 .all {
   grid-template-columns: repeat(3, 1fr);
+  margin-top: 10rem;
+  margin-bottom: 2rem;
 }
 
 .mobileGrid {
