@@ -18,9 +18,10 @@ async function main() {
   events
     .on('added', ({ name, data }) => {
       if (name === JOB_PROCESS_BATCH) {
+        const meta = typeof data === 'string' ? JSON.parse(data) : data;
         notify.info({
           message: 'Batch added for precessing',
-          meta: data,
+          meta,
         });
       }
     })
