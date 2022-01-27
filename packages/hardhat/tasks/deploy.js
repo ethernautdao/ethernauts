@@ -106,13 +106,23 @@ async function _verifyContract(contractAddress, constructorArguments) {
 }
 
 async function _confirmParameters(constructorParams) {
-  console.log('Constructor arguments:', constructorParams);
-  await prompt({
+  const humanConstructorParams = {
+    ...constructorParams,
+    initialMintPrice: `${ethers.utils.formatEther(constructorParams.initialMintPrice)} ETH`,
+    initialEarlyMintPrice: `${ethers.utils.formatEther(constructorParams.initialEarlyMintPrice)} ETH`,
+  };
+  console.log('Constructor arguments:', humanConstructorParams);
+
+  const { question } = await prompt({
     type: 'confirm',
     name: 'question',
     message: 'Continue?',
   });
   console.log();
+
+  if (question === false) {
+    process.exit();
+  }
 }
 
 async function _deployContract(constructorArguments) {
