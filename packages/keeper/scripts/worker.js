@@ -1,3 +1,5 @@
+require('../src/errors-catch');
+
 const { FlowProducer, Worker } = require('bullmq');
 const { getContractFromAbi } = require('@ethernauts/hardhat/src/utils/hardhat');
 const config = require('../src/config');
@@ -33,7 +35,4 @@ async function main() {
   console.log(' - Keeper Jobs Started - ');
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+main();

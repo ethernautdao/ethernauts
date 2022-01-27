@@ -26,8 +26,8 @@ describe('Mint', () => {
     const factory = await ethers.getContractFactory('Ethernauts');
 
     const params = { ...hre.config.defaults };
-    params.definitiveMaxGiftable = 10;
     params.definitiveMaxTokens = 100;
+    params.definitiveMaxGiftableTokens = 10;
 
     Ethernauts = await factory.deploy(...Object.values(params));
   });
@@ -193,7 +193,7 @@ describe('Mint', () => {
       before('mint all', async () => {
         const num =
           (await Ethernauts.maxTokens()).toNumber() -
-          (await Ethernauts.maxGiftable()).toNumber() -
+          (await Ethernauts.maxGiftableTokens()).toNumber() -
           (await Ethernauts.totalSupply()).toNumber();
 
         let promises = [];

@@ -19,4 +19,6 @@ module.exports = cleanEnv(process.env, {
   FLEEK_STORAGE_API_SECRET: str({ default: '' }),
   FLEEK_METADATA_FOLDER: str({ default: 'metadata' }),
   FLEEK_ASSETS_FOLDER: str({ default: 'assets' }),
+  KEEPER_LOGS_WEBHOOK_URL: str({ default: '' }),
+  KEEPER_ERRORS_WEBHOOK_URL: str({ default: '' }),
 });

@@ -89,7 +89,8 @@ describe('Gift', () => {
   describe('when trying to gift more than the maximum amount of giftable tokens', () => {
     before('mint max -1', async () => {
       const num =
-        (await Ethernauts.maxGiftable()).toNumber() - (await Ethernauts.tokensGifted()).toNumber();
+        (await Ethernauts.maxGiftableTokens()).toNumber() -
+        (await Ethernauts.tokensGifted()).toNumber();
 
       let promises = [];
       for (let i = 0; i < num; i++) {

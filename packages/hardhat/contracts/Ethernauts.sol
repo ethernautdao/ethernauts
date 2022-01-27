@@ -1,4 +1,4 @@
-//SPDX-License-Identifier: Unlicense
+//SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts/utils/Address.sol";
@@ -7,9 +7,8 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-contract Ethernauts is ERC721Enumerable, Ownable, ReentrancyGuard {
+contract Ethernauts is ERC721Enumerable, Ownable {
     using Address for address payable;
     using Strings for uint256;
 
@@ -19,17 +18,26 @@ contract Ethernauts is ERC721Enumerable, Ownable, ReentrancyGuard {
     error NotEnoughETH();
     error NoTokensAvailable();
     error CouponAlreadyRedeemed();
-    error CouponSignedForAnotherUser();
+    error InvalidCoupon();
     error NoGiftTokensAvailable();
     error BaseUriIsFrozen();
-    error NoChange();
+    error DoesNotChangeSaleState();
     error InvalidRecoveryAddress();
-    error InsufficientTokenBalance();
+    error InsufficientERC20TokenBalance();
     error NotAuthorized();
+
+    event SaleStateChanged(SaleState state);
+    event BaseTokenURIChanged(string baseTokenURI);
+    event EarlyMintPriceChanged(uint256 earlyMintPrice);
+    event MintPriceChanged(uint256 mintPrice);
+    event CouponSignerChanged(address couponSigner);
+    event ETHWithdrawn(address beneficiary);
+    event PermanentURISet(bool value);
+    event UrlChangerChanged(address urlChanger);
 
     // Can be set only once on deploy
     uint256 public immutable maxTokens;
-    uint256 public immutable maxGiftable;
+    uint256 public immutable maxGiftableTokens;
     uint256 public immutable batchSize;
     bytes32 public immutable provenanceHash;
 
@@ -44,7 +52,7 @@ contract Ethernauts is ERC721Enumerable, Ownable, ReentrancyGuard {
     uint256 private _tokensGifted;
     mapping(address => bool) private _redeemedCoupons; // user address => if its single coupon has been redeemed
     uint256[] private _randomNumbers;
-    bool public permanentUrl;
+    bool public permanentURI;
 
     // Three different sale stages:
     enum SaleState {
@@ -54,18 +62,10 @@ contract Ethernauts is ERC721Enumerable, Ownable, ReentrancyGuard {
     }
 
     SaleState public currentSaleState;
-    event SaleStateChanged(SaleState state);
-    event BaseTokenURIChanged(string baseTokenURI);
-    event EarlyMintPriceChanged(uint256 earlyMintPrice);
-    event MintPriceChanged(uint256 mintPrice);
-    event CouponSignerChanged(address couponSigner);
-    event WithdrawTriggered(address beneficiary);
-    event PermanentURITriggered(bool value);
-    event UrlChangerChanged(address urlChanger);
 
     constructor(
-        uint256 definitiveMaxGiftable,
         uint256 definitiveMaxTokens,
+        uint256 definitiveMaxGiftableTokens,
         uint256 definitiveBatchSize,
         bytes32 definitiveProvenanceHash,
         uint256 initialMintPrice,
@@ -73,16 +73,16 @@ contract Ethernauts is ERC721Enumerable, Ownable, ReentrancyGuard {
         address initialCouponSigner,
         address initialUrlChanger
     ) ERC721("Ethernauts", "NAUTS") {
-        if (definitiveMaxGiftable > 100) {
-            revert MaxGiftableTokensTooLarge();
-        }
-
         if (definitiveMaxTokens > 10000) {
             revert MaxTokensTooLarge();
         }
 
-        maxGiftable = definitiveMaxGiftable;
+        if (definitiveMaxGiftableTokens > 100) {
+            revert MaxGiftableTokensTooLarge();
+        }
+
         maxTokens = definitiveMaxTokens;
+        maxGiftableTokens = definitiveMaxGiftableTokens;
         batchSize = definitiveBatchSize;
         provenanceHash = definitiveProvenanceHash;
 
@@ -111,7 +111,7 @@ contract Ethernauts is ERC721Enumerable, Ownable, ReentrancyGuard {
     // --------------------
 
     /// @notice Mints a single token if at least mintPrice is sent and there are tokens available to mint.
-    function mint() external payable nonReentrant onlyOnState(SaleState.Open) {
+    function mint() external payable onlyOnState(SaleState.Open) {
         if (msg.value < mintPrice) {
             revert NotEnoughETH();
         }
@@ -125,7 +125,7 @@ contract Ethernauts is ERC721Enumerable, Ownable, ReentrancyGuard {
 
     /// @notice Allows the sender to mint while in early sale state.
     /// @param signedCoupon Coupon given by couponSigner giving the sender early mint access.
-    function mintEarly(bytes memory signedCoupon) external payable nonReentrant onlyOnState(SaleState.Early) {
+    function mintEarly(bytes memory signedCoupon) external payable onlyOnState(SaleState.Early) {
         if (msg.value < earlyMintPrice) {
             revert NotEnoughETH();
         }
@@ -139,7 +139,7 @@ contract Ethernauts is ERC721Enumerable, Ownable, ReentrancyGuard {
         }
 
         if (!isCouponSignedForUser(msg.sender, signedCoupon)) {
-            revert CouponSignedForAnotherUser();
+            revert InvalidCoupon();
         }
 
         _redeemedCoupons[msg.sender] = true;
@@ -168,7 +168,7 @@ contract Ethernauts is ERC721Enumerable, Ownable, ReentrancyGuard {
     /// @notice Remaining giftable tokens.
     /// @return The amount of giftable tokens remaining (total giftable - already gifted).
     function availableToGift() public view returns (uint256) {
-        return maxGiftable - _tokensGifted;
+        return maxGiftableTokens - _tokensGifted;
     }
 
     /// @notice Checks if a token with tokenId exists.
@@ -204,33 +204,50 @@ contract Ethernauts is ERC721Enumerable, Ownable, ReentrancyGuard {
     function tokenURI(uint256 tokenId) public view override returns (string memory) {
         string memory baseURI = _baseURI();
 
-        uint256 batchId = tokenId / batchSize;
-        if (batchId >= _randomNumbers.length) {
+        (uint256 assetId, bool assetAvailable) = getAssetIdForTokenId(tokenId);
+        if (!assetAvailable) {
             return string(abi.encodePacked(baseURI, "travelling_to_destination"));
-        }
-
-        uint256 randomNumber = _randomNumbers[batchId];
-        uint256 offset = randomNumber % batchSize;
-        uint256 maxTokenIdInBatch = batchSize * (batchId + 1) - 1;
-
-        uint256 assetId = tokenId + offset;
-        if (assetId > maxTokenIdInBatch) {
-            assetId -= batchSize;
         }
 
         return string(abi.encodePacked(baseURI, assetId.toString()));
     }
 
-    /// @notice Fetch the random number for `batchId`
-    /// @param batchId Id for the batch.
-    /// @return Random number for batchId
-    function getRandomNumberForBatch(uint256 batchId) public view returns (uint) {
-        return _randomNumbers[batchId];
+    function getAssetIdForTokenId(uint256 tokenId) public view returns (uint256 assetId, bool assetAvailable) {
+        uint256 batchNumber = getBatchForToken(tokenId);
+        if (batchNumber >= _randomNumbers.length) {
+            return (assetId = 0, assetAvailable = false);
+        }
+
+        uint256 randomNumber = _randomNumbers[batchNumber];
+        uint256 offset = randomNumber % batchSize;
+        uint256 maxTokenIdInBatch = getMaxTokenIdInBatch(batchNumber);
+
+        assetId = tokenId + offset;
+        if (assetId > maxTokenIdInBatch) {
+            assetId -= batchSize;
+        }
+
+        return (assetId, assetAvailable = true);
+    }
+
+    function getMaxTokenIdInBatch(uint256 batchNumber) public view returns (uint256) {
+        return batchSize * (batchNumber + 1) - 1;
+    }
+
+    function getBatchForToken(uint256 tokenId) public view returns (uint256) {
+        return tokenId / batchSize;
+    }
+
+    /// @notice Fetch the random number for `batchNumber`
+    /// @param batchNumber for the batch.
+    /// @return Random number for batchNumber
+    function getRandomNumberForBatch(uint256 batchNumber) public view returns (uint256) {
+        return _randomNumbers[batchNumber];
     }
 
     /// @notice Get the number of random numbers
     /// @return Number of random numbers in `_randomNumbers`
-    function getRandomNumberCount() public view returns (uint) {
+    function getRandomNumberCount() public view returns (uint256) {
         return _randomNumbers.length;
     }
 
@@ -238,8 +255,8 @@ contract Ethernauts is ERC721Enumerable, Ownable, ReentrancyGuard {
     /// @param tokenId Id for the token.
     /// @return Returns true is the ethernaut arrived
     function isTokenRevealed(uint256 tokenId) public view returns (bool) {
-        uint256 batchId = tokenId / batchSize;
-        if (batchId >= _randomNumbers.length) {
+        uint256 batchNumber = getBatchForToken(tokenId);
+        if (batchNumber >= _randomNumbers.length) {
             return false;
         }
 
@@ -254,7 +271,7 @@ contract Ethernauts is ERC721Enumerable, Ownable, ReentrancyGuard {
     /// @dev This can only be called by the contract owner.
     /// @param to The address the token is being gifted to.
     function gift(address to) external onlyOwner {
-        if (_tokensGifted >= maxGiftable) {
+        if (_tokensGifted >= maxGiftableTokens) {
             revert NoGiftTokensAvailable();
         }
 
@@ -282,14 +299,14 @@ contract Ethernauts is ERC721Enumerable, Ownable, ReentrancyGuard {
     }
 
     /// @notice Sets the base URI for all token URIs.
-    /// @dev This can only be called by the contract owner. Can only be called if NFTs arent done minting.
+    /// @dev This can only be called by the contract owner. Can only be called if if the permanentURI hasn't been set yet.
     /// @param newBaseTokenURI The new base URI for tokens.
     function setBaseURI(string calldata newBaseTokenURI) external {
         if (msg.sender != owner() && msg.sender != urlChanger) {
             revert NotAuthorized();
         }
 
-        if (permanentUrl) {
+        if (permanentURI) {
             revert BaseUriIsFrozen();
         }
 
@@ -303,7 +320,7 @@ contract Ethernauts is ERC721Enumerable, Ownable, ReentrancyGuard {
     /// @param newSaleState The new sale state of the tokens.
     function setSaleState(SaleState newSaleState) external onlyOwner {
         if (newSaleState == currentSaleState) {
-            revert NoChange();
+            revert DoesNotChangeSaleState();
         }
 
         currentSaleState = newSaleState;
@@ -323,9 +340,9 @@ contract Ethernauts is ERC721Enumerable, Ownable, ReentrancyGuard {
     /// @notice Freeze the URI so that it cant be updated anymore.
     /// @dev This can only be called by the contract owner.
     function setPermanentURI() external onlyOwner {
-        permanentUrl = true;
+        permanentURI = true;
 
-        emit PermanentURITriggered(true);
+        emit PermanentURISet(true);
     }
 
     /// @notice Sets address of `urlChanger`
@@ -343,7 +360,7 @@ contract Ethernauts is ERC721Enumerable, Ownable, ReentrancyGuard {
     function withdraw(address payable beneficiary) external onlyOwner {
         beneficiary.sendValue(address(this).balance);
 
-        emit WithdrawTriggered(beneficiary);
+        emit ETHWithdrawn(beneficiary);
     }
 
     /// @notice Withdraw `value` tokens held by this contract.
@@ -361,10 +378,18 @@ contract Ethernauts is ERC721Enumerable, Ownable, ReentrancyGuard {
         }
 
         if (IERC20(token).balanceOf(address(this)) < value) {
-            revert InsufficientTokenBalance();
+            revert InsufficientERC20TokenBalance();
         }
 
         IERC20(token).transfer(to, value);
+    }
+
+    /// @notice Manually generate a random number for a token batch in the case that
+    /// minting is delayed or stagnates. Calling this should be avoided if possible
+    /// because it increases trust on the owner.
+    /// @dev This can only be called by the contract owner.
+    function generateRandomNumber() external onlyOwner {
+        _generateRandomNumber();
     }
 
     // -------------------
@@ -378,18 +403,23 @@ contract Ethernauts is ERC721Enumerable, Ownable, ReentrancyGuard {
     function _mintNext(address to) private {
         uint256 tokenId = totalSupply();
 
-        uint256 currentBatchId = tokenId / batchSize;
-        uint256 maxTokenIdInBatch = batchSize * (currentBatchId + 1) - 1;
+        _generateRandomNumberIfNeeded(tokenId);
 
-        if (tokenId == maxTokenIdInBatch) {
-            _generateRandomNumber();
-        }
-
-        _safeMint(to, tokenId);
+        _mint(to, tokenId);
     }
 
-    function _safeMint(address to, uint256 tokenId) internal virtual override {
-        super._safeMint(to, tokenId);
+    function _generateRandomNumberIfNeeded(uint256 lastTokenId) private {
+        uint256 currentBatchNumber = getBatchForToken(lastTokenId);
+        if (_randomNumbers.length > currentBatchNumber) {
+            return;
+        }
+
+        uint256 maxTokenIdInBatch = getMaxTokenIdInBatch(currentBatchNumber);
+        if (maxTokenIdInBatch > lastTokenId) {
+            return;
+        }
+
+        _generateRandomNumber();
     }
 
     function _generateRandomNumber() private {

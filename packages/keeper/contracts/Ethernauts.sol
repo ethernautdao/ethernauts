@@ -5,7 +5,7 @@ import {Ethernauts as EthernautsBase} from "@ethernauts/hardhat/contracts/Ethern
 
 contract Ethernauts is EthernautsBase {
     constructor(
-        uint256 definitiveMaxGiftable,
+        uint256 definitiveMaxGiftableTokens,
         uint256 definitiveMaxTokens,
         uint256 definitiveBatchSize,
         bytes32 definitiveProvenanceHash,
@@ -15,7 +15,7 @@ contract Ethernauts is EthernautsBase {
         address initialUrlChanger
     )
         EthernautsBase(
-            definitiveMaxGiftable,
+            definitiveMaxGiftableTokens,
             definitiveMaxTokens,
             definitiveBatchSize,
             definitiveProvenanceHash,

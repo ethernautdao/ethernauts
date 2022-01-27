@@ -17,7 +17,7 @@ describe('State Changes', () => {
     const factory = await ethers.getContractFactory('Ethernauts');
 
     const params = { ...hre.config.defaults };
-    params.definitiveMaxGiftable = 10;
+    params.definitiveMaxGiftableTokens = 10;
     params.definitiveMaxTokens = 100;
 
     Ethernauts = await factory.deploy(...Object.values(params));
@@ -42,7 +42,7 @@ describe('State Changes', () => {
   });
 
   it('state cannot be overriden with the same value', async () => {
-    await assertRevert(Ethernauts.connect(owner).setSaleState(0), 'NoChange');
+    await assertRevert(Ethernauts.connect(owner).setSaleState(0), 'DoesNotChangeSaleState');
     assert.equal(await Ethernauts.currentSaleState(), 0);
   });
 });

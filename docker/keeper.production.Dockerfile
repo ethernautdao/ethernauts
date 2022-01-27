@@ -15,6 +15,10 @@ COPY --chown=node:node packages/keeper/package.json /src/packages/keeper/package
 
 RUN npm -w @ethernauts/keeper -w @ethernauts/hardhat ci
 
+# Depending on host, deps sometimes are installed on root node_modules, so we have
+# to make sure to always have the node_modules folders
+RUN mkdir -p /src/packages/hardhat/node_modules /src/packages/keeper/node_modules
+
 FROM node:16.13.2-alpine
 
 ENV NODE_ENV=production

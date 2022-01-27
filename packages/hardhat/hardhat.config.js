@@ -40,7 +40,7 @@ module.exports = {
       accounts: process.env.DEPLOYER_KEY ? [`${process.env.DEPLOYER_KEY}`] : [],
     },
     ['optimistic-kovan']: {
-      url: 'https://kovan.optimism.io',
+      url: process.env.NETWORK_ENDPOINT || 'https://kovan.optimism.io',
       accounts: process.env.DEPLOYER_KEY ? [`${process.env.DEPLOYER_KEY}`] : [],
     },
   },
@@ -48,8 +48,23 @@ module.exports = {
     apiKey: `${process.env.ETHERSCAN_API}`,
   },
   defaults: {
-    definitiveMaxGiftable: 100,
+    // // Local
+    // definitiveMaxTokens: 10000,
+    // definitiveMaxGiftableTokens: 100,
+    // definitiveBatchSize: 50,
+    // definitiveProvenanceHash: '0xabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabca',
+
+    // initialMintPrice: ethers.utils.parseEther('0.2'),
+    // initialEarlyMintPrice: ethers.utils.parseEther('0.015'),
+
+    // // Default hardhat signer[0]
+    // // Will be changed at runtime if targeting a real network.
+    // initialCouponSigner: '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266',
+    // initialUrlChanger: '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266',
+
+    // Mainnet
     definitiveMaxTokens: 10000,
+    definitiveMaxGiftableTokens: 100,
     definitiveBatchSize: 50,
     definitiveProvenanceHash: '0xabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabca',
 
@@ -58,11 +73,10 @@ module.exports = {
 
     // Default hardhat signer[0]
     // Will be changed at runtime if targeting a real network.
-    initialCouponSigner: '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266',
-    initialUrlChanger: '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266',
+    initialCouponSigner: '0xA227D2b83aB33384124A75872e1f3D71b6341D0b',
+    initialUrlChanger: '0xA227D2b83aB33384124A75872e1f3D71b6341D0b',
   },
   overrides: {
-    gasPrice: ethers.utils.parseUnits('100', 'gwei'),
-    gasLimit: 8000000,
+    gasPrice: ethers.utils.parseUnits('0.001', 'gwei'),
   },
 };
