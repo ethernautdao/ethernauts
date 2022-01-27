@@ -2,7 +2,6 @@
 .idea
 .vscode/
 coverage*
-data/
 docker/data/
 node_modules/
 

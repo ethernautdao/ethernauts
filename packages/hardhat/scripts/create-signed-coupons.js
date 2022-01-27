@@ -36,7 +36,7 @@ async function main() {
 }
 
 main()
-  .then(() => console.log('Signed coupons has been created successfully'))
+  .then(() => console.log('Signed coupons have been created successfully'))
   .catch((err) => {
     console.error(err);
     process.exit(1);
