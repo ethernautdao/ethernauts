@@ -46,7 +46,7 @@ exports.getDefaultBucket = async function getDefaultBucket() {
 
 const _memoizedGetDefaultBucket = memoize(exports.getDefaultBucket);
 
-exports.getFolderHash = async function getFolderHash({ key }) {
+exports.getFolderHash = async function getFolderHash(key) {
   const bucket = await _memoizedGetDefaultBucket();
   const folder = key.endsWith('/') ? key : `${key}/`;
 
