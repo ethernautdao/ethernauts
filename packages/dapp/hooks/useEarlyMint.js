@@ -27,8 +27,7 @@ const useMintEarly = () => {
 
         const contract = new Contract(CONTRACT_ADDRESS, ABI, signer);
 
-        const signedCoupons = (await import(`../data/signed-coupons.${ETHEREUM_NETWORK}.json`))
-          .default;
+        const signedCoupons = require(`../data/signed-coupons.${ETHEREUM_NETWORK}.json`);
 
         const signedCoupon = signedCoupons.find((signedCoupon) => {
           const [address] = Object.keys(signedCoupon);
