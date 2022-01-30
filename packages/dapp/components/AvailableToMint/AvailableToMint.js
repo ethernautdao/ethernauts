@@ -15,9 +15,11 @@ const AvailableToMint = () => {
 
   if (isError) return <span className={styles.fetchAvailableToMint}>Something went wrong</span>;
 
+  if (data === 0) return null;
+
   return (
     <p className={styles.fetchAvailableToMint}>
-      <span className={styles.number}>{data}</span>/10000 NFTs minted
+      <span className={styles.number}>{data}</span> NFTs available to mint
     </p>
   );
 };

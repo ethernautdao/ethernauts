@@ -102,8 +102,6 @@ const WalletProvider = ({ children }) => {
   useEffect(() => {
     if (provider && provider.on) {
       const handleAccountsChanged = async (accounts) => {
-        // eslint-disable-next-line no-console
-
         const balance = await web3Provider.getBalance(accounts[0]);
 
         dispatch({
@@ -114,7 +112,6 @@ const WalletProvider = ({ children }) => {
       };
 
       const handleChainChanged = (chainId) => {
-        // eslint-disable-next-line no-console
         dispatch({
           type: 'SET_CHAIN_ID',
           chainId,
