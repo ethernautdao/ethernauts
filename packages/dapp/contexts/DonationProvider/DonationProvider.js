@@ -1,11 +1,9 @@
 import { createContext, useState } from 'react';
 
-import { INITIAL_DONATION } from '../../constants/common';
-
 const DonationContext = createContext();
 
 const DonationProvider = ({ children }) => {
-  const [donation, setDonation] = useState(INITIAL_DONATION);
+  const [donation, setDonation] = useState(0);
 
   const value = { donation, setDonation };
 
