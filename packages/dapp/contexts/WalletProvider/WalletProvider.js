@@ -1,6 +1,6 @@
 import { createContext, useReducer, useCallback, useEffect } from 'react';
 import Web3Modal from 'web3modal';
-import { providers, utils, BigNumber } from 'ethers';
+import { providers } from 'ethers';
 
 // import WalletLink from 'walletlink';
 // import WalletConnectProvider from '@walletconnect/web3-provider';
@@ -8,7 +8,9 @@ import { providers, utils, BigNumber } from 'ethers';
 let web3Modal;
 
 if (typeof window !== 'undefined') {
-  web3Modal = new Web3Modal();
+  web3Modal = new Web3Modal({
+    cacheProvider: true,
+  });
 }
 
 const initialState = {
@@ -89,6 +91,13 @@ const WalletProvider = ({ children }) => {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [provider]);
+
+  // Auto connect to the cached provider
+  useEffect(() => {
+    if (web3Modal.cachedProvider) {
+      connect();
+    }
+  }, [connect]);
 
   useEffect(() => {
     if (provider && provider.on) {
