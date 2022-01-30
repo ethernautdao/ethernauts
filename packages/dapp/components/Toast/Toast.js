@@ -16,7 +16,7 @@ const Toast = () => (
     position="bottom-left"
     containerStyle={{ position: 'fixed', marginBottom: '10px' }}
     toastOptions={{
-      duration: 5000,
+      duration: 10000,
     }}
   />
 );
