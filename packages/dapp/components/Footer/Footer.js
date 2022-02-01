@@ -17,7 +17,7 @@ const Footer = () => (
         <Medium />
       </a>
     </div>
-    <p>EthernautDAO 2022 ✧</p>
+    <p>{`EthernautDAO ${new Date().getFullYear()}✧`}</p>
   </div>
 );
 
