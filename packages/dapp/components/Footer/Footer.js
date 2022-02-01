@@ -5,11 +5,10 @@ import { Discord } from '../Icons/Discord';
 import { Medium } from '../Icons/Medium';
 
 const Footer = () => {
-
   return (
     <>
-      <div className={(styles.footer)}>
-        <div className={(styles.social)}>
+      <div className={styles.footer}>
+        <div className={styles.social}>
           <Twitter />
           <Discord />
           <Medium />

@@ -108,8 +108,10 @@ async function _verifyContract(contractAddress, constructorArguments) {
 async function _confirmParameters(constructorParams) {
   const humanConstructorParams = {
     ...constructorParams,
-    initialMintPrice: `${ethers.utils.formatEther(constructorParams.initialMintPrice)} ETH`,
-    initialEarlyMintPrice: `${ethers.utils.formatEther(constructorParams.initialEarlyMintPrice)} ETH`,
+    initialMintPrice: `${hre.ethers.utils.formatEther(constructorParams.initialMintPrice)} ETH`,
+    initialEarlyMintPrice: `${hre.ethers.utils.formatEther(
+      constructorParams.initialEarlyMintPrice
+    )} ETH`,
   };
   console.log('Constructor arguments:', humanConstructorParams);
 
