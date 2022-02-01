@@ -1,0 +1,10 @@
+.fetchAvailableToMint {
+  top: 100px;
+  font-size: 1rem;
+  position: absolute;
+  color: var(--available-to-mint-text-color);
+
+  .number {
+    color: var(--available-to-mint-number-color);
+  }
+}

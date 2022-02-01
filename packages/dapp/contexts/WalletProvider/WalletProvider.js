@@ -1,6 +1,6 @@
 import { createContext, useReducer, useCallback, useEffect } from 'react';
 import Web3Modal from 'web3modal';
-import { providers, utils, BigNumber } from 'ethers';
+import { providers } from 'ethers';
 
 // import WalletLink from 'walletlink';
 // import WalletConnectProvider from '@walletconnect/web3-provider';
@@ -8,7 +8,9 @@ import { providers, utils, BigNumber } from 'ethers';
 let web3Modal;
 
 if (typeof window !== 'undefined') {
-  web3Modal = new Web3Modal();
+  web3Modal = new Web3Modal({
+    cacheProvider: true,
+  });
 }
 
 const initialState = {
@@ -25,6 +27,7 @@ const reducer = (state, action) => {
     case 'SET_PROVIDER':
       return {
         ...state,
+        balance: action.balance,
         provider: action.provider,
         web3Provider: action.web3Provider,
         address: action.address,
@@ -34,12 +37,13 @@ const reducer = (state, action) => {
     case 'SET_ADDRESS':
       return {
         ...state,
+        balance: action.balance,
         address: action.address,
       };
     case 'SET_CHAIN_ID':
       return {
         ...state,
-        chainId: action.chainId,
+        chainId: Number(action.chainId),
       };
     case 'RESET_PROVIDER':
       return initialState;
@@ -59,12 +63,11 @@ const WalletProvider = ({ children }) => {
   const connect = useCallback(async () => {
     const provider = await web3Modal.connect();
 
-    const web3Provider = new providers.Web3Provider(provider);
+    const web3Provider = new providers.Web3Provider(provider, 'any');
 
     const signer = web3Provider.getSigner();
     const address = await signer.getAddress();
     const balance = await web3Provider.getBalance(address);
-
     const { chainId } = await web3Provider.getNetwork();
 
     dispatch({
@@ -89,18 +92,26 @@ const WalletProvider = ({ children }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [provider]);
 
+  // Auto connect to the cached provider
+  useEffect(() => {
+    if (web3Modal.cachedProvider) {
+      connect();
+    }
+  }, [connect]);
+
   useEffect(() => {
     if (provider && provider.on) {
-      const handleAccountsChanged = (accounts) => {
-        // eslint-disable-next-line no-console
+      const handleAccountsChanged = async (accounts) => {
+        const balance = await web3Provider.getBalance(accounts[0]);
+
         dispatch({
           type: 'SET_ADDRESS',
           address: accounts[0],
+          balance,
         });
       };
 
       const handleChainChanged = (chainId) => {
-        // eslint-disable-next-line no-console
         dispatch({
           type: 'SET_CHAIN_ID',
           chainId,

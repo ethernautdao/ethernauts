@@ -4,9 +4,9 @@ import { Contract, utils } from 'ethers';
 import { WalletContext } from '../contexts/WalletProvider';
 import { DonationContext } from '../contexts/DonationProvider';
 
-import { ABI, TOKEN_ADDRESS, ETHEREUM_NETWORK } from '../config';
+import { ABI, CONTRACT_ADDRESS, ETHEREUM_NETWORK } from '../config';
 
-import { zeroAccount } from '../constants/common';
+import isSupportedNetwork from '../helpers/is-supported-network';
 
 const useMintEarly = () => {
   const [data, setData] = useState(null);
@@ -17,16 +17,17 @@ const useMintEarly = () => {
   const { donation } = useContext(DonationContext);
 
   const fetchMintEarly = async () => {
+    if (!isSupportedNetwork(state.chainId)) return;
+
     try {
       setIsError(false);
       setIsLoading(true);
       if (state.web3Provider) {
         const signer = state.web3Provider.getSigner();
 
-        const contract = new Contract(TOKEN_ADDRESS, ABI, signer);
+        const contract = new Contract(CONTRACT_ADDRESS, ABI, signer);
 
-        const signedCoupons = (await import(`../data/signed-coupons.${ETHEREUM_NETWORK}.json`))
-          .default;
+        const signedCoupons = require(`../data/signed-coupons.${ETHEREUM_NETWORK}.json`);
 
         const signedCoupon = signedCoupons.find((signedCoupon) => {
           const [address] = Object.keys(signedCoupon);
@@ -39,20 +40,15 @@ const useMintEarly = () => {
 
         if (isARedeemedCoupon) throw new Error(`You're trying to use a redeemed coupon`);
 
-        await contract.mintEarly(signedCoupon[state.address], {
+        const tx = await contract.mintEarly(signedCoupon[state.address], {
           value: utils.parseEther(String(donation)),
         });
 
-        contract.on('Transfer', async (from, to, amount, evt) => {
-          if (from !== zeroAccount) return;
-          if (to !== state.address) return;
+        const { transactionHash } = await tx.wait();
 
-          const tokenId = evt.args.tokenId.toString();
+        setData(transactionHash);
 
-          setData(tokenId);
-
-          setIsLoading(false);
-        });
+        setIsLoading(false);
       }
     } catch (err) {
       console.error(err);

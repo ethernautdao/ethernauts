@@ -10,16 +10,22 @@ import { BREAKPOINTS } from '../../constants/common';
 import { WalletContext } from '../../contexts/WalletProvider';
 import { DonationContext } from '../../contexts/DonationProvider';
 
-import { INITIAL_DONATION, MIN_DONATION, MAX_DONATION, EARLY } from '../../constants/common';
+import {
+  MAX_DONATION,
+  MIN_DONATION_PUBLIC_SALE,
+  INITIAL_DONATION_PUBLIC_SALE,
+  MIN_DONATION_EARLY_SALE,
+  INITIAL_DONATION_EARLY_SALE,
+} from '../../constants/common';
+import { EARLY } from '../../constants/sale-state';
 
 import styles from './DonationSlide.module.scss';
 
 const SelectDonation = () => {
   const { state } = useContext(WalletContext);
-  const { donation, setDonation } = useContext(DonationContext);
-
   const [{ data }, fetchSaleState] = useSaleState();
   const { breakpoint } = useBreakpoint(BREAKPOINTS, 'desktop');
+  const { donation, setDonation } = useContext(DonationContext);
 
   const isMobile = breakpoint === 'mobile';
 
@@ -28,6 +34,16 @@ const SelectDonation = () => {
   }, [state.web3Provider, fetchSaleState]);
 
   const isEarlySale = EARLY === data;
+
+  useEffect(() => {
+    const INITIAL_DONATION = isEarlySale
+      ? INITIAL_DONATION_EARLY_SALE
+      : INITIAL_DONATION_PUBLIC_SALE;
+    setDonation(INITIAL_DONATION);
+  }, [isEarlySale]);
+
+  const MIN_DONATION = isEarlySale ? MIN_DONATION_EARLY_SALE : MIN_DONATION_PUBLIC_SALE;
+  const INITIAL_DONATION = isEarlySale ? INITIAL_DONATION_EARLY_SALE : INITIAL_DONATION_PUBLIC_SALE;
 
   return (
     <>
@@ -52,7 +68,7 @@ const SelectDonation = () => {
           type="number"
           className={styles.input}
           value={parseFloat(donation)}
-          onChange={setDonation}
+          onChange={(e) => setDonation(Number(e.target.value).toFixed(2))}
           min={INITIAL_DONATION}
           max={MAX_DONATION}
         />

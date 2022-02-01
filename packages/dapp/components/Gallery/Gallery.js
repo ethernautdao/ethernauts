@@ -1,29 +1,26 @@
 import { useRouter } from 'next/router';
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 
 import { GALLERY_ROUTES } from '../../constants/routes';
 
-import { WalletContext } from '../../contexts/WalletProvider';
-
 import useGallery from '../../hooks/useGallery';
+
+import { Loader } from '../Loader';
 
 import { Grid, ALL, ME } from './Grid';
 
 const Gallery = () => {
   const { asPath } = useRouter();
-  const { state } = useContext(WalletContext);
 
   const [{ data, isLoading, isError }, fetchGalleryItems] = useGallery();
 
   useEffect(() => {
-    if (state.web3Provider) fetchGalleryItems();
-  }, [state.web3Provider, fetchGalleryItems]);
+    fetchGalleryItems();
+  }, []);
 
-  if (isLoading) return 'Loading...';
+  if (isLoading) return <Loader />;
 
   if (isError) return 'Something went wrong...';
-
-  if (!state.web3Provider) return null;
 
   const isAll = asPath === GALLERY_ROUTES.all.path;
 

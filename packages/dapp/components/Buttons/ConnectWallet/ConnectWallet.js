@@ -11,18 +11,7 @@ const ConnectWallet = ({ fullWidth }) => {
   const isConnected = state.web3Provider !== null;
 
   if (isConnected) {
-    return (
-      <button
-        type="button"
-        className={cn(styles.button, {
-          [styles.fullWidth]: fullWidth,
-          [styles.headerButton]: !fullWidth,
-        })}
-        onClick={disconnect}
-      >
-        <span className={styles.text}>Disconnect wallet</span>
-      </button>
-    );
+    return null;
   }
 
   return (

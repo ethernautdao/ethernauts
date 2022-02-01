@@ -22,7 +22,7 @@ const OpenMint = () => {
     notify({ kind: ERROR_KIND });
   }, [isError]);
 
-  if (isLoading) return <Primary isDisabled fullWidth text="Loading..." />;
+  if (isLoading) return <Primary isDisabled fullWidth text="Pending transaction..." />;
 
   return (
     <>

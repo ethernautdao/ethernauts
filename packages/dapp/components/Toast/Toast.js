@@ -14,9 +14,9 @@ const notify = ({ kind }) => toast.custom((t) => ToastKind[kind](t));
 const Toast = () => (
   <Toaster
     position="bottom-left"
-    containerStyle={{ position: 'absolute', marginBottom: '10px' }}
+    containerStyle={{ position: 'fixed', marginBottom: '10px' }}
     toastOptions={{
-      duration: 5000,
+      duration: 10000,
     }}
   />
 );

@@ -4,8 +4,9 @@ import { Contract, utils } from 'ethers';
 import { WalletContext } from '../contexts/WalletProvider';
 import { DonationContext } from '../contexts/DonationProvider';
 
-import { ABI, TOKEN_ADDRESS } from '../config';
-import { zeroAccount } from '../constants/common';
+import { ABI, CONTRACT_ADDRESS } from '../config';
+
+import isSupportedNetwork from '../helpers/is-supported-network';
 
 const useMint = () => {
   const [data, setData] = useState(null);
@@ -16,28 +17,25 @@ const useMint = () => {
   const { donation } = useContext(DonationContext);
 
   const fetchMint = async () => {
+    if (!isSupportedNetwork(state.chainId)) return;
+
     try {
       setIsError(false);
       setIsLoading(true);
       if (state.web3Provider) {
         const signer = state.web3Provider.getSigner();
 
-        const contract = new Contract(TOKEN_ADDRESS, ABI, signer);
+        const contract = new Contract(CONTRACT_ADDRESS, ABI, signer);
 
-        await contract.mint({
+        const tx = await contract.mint({
           value: utils.parseEther(String(donation)),
         });
 
-        contract.on('Transfer', async (from, to, amount, evt) => {
-          if (from !== zeroAccount) return;
-          if (to !== state.address) return;
+        const { transactionHash } = await tx.wait();
 
-          const tokenId = evt.args.tokenId.toString();
+        setData(transactionHash);
 
-          setData(tokenId);
-
-          setIsLoading(false);
-        });
+        setIsLoading(false);
       }
     } catch (err) {
       console.error(err);

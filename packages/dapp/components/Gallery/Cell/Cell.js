@@ -26,7 +26,7 @@ const Cell = ({ tokenId, isRevealed, kind, isMiddleCell }) => {
 
     if (isRevealed && isDev) return '/assets/revealed-token.png';
 
-    if (!isRevealed) return '/assets/unrevealed-token.png';
+    if (!isRevealed) return '/assets/unrevealed-token.jpg';
   }, [isRevealed, isDev, tokenId]);
 
   const imageSize = useMemo(() => {
