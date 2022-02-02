@@ -129,7 +129,7 @@ async function _confirmParameters(constructorParams) {
 
 async function _deployContract(constructorArguments) {
   const factory = await hre.ethers.getContractFactory('Ethernauts');
-  const Ethernauts = await factory.deploy(...constructorArguments, hre.config.overrides);
+  const Ethernauts = await factory.deploy(...constructorArguments);
 
   console.log('Submitted transaction:', Ethernauts.deployTransaction.hash);
 

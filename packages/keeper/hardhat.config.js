@@ -1,3 +1,5 @@
+const ethers = require('ethers');
+
 require('@nomiclabs/hardhat-ethers');
 
 module.exports = {
@@ -21,13 +23,10 @@ module.exports = {
     docker: {
       url: 'http://hardhat-node:8545',
     },
-    goerli: {
-      url: 'https://rpc.goerli.mudit.blog/',
-      accounts: process.env.DEPLOYER_KEY ? [`${process.env.DEPLOYER_KEY}`] : [],
-    },
     ['optimistic-kovan']: {
       url: process.env.NETWORK_ENDPOINT || 'https://kovan.optimism.io',
       accounts: process.env.DEPLOYER_KEY ? [`${process.env.DEPLOYER_KEY}`] : [],
+      gasPrice: ethers.utils.parseUnits('0.001', 'gwei').toNumber(),
     },
   },
 };
