@@ -1,4 +1,5 @@
 const path = require('path');
+const fs = require('fs/promises');
 const { inspect } = require('util');
 const fleek = require('./fleek');
 const config = require('./config');
@@ -67,14 +68,23 @@ const jobs = {
       return;
     }
 
+    const metadataPath = path.join(config.RESOURCES_METADATA_FOLDER, `${assetId}.json`);
+    const assetPath = path.join(config.RESOURCES_ASSETS_FOLDER, `${assetId}.png`);
+
+    // Include TokenId in Metadata
+    const data = JSON.parse(await fs.readFile(metadataPath));
+    data.name = `EthernautDAO #${tokenId}`;
+    data.external_url = `https://mint.ethernautdao.io/nft/${tokenId}`;
+    await fs.writeFile(metadataPath, JSON.stringify(data, null, 2));
+
     const [metadata, asset] = await Promise.all([
       fleek.uploadFile({
         key: metadataKey,
-        location: path.join(config.RESOURCES_METADATA_FOLDER, `${assetId}.json`),
+        location: metadataPath,
       }),
       fleek.uploadFile({
         key: assetKey,
-        location: path.join(config.RESOURCES_ASSETS_FOLDER, `${assetId}.png`),
+        location: assetPath,
       }),
     ]);
 
