@@ -28,5 +28,10 @@ module.exports = {
       accounts: process.env.DEPLOYER_KEY ? [`${process.env.DEPLOYER_KEY}`] : [],
       gasPrice: ethers.utils.parseUnits('0.001', 'gwei').toNumber(),
     },
+    ['optimistic-mainnet']: {
+      url: process.env.NETWORK_ENDPOINT || 'https://mainnet.optimism.io',
+      accounts: process.env.DEPLOYER_KEY ? [`${process.env.DEPLOYER_KEY}`] : [],
+      gasPrice: ethers.utils.parseUnits('0.001', 'gwei').toNumber(),
+    },
   },
 };

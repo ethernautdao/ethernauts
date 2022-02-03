@@ -13,11 +13,7 @@ task('deploy', 'Deploys the Ethernauts NFT contract')
   .addFlag('noConfirm', 'Ask for confirmation before deployment')
   .addFlag('noVerify', 'Verify contract using Etherscan API')
   .addFlag('clear', 'Clear existing deployment before executing')
-  .addOptionalParam(
-    'urlChanger',
-    'Private key of the address that will be allowed to call Ethernauts.setBaseUri (meant to be used by the keeper)'
-  )
-  .setAction(async ({ noConfirm, noVerify, clear, urlChanger }, hre) => {
+  .setAction(async ({ noConfirm, noVerify, clear }, hre) => {
     await hre.run(TASK_COMPILE, { force: true, quiet: true });
 
     const signer = await _getSignerAddress();
@@ -25,6 +21,9 @@ task('deploy', 'Deploys the Ethernauts NFT contract')
     console.log('-- Deploying Ethernauts Contract --');
     console.log(`Network: ${hre.network.name}`);
     console.log(`Signer: ${signer}`);
+
+    const balance = await hre.ethers.provider.getBalance(signer);
+    console.log(`Signer balance: ${hre.ethers.utils.formatEther(balance)} ETH`);
 
     const deploymentPath = `./deployments/${hre.network.name}.json`;
     const data = await _loadOrCreateDeploymentFile(deploymentPath);
@@ -35,15 +34,15 @@ task('deploy', 'Deploys the Ethernauts NFT contract')
 
     const constructorParams = {
       ...hre.config.defaults,
-      initialCouponSigner: signer,
-      initialUrlChanger: urlChanger || hre.config.defaults.initialUrlChanger,
     };
+
+    const constructorArgs = await _parseConstructorArguments(constructorParams);
+    await _estimateDeploymentCosts(constructorArgs);
 
     if (!noConfirm) {
       await _confirmParameters(constructorParams);
     }
 
-    const constructorArgs = await _parseConstructorArguments(constructorParams);
     const Ethernauts = await _deployContract(constructorArgs);
     console.log(`Deployed at: ${Ethernauts.address}`);
 
@@ -127,11 +126,25 @@ async function _confirmParameters(constructorParams) {
   }
 }
 
+async function _estimateDeploymentCosts(constructorArguments) {
+  const factory = await hre.ethers.getContractFactory('Ethernauts');
+  const deploymentData = factory.interface.encodeDeploy(constructorArguments);
+  const estimatedGas = await hre.ethers.provider.estimateGas({ data: deploymentData });
+  console.log(`Deployment gas: ${estimatedGas.toNumber()}`);
+
+  const gasPrice = hre.network.config.gasPrice;
+  console.log(`Gas price: ${hre.ethers.utils.formatUnits(gasPrice, 'gwei')} GWEI`);
+
+  const cost = estimatedGas.mul(gasPrice);
+  console.log(`Estimated cost: ${ethers.utils.formatEther(cost.toString())} ETH`);
+}
+
 async function _deployContract(constructorArguments) {
   const factory = await hre.ethers.getContractFactory('Ethernauts');
-  const Ethernauts = await factory.deploy(...constructorArguments);
+  const Ethernauts = await factory.deploy(...constructorArguments, { gasPrice: hre.network.config.gasPrice });
 
   console.log('Submitted transaction:', Ethernauts.deployTransaction.hash);
+  console.log(JSON.stringify(Ethernauts.deployTransaction), null, 2);
 
   const receipt = await Ethernauts.deployTransaction.wait();
 
