@@ -6,7 +6,7 @@ const constants = require('../src/constants');
 const fileExists = require('../src/utils/file-exists');
 
 async function main() {
-  if (!(await fileExists())) {
+  if (!(await fileExists(path.join(constants.RESOURCES_METADATA_FOLDER, '0.json')))) {
     throw new Error('Metadata files are needed');
   }
 
