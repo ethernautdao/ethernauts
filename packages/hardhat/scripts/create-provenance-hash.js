@@ -6,27 +6,22 @@ const constants = require('../src/constants');
 const fileExists = require('../src/utils/file-exists');
 
 async function main() {
-  if (!(await fileExists(path.join(constants.RESOURCES_METADATA_FOLDER, '0.json')))) {
+  if (!(await fileExists())) {
     throw new Error('Metadata files are needed');
   }
 
-  const metadataFiles = (await fs.readdir(constants.RESOURCES_METADATA_FOLDER)).filter(
-    (name) => path.extname(name) === '.json'
-  );
+  let ipfsHashes = '';
+  for (let i = 0; i < 10000; i++) {
+    const filename = path.join(constants.RESOURCES_METADATA_FOLDER, `${i}.json`);
+    const filepath = path.join(constants.RESOURCES_METADATA_FOLDER, filename);
+    const metadata = JSON.parse(await fs.readFile(filepath)).image;
+    ipfsHashes += metadata.slice(constants.IPFS_PREFIX.length);
+  }
 
-  const ipfsHashes = await Promise.all(
-    metadataFiles.map(async (filename) => {
-      const filepath = path.join(constants.RESOURCES_METADATA_FOLDER, filename);
-      const metadata = JSON.parse(await fs.readFile(filepath)).image;
-      return metadata.slice(constants.IPFS_PREFIX.length);
-    })
-  );
-
-  const concatenated = ipfsHashes.join('');
-  const provenanceHash = crypto.createHash('md5').update(concatenated).digest('hex');
+  const provenanceHash = crypto.createHash('md5').update(ipfsHashes).digest('hex');
 
   console.log('=== Concatenated Hashes ===');
-  console.log(concatenated);
+  console.log(ipfsHashes);
   console.log('---------------------------');
   console.log('=== Provenance MD5 Hash ===');
   console.log(provenanceHash);
