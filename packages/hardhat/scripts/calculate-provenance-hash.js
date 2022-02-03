@@ -12,17 +12,16 @@ async function main() {
     .sort((a, b) => {
       const [nA] = a.split('_');
       const [nB] = b.split('_');
-      return Number(nA) > Number(nB);
+      return Number(nA) < Number(nB);
     });
 
   console.log(`Generating Provenance Hash for ${assets.length} files.`);
 
-  let done = 0;
-  process.stdout.write(`${done}/${assets.length}`);
-
   const ipfsHashes = [];
   for (let assetId = 0; assetId < assets.length; assetId++) {
     const filepath = assets[assetId];
+
+    console.log(filepath);
 
     if (assetId > 0) {
       const [currAssetId] = assets[assetId].split('_');
@@ -34,10 +33,6 @@ async function main() {
 
     const file = await fs.readFile(path.join(FOLDER, filepath));
     ipfsHashes.push(await getIPFSHash(file));
-
-    process.stdout.clearLine(0);
-    process.stdout.cursorTo(0);
-    process.stdout.write(`${++done}/${assets.length}`);
   }
 
   const concatenated = ipfsHashes.join('');
