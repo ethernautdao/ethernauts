@@ -80,6 +80,8 @@ services:
       context: .
       dockerfile: docker/dapp.Dockerfile
     restart: always
+    environment:
+      NEXT_TELEMETRY_DISABLED: 1
     volumes:
       - ./packages/dapp:/src/packages/dapp
       - ./packages/hardhat/artifacts:/src/packages/hardhat/artifacts
