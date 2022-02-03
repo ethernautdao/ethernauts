@@ -89,6 +89,7 @@ services:
       - /src/node_modules
       - /src/packages/dapp/node_modules
       - /src/packages/dapp/.next
+      - /src/packages/hardhat/node_modules
     ports:
       - 3000:3000
     command: sh -c "npx --yes wait-on -l ./packages/hardhat/deployments/docker.json && npm run start:dapp"
