@@ -7,24 +7,38 @@ const { getIPFSHash } = require('../src/utils/ipfs-uri');
 const FOLDER = process.argv[2];
 
 async function main() {
-  const assets = (await fs.readdir(FOLDER)).filter((name) => path.extname(name) === '.png');
+  const assets = (await fs.readdir(FOLDER))
+    .filter((name) => path.extname(name) === '.png')
+    .sort((a, b) => {
+      const [nA] = a.split('_');
+      const [nB] = b.split('_');
+      return Number(nA) > Number(nB);
+    });
 
   console.log(`Generating Provenance Hash for ${assets.length} files.`);
 
   let done = 0;
   process.stdout.write(`${done}/${assets.length}`);
-  const ipfsHashes = await Promise.all(
-    assets.map(async (filepath) => {
-      const file = await fs.readFile(path.join(FOLDER, filepath));
-      const ipfsHash = await getIPFSHash(file);
 
-      process.stdout.clearLine(0);
-      process.stdout.cursorTo(0);
-      process.stdout.write(`${++done}/${assets.length}`);
+  const ipfsHashes = [];
+  for (let assetId = 0; assetId < assets.length; assetId++) {
+    const filepath = assets[assetId];
 
-      return ipfsHash;
-    })
-  );
+    if (assetId > 0) {
+      const [currAssetId] = assets[assetId].split('_');
+      const [prevAssetId] = assets[assetId - 1].split('_');
+      if (Number(currAssetId) - Number(prevAssetId) !== 1) {
+        throw new Error('Invalid asset ids');
+      }
+    }
+
+    const file = await fs.readFile(path.join(FOLDER, filepath));
+    ipfsHashes.push(await getIPFSHash(file));
+
+    process.stdout.clearLine(0);
+    process.stdout.cursorTo(0);
+    process.stdout.write(`${++done}/${assets.length}`);
+  }
 
   const concatenated = ipfsHashes.join('');
   const provenanceHash = crypto.createHash('md5').update(concatenated).digest('hex');

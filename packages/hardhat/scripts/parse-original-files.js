@@ -18,45 +18,43 @@ async function main() {
   let done = 0;
   process.stdout.write(`${done}/${filenames.length}`);
 
-  await Promise.all(
-    filenames.map(async (filename) => {
-      const [assetId, ...attrValues] = path.basename(filename, '.png').split('_');
+  for (const filename of filenames) {
+    const [assetId, ...attrValues] = path.basename(filename, '.png').split('_');
 
-      const attributes = attrValues.reduce((attrs, curr) => {
-        const [trait_type, value] = curr.split('-');
+    const attributes = attrValues.reduce((attrs, curr) => {
+      const [trait_type, value] = curr.split('-');
 
-        if (value !== 'null') {
-          attrs.push({ trait_type, value });
-        }
+      if (value !== 'null') {
+        attrs.push({ trait_type, value });
+      }
 
-        return attrs;
-      }, []);
+      return attrs;
+    }, []);
 
-      const originalPath = path.join(K.RESOURCES_ORIGINAL_FOLDER, filename);
-      const metadataPath = path.join(K.RESOURCES_METADATA_FOLDER, `${assetId}.json`);
-      const assetPath = path.join(K.RESOURCES_ASSETS_FOLDER, `${assetId}.png`);
+    const originalPath = path.join(K.RESOURCES_ORIGINAL_FOLDER, filename);
+    const metadataPath = path.join(K.RESOURCES_METADATA_FOLDER, `${assetId}.json`);
+    const assetPath = path.join(K.RESOURCES_ASSETS_FOLDER, `${assetId}.png`);
 
-      const originalFile = await fs.readFile(originalPath);
-      const ipfsHash = await getIPFSHash(originalFile);
+    const originalFile = await fs.readFile(originalPath);
+    const ipfsHash = await getIPFSHash(originalFile);
 
-      const metadata = {
-        name: `EthernautDAO #${assetId}`,
-        description: 'EthernautDAO governance NFT',
-        external_url: `https://mint.ethernautdao.io/assets/${assetId}`,
-        image: K.IPFS_PREFIX + ipfsHash,
-        attributes,
-      };
+    const metadata = {
+      name: `EthernautDAO #${assetId}`,
+      description: 'EthernautDAO governance NFT',
+      external_url: `https://mint.ethernautdao.io/assets/${assetId}`,
+      image: K.IPFS_PREFIX + ipfsHash,
+      attributes,
+    };
 
-      await Promise.all([
-        fs.writeFile(metadataPath, JSON.stringify(metadata, null, 2)),
-        fs.rename(originalPath, assetPath),
-      ]);
+    await Promise.all([
+      fs.writeFile(metadataPath, JSON.stringify(metadata, null, 2)),
+      fs.rename(originalPath, assetPath),
+    ]);
 
-      process.stdout.clearLine(0);
-      process.stdout.cursorTo(0);
-      process.stdout.write(`${++done}/${filenames.length}`);
-    })
-  );
+    process.stdout.clearLine(0);
+    process.stdout.cursorTo(0);
+    process.stdout.write(`${++done}/${filenames.length}`);
+  }
 }
 
 main().catch((err) => {
