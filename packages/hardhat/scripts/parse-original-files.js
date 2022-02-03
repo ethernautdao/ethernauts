@@ -15,6 +15,9 @@ async function main() {
     }
   }
 
+  let done = 0;
+  process.stdout.write(`${done}/${filenames.length}`);
+
   await Promise.all(
     filenames.map(async (filename) => {
       const [assetId, ...attrValues] = path.basename(filename, '.png').split('_');
@@ -49,24 +52,9 @@ async function main() {
         fs.rename(originalPath, assetPath),
       ]);
 
-      // const metadataPath = path.join(
-      //   constants.RESOURCES_METADATA_FOLDER,
-      //   `${path.parse(asset).name}.json`
-      // );
-
-      // const [file, metadata] = await Promise.all([
-      //   fs.readFile(filepath),
-      //   fs.readFile(metadataPath),
-      // ]);
-
-      // const ipfsHash = await getIPFSHash(file);
-
-      // const metadataWithIpfs = {
-      //   ...JSON.parse(metadata),
-      //   image: constants.IPFS_PREFIX + ipfsHash,
-      // };
-
-      // return fs.writeFile(metadataPath, JSON.stringify(metadataWithIpfs, null, 2));
+      process.stdout.clearLine(0);
+      process.stdout.cursorTo(0);
+      process.stdout.write(`${++done}/${filenames.length}`);
     })
   );
 }
