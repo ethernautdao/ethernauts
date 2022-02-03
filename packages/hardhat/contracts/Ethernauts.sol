@@ -34,6 +34,7 @@ contract Ethernauts is ERC721Enumerable, Ownable {
     event ETHWithdrawn(address beneficiary);
     event PermanentURISet(bool value);
     event UrlChangerChanged(address urlChanger);
+    event PermanentURI(string uri, uint256 indexed tokenId);
 
     // Can be set only once on deploy
     uint256 public immutable maxTokens;
@@ -343,6 +344,10 @@ contract Ethernauts is ERC721Enumerable, Ownable {
         permanentURI = true;
 
         emit PermanentURISet(true);
+
+        for (uint256 tokenId = 0; tokenId < maxTokens; tokenId++) {
+            emit PermanentURI(tokenURI(tokenId), tokenId);
+        }
     }
 
     /// @notice Sets address of `urlChanger`
