@@ -12,8 +12,7 @@ async function main() {
 
   let ipfsHashes = '';
   for (let i = 0; i < 10000; i++) {
-    const filename = path.join(constants.RESOURCES_METADATA_FOLDER, `${i}.json`);
-    const filepath = path.join(constants.RESOURCES_METADATA_FOLDER, filename);
+    const filepath = path.join(constants.RESOURCES_METADATA_FOLDER, `${i}.json`);
     const metadata = JSON.parse(await fs.readFile(filepath)).image;
     ipfsHashes += metadata.slice(constants.IPFS_PREFIX.length);
   }
