@@ -12,7 +12,14 @@ async function main() {
     .sort((a, b) => {
       const [nA] = a.split('_');
       const [nB] = b.split('_');
-      return Number(nA) < Number(nB);
+
+      const nnA = Number(nA);
+      const nnB = Number(nB);
+      if (nnA === nnB) {
+        throw new Error('Same asset ids');
+      }
+
+      return nnA < nnB ? -1 : 1;
     });
 
   console.log(`Generating Provenance Hash for ${assets.length} files.`);
