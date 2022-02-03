@@ -1,15 +1,12 @@
-import { Contract, utils, providers } from 'ethers';
+import { Contract, providers, utils } from 'ethers';
 import { useContext, useState } from 'react';
-
-import { WalletContext } from '../contexts/WalletProvider';
-
-import { ABI, CONTRACT_ADDRESS, CONTRACT_BLOCK } from '../config';
-
-import { zeroAccount } from '../constants/common';
-import { DEFAULT_NETWORKS_PER_ENVIRONMENT } from '../constants/networks';
 
 import getChainData from '../helpers/get-chain-data';
 import isSupportedNetwork from '../helpers/is-supported-network';
+import { ABI, CONTRACT_ADDRESS, CONTRACT_BLOCK } from '../config';
+import { DEFAULT_NETWORKS_PER_ENVIRONMENT } from '../constants/networks';
+import { WalletContext } from '../contexts/WalletProvider';
+import { zeroAccount } from '../constants/common';
 
 const useGallery = () => {
   const [data, setData] = useState(null);
@@ -31,7 +28,7 @@ const useGallery = () => {
 
       const provider = new providers.JsonRpcProvider(rpcUrl);
 
-      const contract = new Contract(CONTRACT_ADDRESS, ABI, provider);
+      const Ethernauts = new Contract(CONTRACT_ADDRESS, ABI, provider);
 
       const iface = new utils.Interface(ABI);
 
@@ -41,39 +38,44 @@ const useGallery = () => {
         toBlock: 'latest',
       };
 
+      const [batchSize, totalSupply] = await Promise.all([
+        Ethernauts.batchSize().then(Number),
+        Ethernauts.totalSupply().then(Number),
+      ]);
+
+      const maxTokenIdRevealed = totalSupply - (totalSupply % batchSize) - 1;
+
       const logs = await provider.getLogs(filter);
 
-      const galleryItems = await logs.reduce(async (acumm, curr) => {
-        const resolvedAcumm = await acumm;
+      const galleryItems = logs.reduce(
+        (galleryItems, curr) => {
+          const parsedLog = iface.parseLog(curr);
 
-        const parsedLog = iface.parseLog(curr);
+          if (parsedLog.name !== 'Transfer' || parsedLog.args.from !== zeroAccount) {
+            return galleryItems;
+          }
 
-        if (parsedLog.name !== 'Transfer') return resolvedAcumm;
+          const to = parsedLog.args.to.toLowerCase();
+          const tokenId = parsedLog.args.tokenId.toNumber();
 
-        const to = parsedLog.args.to.toLowerCase();
-        const from = parsedLog.args.from.toLowerCase();
-        const tokenId = parsedLog.args.tokenId.toNumber();
-
-        // Push nfts based on the current address
-        if (to === state.address?.toLowerCase() && isSupportedNetwork(state.chainId)) {
-          resolvedAcumm.myGalleryItems.push({
+          const item = {
             tokenId,
             owner: to,
-            isRevealed: await contract.isTokenRevealed(tokenId),
-          });
-        }
+            isRevealed: tokenId <= maxTokenIdRevealed,
+          };
 
-        // Push all nfts
-        if (from === zeroAccount.toLowerCase()) {
-          resolvedAcumm.allGalleryItems.push({
-            tokenId,
-            owner: to,
-            isRevealed: await contract.isTokenRevealed(tokenId),
-          });
-        }
+          // Push all nfts
+          galleryItems.allGalleryItems.push(item);
 
-        return resolvedAcumm;
-      }, Promise.resolve({ myGalleryItems: [], allGalleryItems: [] }));
+          // Push nfts based on the current address
+          if (to === state.address?.toLowerCase() && isSupportedNetwork(state.chainId)) {
+            galleryItems.myGalleryItems.push(item);
+          }
+
+          return galleryItems;
+        },
+        { myGalleryItems: [], allGalleryItems: [] }
+      );
 
       setData(galleryItems);
     } catch (err) {
