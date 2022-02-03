@@ -35,13 +35,10 @@ module.exports = {
     docker: {
       url: 'http://hardhat-node:8545',
     },
-    goerli: {
-      url: 'https://rpc.goerli.mudit.blog/',
-      accounts: process.env.DEPLOYER_KEY ? [`${process.env.DEPLOYER_KEY}`] : [],
-    },
     ['optimistic-kovan']: {
       url: process.env.NETWORK_ENDPOINT || 'https://kovan.optimism.io',
       accounts: process.env.DEPLOYER_KEY ? [`${process.env.DEPLOYER_KEY}`] : [],
+      gasPrice: ethers.utils.parseUnits('0.001', 'gwei').toNumber(),
     },
   },
   etherscan: {
@@ -75,8 +72,5 @@ module.exports = {
     // // Will be changed at runtime if targeting a real network.
     // initialCouponSigner: '0xA227D2b83aB33384124A75872e1f3D71b6341D0b',
     // initialUrlChanger: '0xA227D2b83aB33384124A75872e1f3D71b6341D0b',
-  },
-  overrides: {
-    gasPrice: ethers.utils.parseUnits('0.001', 'gwei'),
   },
 };

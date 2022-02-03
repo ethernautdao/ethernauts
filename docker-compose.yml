@@ -12,7 +12,7 @@ services:
       - ./packages/hardhat:/src/packages/hardhat
       - /src/node_modules
       - /src/packages/hardhat/node_modules
-    command: npm run start:hardhat:node -w @ethernauts/hardhat
+    command: sh -c "rm -f /src/packages/hardhat/deployments/docker.json && npm run start:hardhat:node -w @ethernauts/hardhat"
 
   hardhat-deploy:
     build:
@@ -22,7 +22,7 @@ services:
       - ./packages/hardhat:/src/packages/hardhat
       - /src/node_modules
       - /src/packages/hardhat/node_modules
-    command: sh -c "/wait && rm -f /src/packages/hardhat/deployments/docker.json && npm run -w @ethernauts/hardhat start:hardhat:compile && npm run -w @ethernauts/hardhat start:hardhat:deploy -- --no-confirm --no-verify --clear --network docker"
+    command: sh -c "/wait && npm run -w @ethernauts/hardhat start:hardhat:compile && npm run -w @ethernauts/hardhat start:hardhat:deploy -- --no-confirm --no-verify --clear --network docker"
     environment:
       WAIT_HOSTS: hardhat-node:8545
     depends_on:
@@ -32,7 +32,7 @@ services:
     image: redis:6.2-alpine
     command: redis-server --appendonly yes
     volumes:
-      - ./data/redis:/data
+      - ./docker/data/redis:/data
     ports:
       - 6379:6379
 
@@ -53,9 +53,8 @@ services:
       - /src/packages/keeper/node_modules
       - /src/packages/hardhat/node_modules
     depends_on:
-      - hardhat-node
-      - hardhat-deploy
       - redis
+      - hardhat-node
 
   keeper-worker:
     build:
@@ -74,12 +73,15 @@ services:
       - /src/packages/keeper/node_modules
       - /src/packages/hardhat/node_modules
     depends_on:
-      - keeper-queue
+      - hardhat-node
 
   dapp:
     build:
       context: .
       dockerfile: docker/dapp.Dockerfile
+    restart: always
+    environment:
+      NEXT_TELEMETRY_DISABLED: 1
     volumes:
       - ./packages/dapp:/src/packages/dapp
       - ./packages/hardhat/artifacts:/src/packages/hardhat/artifacts
@@ -87,11 +89,9 @@ services:
       - /src/node_modules
       - /src/packages/dapp/node_modules
       - /src/packages/dapp/.next
+      - /src/packages/hardhat/node_modules
     ports:
       - 3000:3000
-    env_file:
-      - ./packages/dapp/.env.local
-    command: sh -c "npx --yes just-wait -p ./packages/hardhat/deployments/docker.json --timeout 10 && npm run start:dapp"
+    command: sh -c "npx --yes wait-on -l ./packages/hardhat/deployments/docker.json && npm run start:dapp"
     depends_on:
       - hardhat-node
-      - hardhat-deploy
