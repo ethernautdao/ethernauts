@@ -5,6 +5,7 @@ import ReactFullpage from '@fullpage/react-fullpage';
 import { Hero } from '../components/Hero';
 import { Mint } from '../components/Mint';
 import { Header } from '../components/Header';
+import { FairLaunch } from '../components/FairLaunch';
 import { Outline } from '../components/Buttons/Outline';
 
 import styles from './index.module.scss';
@@ -24,6 +25,7 @@ export const HomePage = () => {
         ),
       },
       { title: <></>, content: () => <Mint /> },
+      { title: <></>, content: () => <FairLaunch /> },
     ],
     []
   );
@@ -33,6 +35,24 @@ export const HomePage = () => {
       <Head>
         <title>EthernautDAO - Home</title>
         <link rel="icon" href="/favicon.ico" />
+
+        <meta property="og:title" content="EthernautDAO - Solidifying The Future" />
+        <meta property="og:image" content="https://mint.ethernautdao.io/assets/twitter-card.png" />
+        <meta property="og:url" content="https://mint.ethernautdao.io/" />
+        <meta
+          name="twitter:card"
+          content="https://mint.ethernautdao.io/assets/main-background.jpg"
+        />
+
+        <meta
+          property="og:description"
+          content="A common goods DAO aimed at transforming developers into Ethereum developers."
+        />
+        <meta property="og:site_name" content="EthernautDAO - Solidifying The Future" />
+        <meta
+          name="twitter:image:alt"
+          content="A common goods DAO aimed at transforming developers into Ethereum developers."
+        />
       </Head>
 
       <ReactFullpage

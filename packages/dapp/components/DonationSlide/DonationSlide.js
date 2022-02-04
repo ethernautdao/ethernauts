@@ -14,8 +14,10 @@ import {
   MAX_DONATION,
   MIN_DONATION_PUBLIC_SALE,
   INITIAL_DONATION_PUBLIC_SALE,
+  SLIDE_DONATION_STEP_PUBLIC_SALE,
   MIN_DONATION_EARLY_SALE,
   INITIAL_DONATION_EARLY_SALE,
+  SLIDE_DONATION_STEP_EARLY_SALE,
 } from '../../constants/common';
 import { EARLY } from '../../constants/sale-state';
 
@@ -44,6 +46,9 @@ const SelectDonation = () => {
 
   const MIN_DONATION = isEarlySale ? MIN_DONATION_EARLY_SALE : MIN_DONATION_PUBLIC_SALE;
   const INITIAL_DONATION = isEarlySale ? INITIAL_DONATION_EARLY_SALE : INITIAL_DONATION_PUBLIC_SALE;
+  const SLIDE_DONATION_STEP = isEarlySale
+    ? SLIDE_DONATION_STEP_EARLY_SALE
+    : SLIDE_DONATION_STEP_PUBLIC_SALE;
 
   return (
     <>
@@ -54,7 +59,7 @@ const SelectDonation = () => {
         max={MAX_DONATION}
         defaultValue={INITIAL_DONATION}
         onChange={setDonation}
-        step={0.1}
+        step={SLIDE_DONATION_STEP}
       />
       <div className={styles.range}>
         <span>{`${MIN_DONATION} ETH`}</span>
@@ -67,7 +72,7 @@ const SelectDonation = () => {
         <input
           type="number"
           className={styles.input}
-          value={parseFloat(donation)}
+          value={parseFloat(donation).toFixed(isEarlySale ? 3 : 1)}
           onChange={(e) => setDonation(Number(e.target.value).toFixed(2))}
           min={INITIAL_DONATION}
           max={MAX_DONATION}

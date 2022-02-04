@@ -2,9 +2,14 @@
   .section {
     background-size: cover;
     background-position: center center;
+    background-color: transparent !important;
 
     &:first-child {
       background-image: url(/assets/main-background.jpg);
+    }
+
+    &:nth-of-type(2) {
+      background-image: url(/assets/dark-background.png);
     }
 
     &:last-child {
