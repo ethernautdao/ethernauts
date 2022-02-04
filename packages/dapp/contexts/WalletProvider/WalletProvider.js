@@ -1,5 +1,5 @@
-import { createContext, useReducer, useCallback, useEffect } from 'react';
 import Web3Modal from 'web3modal';
+import { createContext, useCallback, useEffect, useReducer } from 'react';
 import { providers } from 'ethers';
 
 // import WalletLink from 'walletlink';
@@ -34,12 +34,12 @@ const reducer = (state, action) => {
         signer: action.signer,
         chainId: action.chainId,
       };
-    case 'SET_BALANCE': 
+    case 'SET_BALANCE':
       return {
         ...state,
         balance: action.balance,
-      }  
-    
+      };
+
     case 'SET_ADDRESS':
       return {
         ...state,
@@ -107,7 +107,7 @@ const WalletProvider = ({ children }) => {
 
   const setBalance = useCallback(async () => {
     if (!web3Provider) return;
-    
+
     const balance = await web3Provider.getBalance(address);
 
     dispatch({
