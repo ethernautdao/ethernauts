@@ -16,7 +16,7 @@ describe('State Changes', () => {
   before('deploy contract', async () => {
     const factory = await ethers.getContractFactory('Ethernauts');
 
-    const params = { ...hre.config.defaults };
+    const params = { ...hre.config.defaultParameters };
     params.definitiveMaxGiftableTokens = 10;
     params.definitiveMaxTokens = 100;
 

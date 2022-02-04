@@ -49,7 +49,7 @@ module.exports = {
   etherscan: {
     apiKey: `${process.env.ETHERSCAN_API}`,
   },
-  defaults: {
+  defaultParameters: {
     definitiveMaxTokens: 10000,
     definitiveMaxGiftableTokens: 100,
     definitiveBatchSize: 50,
@@ -63,7 +63,7 @@ module.exports = {
     initialCouponSigner: '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266',
     initialUrlChanger: '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266',
   },
-  overrides: {
+  customParameters: {
     ['optimistic-kovan']: {
       initialCouponSigner: '0xA227D2b83aB33384124A75872e1f3D71b6341D0b',
       initialUrlChanger: '0xA227D2b83aB33384124A75872e1f3D71b6341D0b',
