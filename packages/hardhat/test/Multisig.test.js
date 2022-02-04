@@ -15,7 +15,7 @@ describe('Multisig', () => {
     let factory;
 
     factory = await ethers.getContractFactory('Ethernauts');
-    Ethernauts = await factory.deploy(...Object.values(hre.config.defaults));
+    Ethernauts = await factory.deploy(...Object.values(hre.config.defaultParameters));
 
     factory = await ethers.getContractFactory('Multisig');
     Multisig = await factory.deploy(Ethernauts.address);

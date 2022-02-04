@@ -25,7 +25,7 @@ describe('Mint', () => {
   before('deploy contract', async () => {
     const factory = await ethers.getContractFactory('Ethernauts');
 
-    const params = { ...hre.config.defaults };
+    const params = { ...hre.config.defaultParameters };
     params.definitiveMaxTokens = 100;
     params.definitiveMaxGiftableTokens = 10;
 

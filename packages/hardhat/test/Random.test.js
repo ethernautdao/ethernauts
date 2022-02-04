@@ -60,7 +60,7 @@ describe('Random', () => {
   before('deploy contract', async () => {
     const factory = await ethers.getContractFactory('Ethernauts');
 
-    const params = { ...hre.config.defaults };
+    const params = { ...hre.config.defaultParameters };
     params.definitiveMaxGiftableTokens = 0;
     params.definitiveMaxTokens = maxTokens;
     params.definitiveBatchSize = batchSize;
