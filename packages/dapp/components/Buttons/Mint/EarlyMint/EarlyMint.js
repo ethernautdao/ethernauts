@@ -14,7 +14,7 @@ import { Disabled } from '../../Disabled';
 import { ETHEREUM_NETWORK } from '../../../../config';
 
 const EarlyMint = () => {
-  const { state } = useContext(WalletContext);
+  const { state, setBalance } = useContext(WalletContext);
   const [{ data, isLoading, isError }, fetchMintEarly] = useMintEarly();
   const [
     { data: isARedeemedCoupon, isLoading: isARedeemedCouponLoading },
@@ -44,6 +44,11 @@ const EarlyMint = () => {
     notify({ kind: ERROR_KIND });
   }, [isError]);
 
+  const handleClick = async () => {
+    await fetchMintEarly();
+    await setBalance();
+  };
+
   if (isARedeemedCouponLoading) return <Primary isDisabled fullWidth text="Loading..." />;
   if (isLoading) return <Primary isDisabled fullWidth text="Pending transaction..." />;
 
@@ -67,7 +72,7 @@ const EarlyMint = () => {
 
   return (
     <>
-      <Primary fullWidth onClick={fetchMintEarly} text="Donate and mint your NFT" />
+      <Primary fullWidth onClick={handleClick} text="Donate and mint your NFT" />
       <Toast />
     </>
   );
