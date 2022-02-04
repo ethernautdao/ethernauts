@@ -12,8 +12,8 @@
     "lint": "next lint",
     "pre:deploy:staging": "env-cmd -f .env.staging npm run build && npm run export",
     "pre:deploy:production": "env-cmd -f .env.production npm run build && npm run export",
-    "deploy:staging": "npm run pre:deploy:staging && netlify deploy --prod --open",
-    "deploy:production": "npm run pre:deploy:production && netlify deploy --prod --open",
+    "deploy:staging": "npm run pre:deploy:staging && netlify deploy --site 0fbebbf0-1e9b-44e0-8a45-971ab6e3124e --prod --open",
+    "deploy:production": "npm run pre:deploy:production && netlify deploy --site 7ba60398-7963-450d-a6c6-77951bd91c30 --prod --open",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
