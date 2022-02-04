@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { utils, providers, Contract } from 'ethers';
 
 import { CONTRACT_ADDRESS, ABI } from '../../config';
@@ -21,15 +21,17 @@ const WalletInfo = () => {
 
   const { rpcUrl } = getChainData(defaultChainId);
 
-  const provider = new providers.JsonRpcProvider(rpcUrl);
+  useEffect(() => {
+    const provider = new providers.JsonRpcProvider(rpcUrl);
 
-  const contract = new Contract(CONTRACT_ADDRESS, ABI, provider);
+    const contract = new Contract(CONTRACT_ADDRESS, ABI, provider);
 
-  contract.on('Transfer', async (from, to) => {
-    if (from !== zeroAccount && to !== state.address) return;
+    contract.on('Transfer', async (from, to) => {
+      if (from !== zeroAccount && to !== state.address) return;
 
-    await setBalance();
-  });
+      await setBalance();
+    });
+  }, []);
 
   const { address, chainId } = state;
 
