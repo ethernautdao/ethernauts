@@ -1,9 +1,28 @@
+@font-face {
+  font-family: Effra Regular;
+  src: url(/fonts/effra/Effra_Std_Rg.ttf);
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: Effra Bold;
+  src: url(/fonts/effra/Effra_Std_Bd.ttf);
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: Effra Light;
+  src: url(/fonts/effra/Effra_Std_Lt.ttf);
+  font-weight: normal;
+}
+
 html,
 body {
   padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  font-family: "Effra Regular", -apple-system, BlinkMacSystemFont, Segoe UI,
+    Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue,
+    sans-serif;
   background: var(--default-background-color);
   font-size: 14px;
 }

@@ -8,6 +8,7 @@
   background: var(--logs-text-color);
   background-clip: text;
   -webkit-text-fill-color: transparent;
+  font-family: "Effra Bold";
 }
 
 .donationTitle {
@@ -20,7 +21,7 @@
   color: var(--white);
   margin-top: 5px;
   font-size: 2rem;
-  font-weight: 500;
+  font-family: Effra Bold;
 }
 
 .mobileDonationDescription {
@@ -46,7 +47,7 @@
   width: 80px;
   outline: none;
   font-size: 2rem;
-  font-weight: bold;
+  font-family: "Effra Bold";
   text-align: center;
   background-color: transparent;
 }

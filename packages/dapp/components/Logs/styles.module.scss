@@ -13,16 +13,17 @@
       background: var(--logs-text-color);
       background-clip: text;
       -webkit-text-fill-color: transparent;
+      font-family: "Effra Bold";
     }
 
     .location {
       margin: 0.5rem 0;
-      font-weight: bold;
       font-size: 3rem;
       letter-spacing: 1px;
       background: var(--logs-text-subtitle);
       background-clip: text;
       -webkit-text-fill-color: transparent;
+      font-family: "Effra Bold";
     }
 
     .text {
