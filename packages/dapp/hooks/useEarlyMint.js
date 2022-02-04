@@ -34,11 +34,14 @@ const useMintEarly = () => {
           return address === state.address;
         });
 
-        if (!signedCoupon) throw new Error(`You're not able to mint in this state`);
+        if (!signedCoupon)
+          throw new Error(
+            `You need to have valid community coupon to purchase during the early sale`
+          );
 
         const isARedeemedCoupon = await contract.userRedeemedCoupon(state.address);
 
-        if (isARedeemedCoupon) throw new Error(`You're trying to use a redeemed coupon`);
+        if (isARedeemedCoupon) throw new Error(`You've redeemed your community sale coupon`);
 
         const tx = await contract.mintEarly(signedCoupon[state.address], {
           value: utils.parseEther(String(donation)),
