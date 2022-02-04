@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useContext } from 'react';
 
 import { WalletContext } from '../../../../contexts/WalletProvider';
 
@@ -38,9 +38,14 @@ const EarlyMint = () => {
   if (isLoading) return <Primary isDisabled fullWidth text="Pending transaction..." />;
 
   if (!signedCoupon)
-    <>
-      <Disabled fullWidth text="You're not able to mint in this state" />
-    </>;
+    return (
+      <>
+        <Disabled
+          fullWidth
+          text="You need to have valid community coupon to purchase during the early sale."
+        />
+      </>
+    );
 
   return (
     <>

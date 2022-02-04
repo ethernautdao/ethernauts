@@ -34,6 +34,12 @@ const reducer = (state, action) => {
         signer: action.signer,
         chainId: action.chainId,
       };
+    case 'SET_BALANCE': 
+      return {
+        ...state,
+        balance: action.balance,
+      }  
+    
     case 'SET_ADDRESS':
       return {
         ...state,
@@ -58,7 +64,7 @@ const WalletContext = createContext();
 const WalletProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const { provider, web3Provider } = state;
+  const { provider, web3Provider, address } = state;
 
   const connect = useCallback(async () => {
     const provider = await web3Modal.connect();
@@ -98,6 +104,17 @@ const WalletProvider = ({ children }) => {
       connect();
     }
   }, [connect]);
+
+  const setBalance = useCallback(async () => {
+    if (!web3Provider) return;
+    
+    const balance = await web3Provider.getBalance(address);
+
+    dispatch({
+      type: 'SET_BALANCE',
+      balance,
+    });
+  }, [provider]);
 
   useEffect(() => {
     if (provider && provider.on) {
@@ -139,7 +156,7 @@ const WalletProvider = ({ children }) => {
     }
   }, [provider, disconnect]);
 
-  const value = { state, connect, disconnect };
+  const value = { state, connect, disconnect, setBalance };
 
   return <WalletContext.Provider value={value}>{children}</WalletContext.Provider>;
 };

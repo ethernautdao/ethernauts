@@ -54,7 +54,7 @@ const SelectDonation = () => {
         max={MAX_DONATION}
         defaultValue={INITIAL_DONATION}
         onChange={setDonation}
-        step={0.1}
+        step={isEarlySale ? 0.015 : 0.1}
       />
       <div className={styles.range}>
         <span>{`${MIN_DONATION} ETH`}</span>
@@ -67,7 +67,7 @@ const SelectDonation = () => {
         <input
           type="number"
           className={styles.input}
-          value={parseFloat(donation)}
+          value={parseFloat(donation).toFixed(isEarlySale ? 3 : 1)}
           onChange={(e) => setDonation(Number(e.target.value).toFixed(2))}
           min={INITIAL_DONATION}
           max={MAX_DONATION}

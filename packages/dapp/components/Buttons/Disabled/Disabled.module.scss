@@ -7,6 +7,7 @@
   background: var(--button-primary-background-color);
 
   &:disabled {
+    margin-bottom: -15px;
     cursor: not-allowed;
     background: var(--button-disabled-color);
   }
