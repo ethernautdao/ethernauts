@@ -42,6 +42,7 @@ const EarlyMint = () => {
       <>
         <Disabled
           fullWidth
+          notElegible
           text="You need to have valid community coupon to purchase during the early sale."
         />
       </>
