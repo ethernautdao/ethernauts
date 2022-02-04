@@ -31,7 +31,9 @@ async function main() {
 
   const signedCoupons = await Promise.all(coupons);
 
-  return fs.promises.writeFile(signedCouponsPath, JSON.stringify(signedCoupons, null, 2));
+  console.log(JSON.stringify(signedCoupons, null, 2));
+
+  return await fs.promises.writeFile(signedCouponsPath, JSON.stringify(signedCoupons, null, 2));
 }
 
 main()
