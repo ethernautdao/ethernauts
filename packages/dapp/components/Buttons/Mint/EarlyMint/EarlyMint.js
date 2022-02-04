@@ -16,8 +16,10 @@ import { ABI, CONTRACT_ADDRESS, ETHEREUM_NETWORK } from '../../../../config';
 const EarlyMint = () => {
   const { state } = useContext(WalletContext);
   const [{ data, isLoading, isError }, fetchMintEarly] = useMintEarly();
-  const [{ data: isARedeemedCoupon, isLoading: isARedeemedCouponLoaing }, fetchUserRedeemedCoupon] =
-    useUserRedeemedCoupon();
+  const [
+    { data: isARedeemedCoupon, isLoading: isARedeemedCouponLoading },
+    fetchUserRedeemedCoupon,
+  ] = useUserRedeemedCoupon();
 
   useEffect(() => {
     fetchUserRedeemedCoupon();
@@ -42,7 +44,7 @@ const EarlyMint = () => {
     notify({ kind: ERROR_KIND });
   }, [isError]);
 
-  if (isARedeemedCouponLoaing) return <Primary isDisabled fullWidth text="Loading..." />;
+  if (isARedeemedCouponLoading) return <Primary isDisabled fullWidth text="Loading..." />;
   if (isLoading) return <Primary isDisabled fullWidth text="Pending transaction..." />;
 
   if (!signedCoupon)
