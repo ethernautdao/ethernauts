@@ -13,7 +13,7 @@ describe('Withdraw', () => {
 
   before('deploy contract', async () => {
     const factory = await ethers.getContractFactory('Ethernauts');
-    Ethernauts = await factory.deploy(...Object.values(hre.config.defaults));
+    Ethernauts = await factory.deploy(...Object.values(hre.config.defaultParameters));
   });
 
   before('open the sale', async () => {

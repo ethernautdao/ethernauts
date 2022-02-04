@@ -18,7 +18,7 @@ describe('General', () => {
   describe('when deploying the contract with invalid parameters', () => {
     describe('when deploying with too many giftable tokens', () => {
       it('reverts', async () => {
-        const params = { ...hre.config.defaults };
+        const params = { ...hre.config.defaultParameters };
         params.definitiveMaxGiftableTokens = 200;
 
         await assertRevert(factory.deploy(...Object.values(params)), 'MaxGiftableTokensTooLarge');
@@ -27,7 +27,7 @@ describe('General', () => {
 
     describe('when deploying with too many tokens', () => {
       it('reverts', async () => {
-        const params = { ...hre.config.defaults };
+        const params = { ...hre.config.defaultParameters };
         params.definitiveMaxTokens = 12000;
 
         await assertRevert(factory.deploy(...Object.values(params)), 'MaxTokensTooLarge');
@@ -37,7 +37,7 @@ describe('General', () => {
 
   describe('when deploying the contract with valid paratemeters', () => {
     before('deploy contract', async () => {
-      Ethernauts = await factory.deploy(...Object.values(hre.config.defaults));
+      Ethernauts = await factory.deploy(...Object.values(hre.config.defaultParameters));
     });
 
     it('shows the correct coupon signer', async () => {
@@ -60,16 +60,19 @@ describe('General', () => {
     it('shows the correct max supplies', async () => {
       assert.equal(
         (await Ethernauts.maxGiftableTokens()).toNumber(),
-        hre.config.defaults.definitiveMaxGiftableTokens
+        hre.config.defaultParameters.definitiveMaxGiftableTokens
       );
       assert.equal(
         (await Ethernauts.maxTokens()).toNumber(),
-        hre.config.defaults.definitiveMaxTokens
+        hre.config.defaultParameters.definitiveMaxTokens
       );
     });
 
     it('shows the correct mint price', async () => {
-      assert.equal((await Ethernauts.mintPrice()).toString(), hre.config.defaults.initialMintPrice);
+      assert.equal(
+        (await Ethernauts.mintPrice()).toString(),
+        hre.config.defaultParameters.initialMintPrice
+      );
     });
 
     it('shows that the expected interfaces are supported', async () => {

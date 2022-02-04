@@ -20,7 +20,7 @@ describe('Test events emitted', () => {
   before('deploy contract', async () => {
     const factory = await ethers.getContractFactory('Ethernauts');
 
-    const params = { ...hre.config.defaults };
+    const params = { ...hre.config.defaultParameters };
     params.definitiveMaxGiftableTokens = 10;
 
     Ethernauts = await factory.deploy(...Object.values(params));
