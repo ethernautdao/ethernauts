@@ -5,7 +5,8 @@
   "main": "index.js",
   "private": true,
   "scripts": {
-    "dev": "env-cmd -f .env.staging next dev",
+    "dev": "next dev",
+    "staging": "env-cmd -f .env.staging next dev",
     "build": "next build",
     "start": "next start",
     "export": "next export",
