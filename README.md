@@ -61,3 +61,15 @@ Finally, you can also set the base URL changer address, with:
 ```bash
 docker compose exec hardhat-node sh -c 'cd /src/packages/hardhat && npx hardhat --network docker exec --method setUrlChanger --args ["0x000"]'
 ```
+
+## Assets Validation
+
+The `provenanceHash` saved at the contract was generated using the IPFS hash for each asset, concatenated in order and getting an MD5 hash from that.
+
+The hash value is:
+
+```
+f04a636d10f42ec5a9d4885d30834a70
+```
+
+And all the assets in order can be seen at [`provenanceHash-concatenated.txt`](provenanceHash-concatenated.txt)
