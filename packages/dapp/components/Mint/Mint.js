@@ -30,8 +30,8 @@ const Mint = () => {
           </div>
           <div className={cn(styles.row, styles.lastRow)}>
             <MintButton />
-            <AvailableToMint />
           </div>
+          <AvailableToMint />
         </div>
       </div>
     </section>
