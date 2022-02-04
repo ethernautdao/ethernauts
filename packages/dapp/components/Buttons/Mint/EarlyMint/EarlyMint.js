@@ -11,7 +11,7 @@ import { SUCCESS_KIND, ERROR_KIND } from '../../../Toast/Kind';
 import { Primary } from '../../Primary';
 import { Disabled } from '../../Disabled';
 
-import { ABI, CONTRACT_ADDRESS, ETHEREUM_NETWORK } from '../../../../config';
+import { ETHEREUM_NETWORK } from '../../../../config';
 
 const EarlyMint = () => {
   const { state } = useContext(WalletContext);
