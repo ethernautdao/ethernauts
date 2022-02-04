@@ -6,7 +6,7 @@ import { WalletContext } from '../../../contexts/WalletProvider';
 import styles from './ConnectWallet.module.scss';
 
 const ConnectWallet = ({ fullWidth }) => {
-  const { state, connect, disconnect } = useContext(WalletContext);
+  const { state, connect } = useContext(WalletContext);
 
   const isConnected = state.web3Provider !== null;
 

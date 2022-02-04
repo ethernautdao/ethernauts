@@ -4,7 +4,6 @@ import { Contract } from 'ethers';
 
 import { ABI, CONTRACT_ADDRESS } from '../config';
 
-import { zeroAccount } from '../constants/common';
 import { DEFAULT_NETWORKS_PER_ENVIRONMENT } from '../constants/networks';
 
 import getChainData from '../helpers/get-chain-data';
@@ -28,18 +27,6 @@ const useAvailableToMint = () => {
       const contract = new Contract(CONTRACT_ADDRESS, ABI, provider);
 
       const availableToMint = await contract.availableToMint();
-
-      contract.on('Transfer', async (from) => {
-        if (from !== zeroAccount) return;
-
-        setIsLoading(true);
-
-        const availableToMint = await contract.availableToMint();
-
-        setData(availableToMint.toNumber());
-
-        setIsLoading(false);
-      });
 
       setData(availableToMint.toNumber());
     } catch (err) {

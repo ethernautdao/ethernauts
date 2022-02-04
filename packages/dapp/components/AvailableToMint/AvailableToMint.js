@@ -11,9 +11,9 @@ const AvailableToMint = () => {
     fetchAvailableToMint();
   }, []);
 
-  if (isLoading) return <span className={styles.fetchAvailableToMint}>Loading...</span>;
+  if (isLoading) return <p className={styles.fetchAvailableToMint}>Loading...</p>;
 
-  if (isError) return <span className={styles.fetchAvailableToMint}>Something went wrong</span>;
+  if (isError) return <p className={styles.fetchAvailableToMint}>Something went wrong</p>;
 
   if (data === 0) return null;
 

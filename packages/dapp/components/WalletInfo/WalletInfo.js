@@ -1,9 +1,5 @@
 import { useContext, useState } from 'react';
-import { utils, providers, Contract } from 'ethers';
-
-import { CONTRACT_ADDRESS, ABI } from '../../config';
-import { DEFAULT_NETWORKS_PER_ENVIRONMENT } from '../../constants/networks';
-import { zeroAccount } from '../../constants/common';
+import { utils } from 'ethers';
 
 import { WalletContext } from '../../contexts/WalletProvider';
 import ellipseAddress from '../../helpers/ellipse-address';
@@ -14,22 +10,8 @@ import { Dot } from './Dot';
 import styles from './WalletInfo.module.scss';
 
 const WalletInfo = () => {
-  const { state, disconnect, setBalance } = useContext(WalletContext);
+  const { state, disconnect } = useContext(WalletContext);
   const [isHover, setIsHover] = useState(false);
-
-  const defaultChainId = DEFAULT_NETWORKS_PER_ENVIRONMENT[process.env.NEXT_PUBLIC_APP_ENV];
-
-  const { rpcUrl } = getChainData(defaultChainId);
-
-  const provider = new providers.JsonRpcProvider(rpcUrl);
-
-  const contract = new Contract(CONTRACT_ADDRESS, ABI, provider);
-
-  contract.on('Transfer', async (from, to) => {
-    if (from !== zeroAccount && to !== state.address) return;
-
-    await setBalance();
-  });
 
   const { address, chainId } = state;
 
