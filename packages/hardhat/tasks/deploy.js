@@ -34,6 +34,7 @@ task('deploy', 'Deploys the Ethernauts NFT contract')
 
     const constructorParams = {
       ...hre.config.defaults,
+      ...(hre.config?.overrides[hre.network.name] || {}),
     };
 
     const constructorArgs = await _parseConstructorArguments(constructorParams);
