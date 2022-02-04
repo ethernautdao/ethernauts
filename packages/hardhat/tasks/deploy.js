@@ -136,12 +136,14 @@ async function _estimateDeploymentCosts(constructorArguments) {
   console.log(`Gas price: ${hre.ethers.utils.formatUnits(gasPrice, 'gwei')} GWEI`);
 
   const cost = estimatedGas.mul(gasPrice);
-  console.log(`Estimated cost: ${ethers.utils.formatEther(cost.toString())} ETH`);
+  console.log(`Estimated cost: ${hre.ethers.utils.formatEther(cost.toString())} ETH`);
 }
 
 async function _deployContract(constructorArguments) {
   const factory = await hre.ethers.getContractFactory('Ethernauts');
-  const Ethernauts = await factory.deploy(...constructorArguments, { gasPrice: hre.network.config.gasPrice });
+  const Ethernauts = await factory.deploy(...constructorArguments, {
+    gasPrice: hre.network.config.gasPrice,
+  });
 
   console.log('Submitted transaction:', Ethernauts.deployTransaction.hash);
   console.log(JSON.stringify(Ethernauts.deployTransaction), null, 2);
