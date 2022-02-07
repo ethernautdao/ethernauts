@@ -33,6 +33,7 @@ services:
       REDIS_PORT: 6379
       RESOURCES_METADATA_FOLDER: /src/resources/metadata
       RESOURCES_ASSETS_FOLDER: /src/resources/assets
+      DEPLOYER_KEY: ${URL_CHANGER_KEY}
     volumes:
       - ${RESOURCES_METADATA_FOLDER}:/src/resources/metadata:ro
       - ${RESOURCES_ASSETS_FOLDER}:/src/resources/assets:ro
