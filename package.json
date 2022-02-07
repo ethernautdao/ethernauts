@@ -35,6 +35,7 @@
     "coverage": "npm run --workspaces --if-present coverage",
     "start:dapp:dev": "npm run dev -w @ethernauts/dapp",
     "start:dapp:staging": "npm run staging -w @ethernauts/dapp",
+    "start:dapp:production": "npm run production -w @ethernauts/dapp",
     "start:keeper": "npm run start:keeper -w @ethernauts/hardhat",
     "lint:js": "prettier --check '**/*.js' && eslint '**/*.js' && npm run lint -w @ethernauts/dapp",
     "lint:js:fix": "prettier --write '**/*.js' && eslint --fix '**/*.js'",

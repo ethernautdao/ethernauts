@@ -31,7 +31,7 @@ const useSwitchNetwork = (windowIsActive) => {
       if (e?.message?.includes('Unrecognized chain ID')) {
         await web3Provider.provider.request({
           method: 'wallet_addEthereumChain',
-          params: [OPTIMISM_NETWORKS[formattedChainId]],
+          params: [OPTIMISM_NETWORKS[defaultChainId]],
         });
       }
     }
