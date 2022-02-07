@@ -2,7 +2,11 @@ import debounce from 'lodash.debounce';
 import { useCallback, useState, useEffect } from 'react';
 
 const useIsWindowFocused = () => {
-  const [windowIsActive, setWindowIsActive] = useState(true);
+  const [windowIsActive, setWindowIsActive] = useState(false);
+
+  useEffect(() => {
+    setWindowIsActive(!document.hidden);
+  }, []);
 
   const handleActivity = useCallback(
     debounce(

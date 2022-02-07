@@ -1,15 +1,29 @@
-import Web3Modal from 'web3modal';
-import { createContext, useCallback, useEffect, useReducer } from 'react';
 import { providers } from 'ethers';
+import Web3Modal from 'web3modal';
+import WalletConnectProvider from '@walletconnect/web3-provider';
+import { createContext, useCallback, useEffect, useReducer } from 'react';
 
-// import WalletLink from 'walletlink';
-// import WalletConnectProvider from '@walletconnect/web3-provider';
+import { INFURA_PROJECT_ID } from '../../config';
+
+const providerOptions = {
+  walletconnect: {
+    package: WalletConnectProvider,
+    options: {
+      infuraId: INFURA_PROJECT_ID,
+      rpc: {
+        10: 'https://mainnet.optimism.io',
+        69: 'https://kovan.optimism.io/',
+      },
+    },
+  },
+};
 
 let web3Modal;
 
 if (typeof window !== 'undefined') {
   web3Modal = new Web3Modal({
     cacheProvider: true,
+    providerOptions,
   });
 }
 
@@ -128,11 +142,9 @@ const WalletProvider = ({ children }) => {
         });
       };
 
-      const handleChainChanged = (chainId) => {
-        dispatch({
-          type: 'SET_CHAIN_ID',
-          chainId,
-        });
+      const handleChainChanged = () => {
+        // Ref: https://docs.ethers.io/v5/single-page/#/v5/concepts/best-practices/-%23-best-practices--network-changes
+        window.location.reload();
       };
 
       const handleDisconnect = (error) => {
