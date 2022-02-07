@@ -43,7 +43,9 @@ const useMintEarly = () => {
 
         if (isARedeemedCoupon) throw new Error(`You've redeemed your community sale coupon`);
 
-        const tx = await contract.mintEarly(signedCoupon[state.address], {
+        const [coupon] = Object.values(signedCoupon);
+
+        const tx = await contract.mintEarly(signedCoupon[coupon], {
           value: utils.parseEther(String(donation)),
         });
 
