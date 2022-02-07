@@ -45,7 +45,7 @@ const useMintEarly = () => {
 
         const [coupon] = Object.values(signedCoupon);
 
-        const tx = await contract.mintEarly(signedCoupon[coupon], {
+        const tx = await contract.mintEarly(coupon, {
           value: utils.parseEther(String(donation)),
         });
 
