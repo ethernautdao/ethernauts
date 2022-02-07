@@ -30,9 +30,9 @@ const Cell = ({ tokenId, isRevealed, kind, isMiddleCell }) => {
   }, [isRevealed, isDev, tokenId]);
 
   const imageSize = useMemo(() => {
-    if (isMobile || kind === ALL) return { width: '360px', height: '180px' };
+    if (isMobile || kind === ALL) return { width: 'auto', height: '180px' };
 
-    return { width: '960px', height: '400px' };
+    return { width: 'auto', height: '400px' };
   }, [isMobile, kind]);
 
   return (
