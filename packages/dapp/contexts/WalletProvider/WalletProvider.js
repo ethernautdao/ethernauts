@@ -60,11 +60,6 @@ const reducer = (state, action) => {
         balance: action.balance,
         address: action.address,
       };
-    case 'SET_CHAIN_ID':
-      return {
-        ...state,
-        chainId: Number(action.chainId),
-      };
     case 'RESET_PROVIDER':
       return initialState;
     default:
