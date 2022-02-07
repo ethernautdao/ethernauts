@@ -31,7 +31,7 @@ const useMintEarly = () => {
 
         const signedCoupon = signedCoupons.find((signedCoupon) => {
           const [address] = Object.keys(signedCoupon);
-          return address === state.address;
+          return address.toLowerCase() === state.address.toLowerCase();
         });
 
         if (!signedCoupon)
@@ -43,7 +43,9 @@ const useMintEarly = () => {
 
         if (isARedeemedCoupon) throw new Error(`You've redeemed your community sale coupon`);
 
-        const tx = await contract.mintEarly(signedCoupon[state.address], {
+        const [coupon] = Object.values(signedCoupon);
+
+        const tx = await contract.mintEarly(coupon, {
           value: utils.parseEther(String(donation)),
         });
 
