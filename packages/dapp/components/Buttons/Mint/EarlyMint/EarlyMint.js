@@ -29,7 +29,7 @@ const EarlyMint = () => {
 
   const signedCoupon = signedCoupons.find((signedCoupon) => {
     const [address] = Object.keys(signedCoupon);
-    return address === state.address;
+    return address.toLowerCase() === state.address.toLowerCase();
   });
 
   useEffect(() => {
