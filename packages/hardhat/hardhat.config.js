@@ -9,6 +9,7 @@ require('./tasks/deploy');
 require('./tasks/exec');
 require('./tasks/mint');
 require('./tasks/sale-state');
+require('./tasks/sign-coupon');
 
 module.exports = {
   solidity: {
