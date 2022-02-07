@@ -101,6 +101,8 @@ const WalletProvider = ({ children }) => {
     }
     await web3Modal.clearCachedProvider();
 
+    localStorage.removeItem('walletconnect');
+
     dispatch({
       type: 'RESET_PROVIDER',
     });
