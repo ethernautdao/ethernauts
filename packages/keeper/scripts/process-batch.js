@@ -28,9 +28,9 @@ async function main() {
     throw new Error(`Invalid batch number ${batchNumber}`);
   }
 
-  console.log(`   maxTokens: ${batchSize} `);
-  console.log(`   BatchSize: ${batchSize} `);
-  console.log(`   maxBatchNumber: ${batchSize} `);
+  console.log(`   maxTokens: ${maxTokens} `);
+  console.log(`   batchSize: ${batchSize} `);
+  console.log(`   maxBatchNumber: ${maxBatchNumber} `);
 
   await queue.add({
     name: JOB_PROCESS_BATCH,

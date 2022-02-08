@@ -59,15 +59,6 @@ const jobs = {
     const metadataKey = `${config.FLEEK_METADATA_FOLDER}/${assetId}`;
     const assetKey = `${config.FLEEK_ASSETS_FOLDER}/${assetId}.png`;
 
-    const exists = await fleek.fileExists({
-      key: metadataKey,
-    });
-
-    if (exists) {
-      console.warn(`Resource with assetId "${assetId}" already uploaded`);
-      return;
-    }
-
     const metadataPath = path.join(config.RESOURCES_METADATA_FOLDER, `${assetId}.json`);
     const assetPath = path.join(config.RESOURCES_ASSETS_FOLDER, `${assetId}.png`);
 
@@ -78,16 +69,33 @@ const jobs = {
     data.external_url = `https://mint.ethernautdao.io/nft/${tokenId}`;
     await fs.writeFile(metadataPath, JSON.stringify(data, null, 2));
 
-    const [metadata, asset] = await Promise.all([
-      fleek.uploadFile({
+    const metadataExists = await fleek.fileExists({
+      key: metadataKey,
+    });
+
+    let metadata;
+    if (metadataExists) {
+      console.warn(`Metadata with assetId "${assetId}" already uploaded`);
+    } else {
+      metadata = await fleek.uploadFile({
         key: metadataKey,
         location: metadataPath,
-      }),
-      fleek.uploadFile({
+      });
+    }
+
+    const assetExists = await fleek.fileExists({
+      key: assetKey,
+    });
+
+    let asset;
+    if (assetExists) {
+      console.warn(`Asset with assetId "${assetId}" already uploaded`);
+    } else {
+      metadata = await fleek.uploadFile({
         key: assetKey,
         location: assetPath,
-      }),
-    ]);
+      });
+    }
 
     return {
       tokenId,
