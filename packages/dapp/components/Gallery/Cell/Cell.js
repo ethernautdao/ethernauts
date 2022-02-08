@@ -13,21 +13,21 @@ import styles from './Cell.module.scss';
 
 const MAX_PRIORITY_ITEMS = 24;
 
-const Cell = ({ tokenId, isRevealed, kind, isMiddleCell }) => {
+const Cell = ({ assetId, isRevealed, kind, isMiddleCell }) => {
   const { breakpoint } = useBreakpoint(BREAKPOINTS, 'desktop');
 
   const isMobile = breakpoint === 'mobile';
 
-  const hasPriority = tokenId <= MAX_PRIORITY_ITEMS;
+  const hasPriority = assetId <= MAX_PRIORITY_ITEMS;
 
   const imageSrc = useMemo(() => {
     if (isRevealed && !isDev)
-      return `https://storageapi.fleek.co/${FLEEK_BUCKET_ID}/assets/${tokenId}.png`;
+      return `https://storageapi.fleek.co/${FLEEK_BUCKET_ID}/assets/${assetId}.png`;
 
     if (isRevealed && isDev) return '/assets/revealed-token.png';
 
     if (!isRevealed) return '/assets/unrevealed-token.jpg';
-  }, [isRevealed, isDev, tokenId]);
+  }, [isRevealed, isDev, assetId]);
 
   const imageSize = useMemo(() => {
     if (isMobile || kind === ALL) return { width: '360px', height: '180px' };
@@ -37,7 +37,7 @@ const Cell = ({ tokenId, isRevealed, kind, isMiddleCell }) => {
 
   return (
     <div
-      key={`cell-${tokenId}`}
+      key={`cell-${assetId}`}
       className={cn(styles.cellContainer, {
         [styles.middle]: isMiddleCell,
         [styles.all]: kind === ALL,
@@ -54,7 +54,7 @@ const Cell = ({ tokenId, isRevealed, kind, isMiddleCell }) => {
           priority={hasPriority}
         />
       </Zoom>
-      <span className={styles.tokenId}>#{tokenId}</span>
+      <span className={styles.assetId}>#{assetId}</span>
     </div>
   );
 };

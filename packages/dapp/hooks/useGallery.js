@@ -47,35 +47,39 @@ const useGallery = () => {
 
       const logs = await provider.getLogs(filter);
 
-      const galleryItems = logs.reduce(
-        (galleryItems, curr) => {
-          const parsedLog = iface.parseLog(curr);
+      const galleryItems = await logs.reduce(async (pGalleryItems, curr) => {
+        const galleryItems = await pGalleryItems;
 
-          if (parsedLog.name !== 'Transfer' || parsedLog.args.from !== zeroAccount) {
-            return galleryItems;
-          }
+        const parsedLog = iface.parseLog(curr);
 
-          const to = parsedLog.args.to.toLowerCase();
-          const tokenId = parsedLog.args.tokenId.toNumber();
-
-          const item = {
-            tokenId,
-            owner: to,
-            isRevealed: tokenId <= maxTokenIdRevealed,
-          };
-
-          // Push all nfts
-          galleryItems.allGalleryItems.push(item);
-
-          // Push nfts based on the current address
-          if (to === state.address?.toLowerCase() && isSupportedNetwork(state.chainId)) {
-            galleryItems.myGalleryItems.push(item);
-          }
-
+        if (parsedLog.name !== 'Transfer' || parsedLog.args.from !== zeroAccount) {
           return galleryItems;
-        },
-        { myGalleryItems: [], allGalleryItems: [] }
-      );
+        }
+
+        const to = parsedLog.args.to.toLowerCase();
+        const tokenId = parsedLog.args.tokenId.toNumber();
+
+        const assetId = await Ethernauts.getAssetIdForTokenId(tokenId);
+
+        // getAssetIdForTokenId returns "assetId,boolean" so it takes the first position;
+        const [formattedAssetId] = assetId.toString().split(',');
+
+        const item = {
+          assetId: formattedAssetId,
+          owner: to,
+          isRevealed: tokenId <= maxTokenIdRevealed,
+        };
+
+        // Push all nfts
+        galleryItems.allGalleryItems.push(item);
+
+        // Push nfts based on the current address
+        if (to === state.address?.toLowerCase() && isSupportedNetwork(state.chainId)) {
+          galleryItems.myGalleryItems.push(item);
+        }
+
+        return galleryItems;
+      }, Promise.resolve({ myGalleryItems: [], allGalleryItems: [] }));
 
       setData(galleryItems);
     } catch (err) {
