@@ -43,9 +43,14 @@ const useGallery = () => {
         Ethernauts.totalSupply().then(Number),
       ]);
 
+      const batchNumber = Math.floor(tokenId / batchSize);
+
       const maxTokenIdRevealed = totalSupply - (totalSupply % batchSize) - 1;
 
       const logs = await provider.getLogs(filter);
+
+      const randomNumber = await Ethernauts.getRandomNumberForBatch(batchNumber);
+      const offset = Number(randomNumber.mod(batchSize));
 
       const galleryItems = await logs.reduce(async (pGalleryItems, curr) => {
         const galleryItems = await pGalleryItems;
@@ -59,12 +64,13 @@ const useGallery = () => {
         const to = parsedLog.args.to.toLowerCase();
         const tokenId = parsedLog.args.tokenId.toNumber();
 
-        const assetId = await Ethernauts.getAssetIdForTokenId(tokenId);
+        // const assetId = await Ethernauts.getAssetIdForTokenId(tokenId);
 
         // getAssetIdForTokenId returns "assetId,boolean" so it takes the first position;
         const [formattedAssetId] = assetId.toString().split(',');
 
         const item = {
+          tokenId,
           assetId: formattedAssetId,
           owner: to,
           isRevealed: tokenId <= maxTokenIdRevealed,
