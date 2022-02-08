@@ -13,7 +13,7 @@ const queue = new FlowProducer({
 });
 
 async function main() {
-  const batchNumber = Number(process.argv[2]);
+  const batchNumber = Number(process.env.BATCH_ID);
 
   const Ethernauts = await getContractFromAbi('Ethernauts');
 
