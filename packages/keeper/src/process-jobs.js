@@ -56,15 +56,15 @@ const jobs = {
    * Get a mint process job and upload to necessary asset to IPFS
    */
   [JOB_UPLOAD_RESOURCE]: async function ({ tokenId, assetId }) {
-    const metadataKey = `${config.FLEEK_METADATA_FOLDER}/${tokenId}`;
-    const assetKey = `${config.FLEEK_ASSETS_FOLDER}/${tokenId}.png`;
+    const metadataKey = `${config.FLEEK_METADATA_FOLDER}/${assetId}`;
+    const assetKey = `${config.FLEEK_ASSETS_FOLDER}/${assetId}.png`;
 
     const exists = await fleek.fileExists({
       key: metadataKey,
     });
 
     if (exists) {
-      console.warn(`Resource with tokenId "${tokenId}" already uploaded`);
+      console.warn(`Resource with assetId "${assetId}" already uploaded`);
       return;
     }
 
@@ -74,6 +74,7 @@ const jobs = {
     // Include TokenId in Metadata
     const data = JSON.parse(await fs.readFile(metadataPath));
     data.name = `EthernautDAO #${tokenId}`;
+    data.description = 'EthernautDAO donation NFT';
     data.external_url = `https://mint.ethernautdao.io/nft/${tokenId}`;
     await fs.writeFile(metadataPath, JSON.stringify(data, null, 2));
 

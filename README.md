@@ -1,6 +1,6 @@
 # Ethernauts
 
-WIP implementation for https://forum.ethernautdao.io/t/deploy-ethernaut-avatar-nfts-to-bootstrap-the-dao-s-tokenomics/299
+Implementation for https://forum.ethernautdao.io/t/deploy-ethernaut-avatar-nfts-to-bootstrap-the-dao-s-tokenomics/299
 
 ## Requirements
 
@@ -66,7 +66,7 @@ docker compose exec hardhat-node sh -c 'cd /src/packages/hardhat && npx hardhat 
 
 The `provenanceHash` saved at the contract was generated using the IPFS hash for each asset, concatenated in order and getting an MD5 hash from that.
 
-The hash value is:
+The final deployed provenanceHash, which can be read at the [Deployed Contract](https://optimistic.etherscan.io/address/0xa433e0bf662dd934833c66d4f03711e1cce9c9b2) using the method `Ethernauts.provenanceHash()` is the following:
 
 ```
 f04a636d10f42ec5a9d4885d30834a70
