@@ -91,7 +91,7 @@ const jobs = {
     if (assetExists) {
       console.warn(`Asset with assetId "${assetId}" already uploaded`);
     } else {
-      metadata = await fleek.uploadFile({
+      asset = await fleek.uploadFile({
         key: assetKey,
         location: assetPath,
       });
