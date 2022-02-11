@@ -3,7 +3,12 @@ const fs = require('fs/promises');
 const { inspect } = require('util');
 const fleek = require('./fleek');
 const config = require('./config');
-const { JOB_PROCESS_BATCH, JOB_UPDATE_BASE_URL, JOB_UPLOAD_RESOURCE } = require('./constants');
+const {
+  JOB_PROCESS_BATCH_END,
+  JOB_PROCESS_BATCH,
+  JOB_UPDATE_BASE_URL,
+  JOB_UPLOAD_RESOURCE,
+} = require('./constants');
 
 const jobs = {
   /**
@@ -29,12 +34,27 @@ const jobs = {
     }
 
     await queue.add({
-      name: JOB_UPDATE_BASE_URL,
+      name: JOB_PROCESS_BATCH_END,
       queueName: config.MINTS_QUEUE_NAME,
       children,
     });
 
     return { batchNumber, minTokenIdInBatch, maxTokenIdInBatch };
+  },
+
+  /**
+   * Check every 5 minutes for the following hour if the baseURI is ok, and
+   * update it if its not.
+   */
+  [JOB_PROCESS_BATCH_END]: async function (_, { queue }) {
+    await queue.add({
+      name: JOB_UPDATE_BASE_URL,
+      queueName: config.MINTS_QUEUE_NAME,
+      repeat: {
+        every: '* */5 * * * *',
+        limit: 12,
+      },
+    });
   },
 
   /**
@@ -46,10 +66,17 @@ const jobs = {
     if (!baseUriHash.startsWith('ipfs://')) baseUriHash = `ipfs://${baseUriHash}`;
     if (!baseUriHash.endsWith('/')) baseUriHash += '/';
 
-    const tx = await Ethernauts.setBaseURI(baseUriHash);
-    await tx.wait();
+    const current = await Ethernauts.baseTokenURI();
 
-    return { baseUriHash };
+    if (current !== baseUriHash) {
+      const tx = await Ethernauts.setBaseURI(baseUriHash);
+      await tx.wait();
+    }
+
+    return {
+      baseUriHash,
+      updated: current !== baseUriHash,
+    };
   },
 
   /**
