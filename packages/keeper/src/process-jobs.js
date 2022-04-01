@@ -3,7 +3,12 @@ const fs = require('fs/promises');
 const { inspect } = require('util');
 const fleek = require('./fleek');
 const config = require('./config');
-const { JOB_PROCESS_BATCH, JOB_UPDATE_BASE_URL, JOB_UPLOAD_RESOURCE } = require('./constants');
+const {
+  JOB_PROCESS_BATCH_END,
+  JOB_PROCESS_BATCH,
+  JOB_UPDATE_BASE_URL,
+  JOB_UPLOAD_RESOURCE,
+} = require('./constants');
 
 const jobs = {
   /**
@@ -29,12 +34,27 @@ const jobs = {
     }
 
     await queue.add({
-      name: JOB_UPDATE_BASE_URL,
+      name: JOB_PROCESS_BATCH_END,
       queueName: config.MINTS_QUEUE_NAME,
       children,
     });
 
     return { batchNumber, minTokenIdInBatch, maxTokenIdInBatch };
+  },
+
+  /**
+   * Check every 5 minutes for the following hour if the baseURI is ok, and
+   * update it if its not.
+   */
+  [JOB_PROCESS_BATCH_END]: async function (_, { queue }) {
+    await queue.add({
+      name: JOB_UPDATE_BASE_URL,
+      queueName: config.MINTS_QUEUE_NAME,
+      repeat: {
+        every: '* */5 * * * *',
+        limit: 12,
+      },
+    });
   },
 
   /**
@@ -46,10 +66,17 @@ const jobs = {
     if (!baseUriHash.startsWith('ipfs://')) baseUriHash = `ipfs://${baseUriHash}`;
     if (!baseUriHash.endsWith('/')) baseUriHash += '/';
 
-    const tx = await Ethernauts.setBaseURI(baseUriHash);
-    await tx.wait();
+    const current = await Ethernauts.baseTokenURI();
 
-    return { baseUriHash };
+    if (current !== baseUriHash) {
+      const tx = await Ethernauts.setBaseURI(baseUriHash);
+      await tx.wait();
+    }
+
+    return {
+      baseUriHash,
+      updated: current !== baseUriHash,
+    };
   },
 
   /**
@@ -58,15 +85,6 @@ const jobs = {
   [JOB_UPLOAD_RESOURCE]: async function ({ tokenId, assetId }) {
     const metadataKey = `${config.FLEEK_METADATA_FOLDER}/${assetId}`;
     const assetKey = `${config.FLEEK_ASSETS_FOLDER}/${assetId}.png`;
-
-    const exists = await fleek.fileExists({
-      key: metadataKey,
-    });
-
-    if (exists) {
-      console.warn(`Resource with assetId "${assetId}" already uploaded`);
-      return;
-    }
 
     const metadataPath = path.join(config.RESOURCES_METADATA_FOLDER, `${assetId}.json`);
     const assetPath = path.join(config.RESOURCES_ASSETS_FOLDER, `${assetId}.png`);
@@ -78,16 +96,33 @@ const jobs = {
     data.external_url = `https://mint.ethernautdao.io/nft/${tokenId}`;
     await fs.writeFile(metadataPath, JSON.stringify(data, null, 2));
 
-    const [metadata, asset] = await Promise.all([
-      fleek.uploadFile({
+    const metadataExists = await fleek.fileExists({
+      key: metadataKey,
+    });
+
+    let metadata;
+    if (metadataExists) {
+      console.warn(`Metadata with assetId "${assetId}" already uploaded`);
+    } else {
+      metadata = await fleek.uploadFile({
         key: metadataKey,
         location: metadataPath,
-      }),
-      fleek.uploadFile({
+      });
+    }
+
+    const assetExists = await fleek.fileExists({
+      key: assetKey,
+    });
+
+    let asset;
+    if (assetExists) {
+      console.warn(`Asset with assetId "${assetId}" already uploaded`);
+    } else {
+      asset = await fleek.uploadFile({
         key: assetKey,
         location: assetPath,
-      }),
-    ]);
+      });
+    }
 
     return {
       tokenId,

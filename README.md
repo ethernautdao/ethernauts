@@ -73,3 +73,7 @@ f04a636d10f42ec5a9d4885d30834a70
 ```
 
 And all the assets in order can be seen at [`provenanceHash-concatenated.txt`](provenanceHash-concatenated.txt)
+
+There's also available the script command `node bin/check-provenance.js` which will parse the mentioned file and show all the hashes in order, which allows you to easily check that the assigned asset for your NFT is valid, in the correct order and wasn't tempered with.
+
+> ProTip: Only show you assetId specifying it on the command, like so: `node bin/check-provenance.js 3`

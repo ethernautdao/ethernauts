@@ -5,6 +5,7 @@
 
   .image {
     border-radius: 12px;
+    object-fit: cover;
   }
 
   @include breakpoint(xs) {
