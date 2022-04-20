@@ -28,6 +28,7 @@ yarn-error.log*
 .env.development
 .env.staging
 .env.production
+.env.local
 
 # netlify
 .netlify
