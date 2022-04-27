@@ -18,13 +18,15 @@ const Header = () => {
   return (
     <>
       <header className={styles.header}>
-        <Link href="/" passHref>
-          <a>
-            <img src={'/assets/ethernaut-logo.svg'} />
-          </a>
-        </Link>
+        {!isMobile && (
+          <Link href="/" passHref>
+            <a>
+              <img src={'/assets/ethernaut-logo.svg'} />
+            </a>
+          </Link>
+        )}
         <div className={styles.end}>
-          <Navigation routes={MAIN_ROUTES} />
+          <span id='menu'><Navigation routes={MAIN_ROUTES}/></span>
           {!isMobile && (
             <>
               <WalletInfo />
