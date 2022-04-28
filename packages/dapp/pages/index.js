@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import ReactFullpage from '@fullpage/react-fullpage';
 
 import { Hero } from '../components/Hero';
+import { AboutUs } from '../components/AboutUs';
 import { Mint } from '../components/Mint';
 import { Header } from '../components/Header';
 import { FairLaunch } from '../components/FairLaunch';
@@ -20,10 +21,11 @@ export const HomePage = () => {
         content: ({ fullpageApi }) => (
           <>
             <Hero />
-            <Outline text="Mint Now" onClick={() => fullpageApi.moveSectionDown()} />
+            <Outline text="Mint Now" onClick={() => fullpageApi.moveTo(3, 0)} />
           </>
         ),
       },
+      { title: <></>, content: () => <AboutUs /> },
       { title: <></>, content: () => <Mint /> },
       { title: <></>, content: () => <FairLaunch /> },
     ],
@@ -57,6 +59,11 @@ export const HomePage = () => {
 
       <ReactFullpage
         navigation
+        anchors={['home', 'about', 'donate', 'fair']}
+        menu="#menu"
+        scrollOverflow="true"
+        paddingTop="60px"
+        paddingBottom="60px"
         sectionsColor={sectionsColor}
         onLeave={() => {}}
         render={({ fullpageApi }) => (

@@ -1,4 +1,7 @@
-export const HOME_PATH = '/';
+export const BASE_PATH = '/';
+export const HOME_PATH = '/#home';
+export const ABOUT_PATH = '/#about';
+export const DONATE_PATH = '/#donate';
 export const GALLERY_ALL_PATH = '/gallery/';
 export const GALLERY_ME_PATH = '/gallery/me/';
 
@@ -17,9 +20,21 @@ export const MAIN_ROUTES = {
   home: {
     path: HOME_PATH,
     text: 'Home',
+    menuanchor: 'home',
+  },
+  about: {
+    path: ABOUT_PATH,
+    text: 'About us',
+    menuanchor: 'about',
+  },
+  donate: {
+    path: DONATE_PATH,
+    text: 'Donate',
+    menuanchor: 'donate',
   },
   gallery: {
     path: GALLERY_ALL_PATH,
     text: 'Gallery',
+    menuanchor: 'gallery',
   },
 };
