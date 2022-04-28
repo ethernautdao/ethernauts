@@ -18,31 +18,6 @@
   }
 }
 
-.buttonContainer {
-  max-width: 960px;
-  width: 100%;
-  height: 50px;
-  display: block;
-  position: absolute;
-  bottom: 60px;
-  text-align: center;
-
-  a{
-    color: var(--text-anchor-link-color);
-    letter-spacing: 2px;
-    position: relative;
-    z-index: 99;
-  }
-
-  svg{
-    position: absolute;
-    top: 0;
-    width: 100%;
-    left: 0;
-    right: 0;
-  }
-}
-
 .mobileInnerContainer {
   width: 365px;
 }

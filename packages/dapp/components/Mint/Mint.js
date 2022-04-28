@@ -35,10 +35,6 @@ const Mint = () => {
           <AvailableToMint />
         </div>
       </div>
-      <div className={cn(styles.buttonContainer)}>
-        <a href="#fair">OUR ETHICS CODE</a>
-        <DownArrow />
-      </div>
     </section>
   );
 };
