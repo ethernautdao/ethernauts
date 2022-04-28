@@ -7,6 +7,7 @@ import { Logs } from '../Logs';
 import { DonationSlide } from '../DonationSlide';
 import { Mint as MintButton } from '../Buttons/Mint';
 import { AvailableToMint } from '../AvailableToMint';
+import { DownArrow } from '../Icons/DownArrow';
 
 import styles from './Mint.module.scss';
 
@@ -33,6 +34,10 @@ const Mint = () => {
           </div>
           <AvailableToMint />
         </div>
+      </div>
+      <div className={cn(styles.buttonContainer)}>
+        <a href="#fair">OUR ETHICS CODE</a>
+        <DownArrow />
       </div>
     </section>
   );

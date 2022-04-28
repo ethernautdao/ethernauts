@@ -10,8 +10,7 @@ const INFURA_PROJECT_ID = process.env.NEXT_PUBLIC_INFURA_PROJECT_ID;
 const FLEEK_BUCKET_ID = process.env.NEXT_PUBLIC_FLEEK_BUCKET_ID;
 
 if (!CONTRACT_ADDRESS && isDev) {
-  const { token } = require('@ethernauts/hardhat/deployments/docker.json');
-
+  const { token } = require(`@ethernauts/hardhat/deployments/${ETHEREUM_NETWORK}.json`);
   CONTRACT_ADDRESS = token;
 }
 

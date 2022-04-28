@@ -45,7 +45,7 @@ const Cell = ({ assetId, tokenId, isRevealed, kind, isMiddleCell }) => {
         [styles.mobile]: isMobile,
       })}
     >
-      <Zoom>
+      <Zoom overlayBgColorEnd="rgba(0, 0, 0, 0.95)">
         <img
           src={imageSrc}
           {...imageSize}
