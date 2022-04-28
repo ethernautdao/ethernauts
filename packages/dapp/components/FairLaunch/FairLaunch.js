@@ -7,7 +7,10 @@ const FairLaunch = () => (
       <p className={styles.description}>
         Ethernauts NFT avoids the typical NFT mint gas wars by launching on Optimism, although
         that's not the only reason why we choose Optimism! Transactions in the Optimism network are
-        processed sequentially, so there's no point in using a higher gas price. <a href='https://optimistic.etherscan.io/address/0xA433e0Bf662Dd934833C66D4f03711e1CCE9c9B2#code'>READ OUR SMART CONTRACT</a>
+        processed sequentially, so there's no point in using a higher gas price.{' '}
+        <a href="https://optimistic.etherscan.io/address/0xA433e0Bf662Dd934833C66D4f03711e1CCE9c9B2#code">
+          READ OUR SMART CONTRACT
+        </a>
       </p>
 
       <h3 className={styles.title}>FAIR SALE</h3>

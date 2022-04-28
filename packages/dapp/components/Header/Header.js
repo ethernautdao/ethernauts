@@ -26,7 +26,9 @@ const Header = () => {
           </Link>
         )}
         <div className={styles.end}>
-          <span id='menu'><Navigation routes={MAIN_ROUTES}/></span>
+          <span id="menu">
+            <Navigation routes={MAIN_ROUTES} />
+          </span>
           {!isMobile && (
             <>
               <WalletInfo />

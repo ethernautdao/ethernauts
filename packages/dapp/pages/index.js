@@ -31,7 +31,7 @@ export const HomePage = () => {
     ],
     []
   );
- 
+
   return (
     <div className={styles.outerContainer}>
       <Head>
@@ -60,10 +60,10 @@ export const HomePage = () => {
       <ReactFullpage
         navigation
         anchors={['home', 'about', 'donate', 'fair']}
-        menu= '#menu'
-        scrollOverflow='true'
-        paddingTop='60px'
-	      paddingBottom='60px'
+        menu="#menu"
+        scrollOverflow="true"
+        paddingTop="60px"
+        paddingBottom="60px"
         sectionsColor={sectionsColor}
         onLeave={() => {}}
         render={({ fullpageApi }) => (
