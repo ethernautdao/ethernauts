@@ -22,11 +22,11 @@ const Grid = ({ items, kind }) => {
 
   const chunks = useMemo(() => chunk(items, columns), [items, columns]);
 
-  const isMiddleCell = (assetId) => {
+  const isMiddleCell = (tokenId) => {
     if (kind === ME) return false;
 
     return chunks.some((item) => {
-      return item[1]?.assetId === assetId;
+      return item[1]?.tokenId === tokenId;
     });
   };
 
@@ -39,11 +39,12 @@ const Grid = ({ items, kind }) => {
           [styles.mobileGrid]: isMobile,
         })}
       >
-        {items?.map(({ assetId, isRevealed }) => {
-          const isMiddle = isMiddleCell(assetId);
+        {items?.map(({ assetId, tokenId, isRevealed }) => {
+          const isMiddle = isMiddleCell(tokenId);
           return (
             <Cell
-              key={assetId}
+              key={tokenId}
+              tokenId={tokenId}
               assetId={assetId}
               isRevealed={isRevealed}
               kind={kind}

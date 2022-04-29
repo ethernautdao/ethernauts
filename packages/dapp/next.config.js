@@ -9,7 +9,7 @@ module.exports = {
     };
   },
   images: {
-    domains: ['https://storageapi.fleek.co/'],
+    domains: ['https://storageapi.fleek.co/', 'https://storageapi2.fleek.co/'],
   },
   // Fix fast refresh for Windows users
   webpackDevMiddleware: (config) => {

@@ -13,7 +13,7 @@ import styles from './Cell.module.scss';
 
 const MAX_PRIORITY_ITEMS = 24;
 
-const Cell = ({ assetId, isRevealed, kind, isMiddleCell }) => {
+const Cell = ({ assetId, tokenId, isRevealed, kind, isMiddleCell }) => {
   const { breakpoint } = useBreakpoint(BREAKPOINTS, 'desktop');
 
   const isMobile = breakpoint === 'mobile';
@@ -22,7 +22,7 @@ const Cell = ({ assetId, isRevealed, kind, isMiddleCell }) => {
 
   const imageSrc = useMemo(() => {
     if (isRevealed && !isDev)
-      return `https://storageapi.fleek.co/${FLEEK_BUCKET_ID}/assets/${assetId}.png`;
+      return `https://storageapi2.fleek.co/${FLEEK_BUCKET_ID}/assets/${assetId}.png`;
 
     if (isRevealed && isDev) return '/assets/revealed-token.png';
 
@@ -37,7 +37,7 @@ const Cell = ({ assetId, isRevealed, kind, isMiddleCell }) => {
 
   return (
     <div
-      key={`cell-${assetId}`}
+      key={`cell-${tokenId}`}
       className={cn(styles.cellContainer, {
         [styles.middle]: isMiddleCell,
         [styles.all]: kind === ALL,
@@ -51,10 +51,10 @@ const Cell = ({ assetId, isRevealed, kind, isMiddleCell }) => {
           {...imageSize}
           {...imageSize}
           className={styles.image}
-          priority={hasPriority}
+          priority={hasPriority.toString()}
         />
       </Zoom>
-      <span className={styles.assetId}>#{assetId}</span>
+      <span className={styles.tokenId}>#{tokenId}</span>
     </div>
   );
 };

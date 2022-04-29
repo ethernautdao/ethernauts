@@ -43,7 +43,16 @@ const useGallery = () => {
         Ethernauts.totalSupply().then(Number),
       ]);
 
+      const maxBatchRevealed = Math.floor(totalSupply / batchSize - 1);
       const maxTokenIdRevealed = totalSupply - (totalSupply % batchSize) - 1;
+
+      const offsets = [];
+
+      for (let batchId = 0; batchId <= maxBatchRevealed; batchId++) {
+        const randomNumber = await Ethernauts.getRandomNumberForBatch(batchId);
+        const offset = Number(randomNumber.mod(batchSize));
+        offsets.push(offset);
+      }
 
       const logs = await provider.getLogs(filter);
 
@@ -58,16 +67,19 @@ const useGallery = () => {
 
         const to = parsedLog.args.to.toLowerCase();
         const tokenId = parsedLog.args.tokenId.toNumber();
+        const isRevealed = tokenId <= maxTokenIdRevealed;
+        const batchNumber = Math.floor(tokenId / batchSize);
+        const maxTokenIdInBatch = batchSize * (batchNumber + 1) - 1;
+        const offset = offsets[batchNumber];
 
-        const assetId = await Ethernauts.getAssetIdForTokenId(tokenId);
-
-        // getAssetIdForTokenId returns "assetId,boolean" so it takes the first position;
-        const [formattedAssetId] = assetId.toString().split(',');
+        let assetId = tokenId + offset;
+        if (assetId > maxTokenIdInBatch) assetId -= batchSize;
 
         const item = {
-          assetId: formattedAssetId,
+          tokenId,
+          assetId,
           owner: to,
-          isRevealed: tokenId <= maxTokenIdRevealed,
+          isRevealed,
         };
 
         // Push all nfts
